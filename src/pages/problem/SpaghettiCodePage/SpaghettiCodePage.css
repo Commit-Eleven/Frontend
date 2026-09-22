@@ -10,17 +10,17 @@
 
 .spaghetti-editor-card {
   overflow: hidden;
-  border: 1px solid #e6eaeb;
+  /* border: 1px solid #e6eaeb; */
   border-radius: 12px;
-  background: #fff;
-  box-shadow: 0 8px 22px #0c244109;
+  background-color: transparent;
+  /* box-shadow: 0 8px 22px #0c244109; */
 }
 
 .spaghetti-editor-card header {
   display: flex;
   align-items: center;
   padding: 13px 16px;
-  border-bottom: 1px solid #edf0f0;
+  /* border-bottom: 1px solid #edf0f0; */
 }
 
 .spaghetti-editor-card header strong {
@@ -54,13 +54,32 @@
 .spaghetti-test-input code {
   padding: 5px 8px;
   border-radius: 5px;
-  background: #eff5f4;
+  /* background: #eff5f4; */
   color: #0c7e6a;
-  font: 12px ui-monospace, monospace;
+  font:
+    12px ui-monospace,
+    monospace;
 }
 
 .spaghetti-test-input small {
   color: #9aa5a2;
+}
+
+.spaghetti-run-result {
+  display: block;
+  margin: 10px 0 0;
+  padding: 11px 13px;
+  border: 1px solid #bcefe2;
+  border-radius: 7px;
+  background: #f3fffb;
+  color: #0c7e6a;
+  font: 12px/1.5 ui-monospace, monospace;
+}
+
+.spaghetti-run-result--error {
+  border-color: #ffc4c4;
+  background: #fff5f5;
+  color: #d52727;
 }
 
 @media (max-width: 760px) {

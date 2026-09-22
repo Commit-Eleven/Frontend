@@ -13,12 +13,18 @@ function SpaghettiCodePage({ question, onNext }) {
   const [status, setStatus] = useState(null);
   const [notice, setNotice] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { runCode, resetResult } = useCodeRunner();
+  const { runCode, runResult, resetResult } = useCodeRunner();
 
   /** 코드가 수정되면 이전 실행 결과를 초기화합니다. */
   const handleSourceChange = (value) => {
     setSource(value);
     resetResult();
+  };
+
+  /** 개선한 코드를 테스트 입력값으로 실행하고 결과를 표시합니다. */
+  const handleRun = () => {
+    setNotice(null);
+    runCode(source, question.testInput);
   };
 
   /** 제출한 코드의 동작을 검사하고 채점 결과를 표시합니다. */
@@ -54,10 +60,15 @@ function SpaghettiCodePage({ question, onNext }) {
           </article>
           <article className="spaghetti-editor-card spaghetti-editor-card--solution">
             <header><strong>개선 후</strong></header>
-            <CodeEditor label="개선한 코드" value={source} onChange={handleSourceChange} language={question.language} readOnly={Boolean(status) || isSubmitting} showLabel={false} showTestInput={false} minHeight="270px" />
+            <CodeEditor label="개선한 코드" value={source} onChange={handleSourceChange} language={question.language} onRun={handleRun} isRunning={runResult.status === 'running'} isRunDisabled={Boolean(status) || isSubmitting} readOnly={Boolean(status) || isSubmitting} showLabel={false} showTestInput={false} minHeight="270px" />
           </article>
         </section>
         <p className="spaghetti-test-input"><span>테스트 입력값</span><code>{JSON.stringify(question.testInput)}</code><small>제출 시 자동으로 테스트합니다.</small></p>
+        {runResult.status !== 'idle' && (
+          <output className={`spaghetti-run-result spaghetti-run-result--${runResult.status}`}>
+            {runResult.status === 'success' ? `실행 결과: ${runResult.output}` : `실행 오류: ${runResult.output}`}
+          </output>
+        )}
         {notice && <p className="code-question-notice">{notice}</p>}
         <QuestionFeedback type={feedback} hint={question.hint} explanation={status === 'correct' ? question.explanation : '동작 결과가 기존 코드의 기대값과 다릅니다. 함수와 반환값을 다시 확인해보세요.'} />
       </div>
