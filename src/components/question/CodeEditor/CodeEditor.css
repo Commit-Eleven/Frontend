@@ -40,6 +40,32 @@
   gap: 7px;
 }
 
+.code-editor__toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.code-editor__toolbar button {
+  min-height: 25px;
+  padding: 0 10px;
+  border: 1px solid #02caa4;
+  border-radius: 5px;
+  background: #02caa4;
+  color: #062f29;
+  font: 700 11px Pretendard, sans-serif;
+  cursor: pointer;
+}
+
+.code-editor__toolbar button:hover:not(:disabled) {
+  background: #39d8ba;
+}
+
+.code-editor__toolbar button:disabled {
+  opacity: .65;
+  cursor: not-allowed;
+}
+
 .code-editor__toolbar i {
   width: 7px;
   height: 7px;

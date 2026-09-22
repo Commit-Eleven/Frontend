@@ -66,13 +66,8 @@ function SubjectiveCodePage({ question, onNext }) {
             ))}
           </ul>
         </section>
-        <CodeEditor label="코드 작성" value={source} onChange={handleSourceChange} language={question.language} readOnly={Boolean(status) || isSubmitting} showLabel={false} showTestInput={false} />
-        <div className="code-execution">
-          <div><span>테스트 입력값</span><code>{JSON.stringify(question.testInput)}</code></div>
-          <button type="button" onClick={handleRun} disabled={Boolean(status) || isSubmitting || runResult.status === 'running'}>
-            {runResult.status === 'running' ? '실행 중...' : '실행하기'}
-          </button>
-        </div>
+        <CodeEditor label="코드 작성" value={source} onChange={handleSourceChange} language={question.language} onRun={handleRun} isRunning={runResult.status === 'running'} isRunDisabled={Boolean(status) || isSubmitting} readOnly={Boolean(status) || isSubmitting} showLabel={false} showTestInput={false} />
+        <div className="code-execution"><span>테스트 입력값</span><code>{JSON.stringify(question.testInput)}</code></div>
         {runResult.status !== 'idle' && (
           <output className={`code-execution__result code-execution__result--${runResult.status}`}>
             {runResult.status === 'success' ? `실행 결과: ${runResult.output}` : `실행 오류: ${runResult.output}`}
