@@ -39,7 +39,7 @@ function SpaghettiCodePage({ question, onNext }) {
       <QuestionProgress current={question.current} total={question.total} unit={question.unit} elapsedTime={question.elapsedTime} isStopped={Boolean(status)} />
       <div className="quiz-body">
         <p className="quiz-question">{question.text}</p>
-        <section className="question-requirements question-requirements--spaghetti" aria-label="개선 조건">
+        <section className="question-requirements" aria-label="개선 조건">
           <strong>개선 조건</strong>
           <ul>
             {question.requirements.map((requirement) => (
@@ -49,11 +49,11 @@ function SpaghettiCodePage({ question, onNext }) {
         </section>
         <section className="spaghetti-editors" aria-label="코드 비교">
           <article className="spaghetti-editor-card spaghetti-editor-card--original">
-            <header><span>원본</span><div><strong>개선 전 코드</strong><small>읽기 어려운 기존 구현</small></div></header>
+            <header><strong>개선 전</strong></header>
             <CodeEditor label="개선 전 코드" value={question.originalCode} language={question.language} readOnly showLabel={false} showTestInput={false} minHeight="270px" />
           </article>
           <article className="spaghetti-editor-card spaghetti-editor-card--solution">
-            <header><span>작성</span><div><strong>개선한 코드</strong><small>동작을 유지하며 더 읽기 좋게 작성하세요.</small></div></header>
+            <header><strong>개선 후</strong></header>
             <CodeEditor label="개선한 코드" value={source} onChange={handleSourceChange} language={question.language} readOnly={Boolean(status) || isSubmitting} showLabel={false} showTestInput={false} minHeight="270px" />
           </article>
         </section>

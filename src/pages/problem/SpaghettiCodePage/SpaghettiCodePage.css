@@ -2,26 +2,6 @@
   min-height: 780px;
 }
 
-.question-requirements--spaghetti {
-  position: relative;
-  overflow: hidden;
-  border: 1px solid #c5fff4;
-  background: linear-gradient(105deg, #effffb 0%, #f7fffd 100%);
-}
-
-.question-requirements--spaghetti::after {
-  content: '</>';
-  position: absolute;
-  top: 14px;
-  right: 18px;
-  color: #02caa422;
-  font: 700 28px ui-monospace, monospace;
-}
-
-.question-requirements--spaghetti strong {
-  color: #0c7e6a;
-}
-
 .spaghetti-editors {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -36,52 +16,16 @@
   box-shadow: 0 8px 22px #0c244109;
 }
 
-.spaghetti-editor-card--solution {
-  border-color: #9aeedc;
-}
-
 .spaghetti-editor-card header {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 14px 15px;
+  padding: 13px 16px;
   border-bottom: 1px solid #edf0f0;
-}
-
-.spaghetti-editor-card--solution header {
-  background: #f4fffc;
-}
-
-.spaghetti-editor-card header > span {
-  display: grid;
-  width: 34px;
-  height: 26px;
-  border-radius: 7px;
-  place-items: center;
-  background: #edf0f0;
-  color: #64706f;
-  font-size: 11px;
-  font-weight: 700;
-}
-
-.spaghetti-editor-card--solution header > span {
-  background: #02caa4;
-  color: #fff;
-}
-
-.spaghetti-editor-card header div {
-  display: grid;
-  gap: 3px;
 }
 
 .spaghetti-editor-card header strong {
   color: #293533;
   font-size: 14px;
-}
-
-.spaghetti-editor-card header small {
-  color: #83908d;
-  font-size: 11px;
 }
 
 .spaghetti-editor-card .code-editor {
