@@ -1,0 +1,30 @@
+.quiz-card--subjective {
+  min-height: 690px;
+}
+
+.question-requirements {
+  margin: 0 0 22px;
+  padding: 16px 18px;
+  border-radius: 8px;
+  background: #eee;
+}
+
+.question-requirements strong {
+  color: #333;
+  font-size: 14px;
+}
+
+.question-requirements ul {
+  display: grid;
+  gap: 5px;
+  margin: 9px 0 0;
+  padding-left: 18px;
+  color: #333;
+  font-size: 13px;
+}
+
+.code-question-notice {
+  margin: 14px 0 0;
+  color: #d52727;
+  font-size: 13px;
+}

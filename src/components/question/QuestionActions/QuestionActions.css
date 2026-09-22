@@ -1,0 +1,25 @@
+.quiz-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 14px;
+  padding: 0 32px 28px;
+}
+.quiz-actions button {
+  min-width: 96px;
+  min-height: 37px;
+  border-radius: 7px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.quiz-actions__hint {
+  border: 1px solid #02caa4;
+  color: #02b997;
+  background: #fff;
+}
+.quiz-actions__next {
+  border: 1px solid #02caa4;
+  color: #fff;
+  background: #02caa4;
+}

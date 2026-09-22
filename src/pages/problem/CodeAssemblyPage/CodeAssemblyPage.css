@@ -1,0 +1,108 @@
+.quiz-card--assembly {
+  min-height: 700px;
+}
+.assembly-slots {
+  display: grid;
+  gap: 10px;
+  margin: 0 0 30px;
+  padding: 0;
+  list-style: none;
+}
+.assembly-slots > li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 43px;
+}
+.assembly-slots > li > span {
+  display: grid;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #eef0f0;
+  place-items: center;
+  color: #555;
+  font-size: 12px;
+}
+.assembly-slots em,
+.placed-block {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex: 1;
+  min-height: 43px;
+  padding: 12px 16px;
+  border: 1px dashed #dfe3e3;
+  border-radius: 7px;
+  color: #979797;
+  background: #fff;
+  font:
+    13px ui-monospace,
+    monospace;
+  text-align: left;
+}
+.placed-block {
+  border-style: solid;
+  border-color: #c5eee5;
+  color: #167764;
+  cursor: pointer;
+}
+.placed-block b {
+  font: 15px system-ui;
+}
+.placed-block--correct {
+  border-color: #02caa4;
+  background: #e0fff8;
+}
+.placed-block--wrong {
+  border-color: #ff7474;
+  background: #ffe3e3;
+  color: #d52727;
+}
+.block-bank {
+  padding: 19px;
+  border: 1px solid #e0e3e3;
+  border-radius: 8px;
+}
+.block-bank strong {
+  display: block;
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+.block-bank > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.block-bank small {
+  color: #999;
+}
+.code-block {
+  border: 0;
+  border-radius: 6px;
+  padding: 8px 13px;
+  font:
+    12px ui-monospace,
+    monospace;
+  cursor: pointer;
+}
+.code-block--0 {
+  background: #e8e2ff;
+  color: #6241b0;
+}
+.code-block--1 {
+  background: #fff0e5;
+  color: #d26528;
+}
+.code-block--2 {
+  background: #dff7e8;
+  color: #27824a;
+}
+.code-block--3 {
+  background: #e4f1ff;
+  color: #2872ad;
+}
+.code-block--4 {
+  background: #ffe4e5;
+  color: #d34d50;
+}

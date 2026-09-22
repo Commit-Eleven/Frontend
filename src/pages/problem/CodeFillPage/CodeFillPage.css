@@ -1,0 +1,57 @@
+.quiz-card--fill {
+  min-height: 690px;
+}
+.quiz-code--fill mark {
+  display: inline-block;
+  min-width: 54px;
+  padding: 1px 12px;
+  border-radius: 999px;
+  background: #585858;
+  color: #fff;
+  text-align: center;
+}
+.fill-fields {
+  display: grid;
+  gap: 13px;
+}
+.fill-field {
+  display: grid;
+  grid-template-columns: 64px 1fr 20px;
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 0 13px;
+  border: 1px solid #e0e3e3;
+  border-radius: 7px;
+  background: #fff;
+}
+.fill-field > span {
+  color: #888;
+  font-size: 12px;
+}
+.fill-field input {
+  width: 100%;
+  border: 0;
+  outline: 0;
+  color: #333;
+  background: transparent;
+  font:
+    13px ui-monospace,
+    monospace;
+}
+.fill-field input::placeholder {
+  color: #a8a8a8;
+}
+.fill-field b {
+  font-size: 15px;
+}
+.fill-field--correct {
+  border-color: #02caa4;
+  background: #e0fff8;
+  color: #087c69;
+}
+.fill-field--wrong {
+  border-color: #ff7474;
+  background: #ffe3e3;
+  color: #d52727;
+}

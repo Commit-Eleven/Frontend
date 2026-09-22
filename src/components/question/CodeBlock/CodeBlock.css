@@ -1,0 +1,28 @@
+.numbered-code-block {
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr);
+  padding: 0;
+  overflow: hidden;
+}
+
+.numbered-code-block__line-numbers {
+  display: grid;
+  align-content: start;
+  margin: 0;
+  padding: 25px 8px 25px 0;
+  background: #383838;
+  color: #d7d7d7;
+  font: 13px/1.75 ui-monospace, monospace;
+  list-style: none;
+  text-align: right;
+}
+
+.numbered-code-block pre {
+  min-width: 0;
+  margin: 0;
+  padding: 25px 30px;
+  overflow-x: auto;
+  color: #d5f5eb;
+  font: 13px/1.75 ui-monospace, monospace;
+  white-space: pre;
+}

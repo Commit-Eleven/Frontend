@@ -1,0 +1,99 @@
+.code-editor {
+  display: grid;
+  gap: 10px;
+}
+
+.code-editor__label {
+  color: #333;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.code-editor__surface {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid #3b3b3b;
+  border-radius: 8px;
+  background: #282c34;
+}
+
+.code-editor__surface:focus-within {
+  border-color: #02caa4;
+  box-shadow: 0 0 0 3px #02caa420;
+}
+
+.code-editor__toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 35px;
+  padding: 0 13px;
+  border-bottom: 1px solid #3b3b3b;
+  background: #21252b;
+  color: #aab3bb;
+  font: 12px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+.code-editor__toolbar span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.code-editor__toolbar i {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: #02caa4;
+}
+
+.code-editor .cm-editor {
+  outline: 0;
+  font: 13px/1.75 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+.code-editor .cm-editor.cm-focused {
+  outline: 0;
+}
+
+.code-editor .cm-scroller {
+  overflow: auto;
+  font-family: inherit;
+}
+
+.code-editor .cm-gutters {
+  border-right: 1px solid #3b3b3b;
+  background: #21252b;
+  color: #69727b;
+}
+
+.code-editor .cm-activeLineGutter {
+  background: #2c313a;
+  color: #d5dce3;
+}
+
+.code-editor .cm-activeLine {
+  background: #2c313a80;
+}
+
+.code-editor .cm-content {
+  padding: 16px 0 26px;
+  caret-color: #f8f8f2;
+}
+
+.code-editor .cm-line {
+  padding: 0 18px;
+}
+
+.code-editor .cm-foldGutter .cm-gutterElement {
+  padding-left: 4px;
+}
+
+.code-editor .cm-tooltip-autocomplete > ul > li[aria-selected] {
+  background: #02a98a;
+}
+
+.code-editor__test-input {
+  color: #69727b;
+  font: 12px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}

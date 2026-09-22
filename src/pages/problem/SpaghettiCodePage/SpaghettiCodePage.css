@@ -1,0 +1,15 @@
+.quiz-card--spaghetti {
+  min-height: 810px;
+}
+
+.spaghetti-editors {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+@media (max-width: 760px) {
+  .spaghetti-editors {
+    grid-template-columns: 1fr;
+  }
+}
