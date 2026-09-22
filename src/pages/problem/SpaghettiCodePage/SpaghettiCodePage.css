@@ -1,15 +1,130 @@
 .quiz-card--spaghetti {
-  min-height: 810px;
+  min-height: 780px;
+}
+
+.question-requirements--spaghetti {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid #c5fff4;
+  background: linear-gradient(105deg, #effffb 0%, #f7fffd 100%);
+}
+
+.question-requirements--spaghetti::after {
+  content: '</>';
+  position: absolute;
+  top: 14px;
+  right: 18px;
+  color: #02caa422;
+  font: 700 28px ui-monospace, monospace;
+}
+
+.question-requirements--spaghetti strong {
+  color: #0c7e6a;
 }
 
 .spaghetti-editors {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 18px;
+  gap: 20px;
+}
+
+.spaghetti-editor-card {
+  overflow: hidden;
+  border: 1px solid #e6eaeb;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 8px 22px #0c244109;
+}
+
+.spaghetti-editor-card--solution {
+  border-color: #9aeedc;
+}
+
+.spaghetti-editor-card header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 15px;
+  border-bottom: 1px solid #edf0f0;
+}
+
+.spaghetti-editor-card--solution header {
+  background: #f4fffc;
+}
+
+.spaghetti-editor-card header > span {
+  display: grid;
+  width: 34px;
+  height: 26px;
+  border-radius: 7px;
+  place-items: center;
+  background: #edf0f0;
+  color: #64706f;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.spaghetti-editor-card--solution header > span {
+  background: #02caa4;
+  color: #fff;
+}
+
+.spaghetti-editor-card header div {
+  display: grid;
+  gap: 3px;
+}
+
+.spaghetti-editor-card header strong {
+  color: #293533;
+  font-size: 14px;
+}
+
+.spaghetti-editor-card header small {
+  color: #83908d;
+  font-size: 11px;
+}
+
+.spaghetti-editor-card .code-editor {
+  gap: 0;
+}
+
+.spaghetti-editor-card .code-editor__surface {
+  border: 0;
+  border-radius: 0;
+}
+
+.spaghetti-test-input {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 16px 0 0;
+  color: #64706f;
+  font-size: 12px;
+}
+
+.spaghetti-test-input span {
+  color: #40504c;
+  font-weight: 700;
+}
+
+.spaghetti-test-input code {
+  padding: 5px 8px;
+  border-radius: 5px;
+  background: #eff5f4;
+  color: #0c7e6a;
+  font: 12px ui-monospace, monospace;
+}
+
+.spaghetti-test-input small {
+  color: #9aa5a2;
 }
 
 @media (max-width: 760px) {
   .spaghetti-editors {
     grid-template-columns: 1fr;
+  }
+
+  .spaghetti-test-input {
+    flex-wrap: wrap;
   }
 }

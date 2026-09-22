@@ -12,7 +12,8 @@ function SpaghettiCodePage({ question, onNext }) {
   const [feedback, setFeedback] = useState(null);
   const [status, setStatus] = useState(null);
   const [notice, setNotice] = useState(null);
-  const { runCode, runResult, resetResult } = useCodeRunner();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { runCode, resetResult } = useCodeRunner();
 
   /** 코드가 수정되면 이전 실행 결과를 초기화합니다. */
   const handleSourceChange = (value) => {
@@ -20,21 +21,17 @@ function SpaghettiCodePage({ question, onNext }) {
     resetResult();
   };
 
-  /** 개선한 코드의 기존 동작을 테스트합니다. */
-  const handleRun = () => {
-    setNotice(null);
-    runCode(source, question.testInput);
-  };
-
-  /** 실행 결과가 기존 동작과 같으면 개선 답안을 제출합니다. */
+  /** 제출한 코드의 동작을 검사하고 채점 결과를 표시합니다. */
   const handleSubmit = () => {
     if (status) return onNext(status);
-    if (runResult.status !== 'success') {
-      setNotice('제출하기 전에 개선한 코드를 실행해보세요.');
-      return;
-    }
-    setStatus(runResult.output === JSON.stringify(question.expectedOutput) ? 'correct' : 'wrong');
-    setFeedback('answer');
+    setNotice(null);
+    setIsSubmitting(true);
+    runCode(source, question.testInput, (result) => {
+      setIsSubmitting(false);
+      setStatus(result.status === 'success' && result.output === JSON.stringify(question.expectedOutput) ? 'correct' : 'wrong');
+      setFeedback('answer');
+      if (result.status === 'error') setNotice(`실행 오류: ${result.output}`);
+    });
   };
 
   return (
@@ -42,7 +39,7 @@ function SpaghettiCodePage({ question, onNext }) {
       <QuestionProgress current={question.current} total={question.total} unit={question.unit} elapsedTime={question.elapsedTime} isStopped={Boolean(status)} />
       <div className="quiz-body">
         <p className="quiz-question">{question.text}</p>
-        <section className="question-requirements" aria-label="개선 조건">
+        <section className="question-requirements question-requirements--spaghetti" aria-label="개선 조건">
           <strong>개선 조건</strong>
           <ul>
             {question.requirements.map((requirement) => (
@@ -50,24 +47,21 @@ function SpaghettiCodePage({ question, onNext }) {
             ))}
           </ul>
         </section>
-        <div className="spaghetti-editors">
-          <CodeEditor label="개선 전 코드" value={question.originalCode} language={question.language} readOnly minHeight="270px" />
-          <CodeEditor label="개선한 코드" value={source} onChange={handleSourceChange} language={question.language} testInput={question.testInput} readOnly={Boolean(status)} minHeight="270px" />
-        </div>
-        <div className="code-runner">
-          <button type="button" onClick={handleRun} disabled={runResult.status === 'running' || Boolean(status)}>
-            {runResult.status === 'running' ? '실행 중...' : '동작 확인하기'}
-          </button>
-          {runResult.status !== 'idle' && (
-            <pre className={`code-runner__result code-runner__result--${runResult.status}`}>
-              <code>{runResult.status === 'success' ? `실행 결과: ${runResult.output}` : runResult.output}</code>
-            </pre>
-          )}
-        </div>
+        <section className="spaghetti-editors" aria-label="코드 비교">
+          <article className="spaghetti-editor-card spaghetti-editor-card--original">
+            <header><span>원본</span><div><strong>개선 전 코드</strong><small>읽기 어려운 기존 구현</small></div></header>
+            <CodeEditor label="개선 전 코드" value={question.originalCode} language={question.language} readOnly showLabel={false} showTestInput={false} minHeight="270px" />
+          </article>
+          <article className="spaghetti-editor-card spaghetti-editor-card--solution">
+            <header><span>작성</span><div><strong>개선한 코드</strong><small>동작을 유지하며 더 읽기 좋게 작성하세요.</small></div></header>
+            <CodeEditor label="개선한 코드" value={source} onChange={handleSourceChange} language={question.language} readOnly={Boolean(status) || isSubmitting} showLabel={false} showTestInput={false} minHeight="270px" />
+          </article>
+        </section>
+        <p className="spaghetti-test-input"><span>테스트 입력값</span><code>{JSON.stringify(question.testInput)}</code><small>제출 시 자동으로 테스트합니다.</small></p>
         {notice && <p className="code-question-notice">{notice}</p>}
         <QuestionFeedback type={feedback} hint={question.hint} explanation={status === 'correct' ? question.explanation : '동작 결과가 기존 코드의 기대값과 다릅니다. 함수와 반환값을 다시 확인해보세요.'} />
       </div>
-      <QuestionActions status={status} onHint={() => setFeedback('hint')} onSubmit={handleSubmit} />
+      <QuestionActions status={status} isSubmitting={isSubmitting} onHint={() => setFeedback('hint')} onSubmit={handleSubmit} />
     </section>
   );
 }
