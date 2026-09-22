@@ -18,8 +18,8 @@
 }
 
 .code-editor__surface:focus-within {
-  border-color: #02caa4;
-  box-shadow: 0 0 0 3px #02caa420;
+  border-color: #3b3b3b;
+  box-shadow: none;
 }
 
 .code-editor__toolbar {
@@ -47,23 +47,41 @@
 }
 
 .code-editor__toolbar button {
-  min-height: 25px;
-  padding: 0 10px;
-  border: 1px solid #02caa4;
-  border-radius: 5px;
-  background: #02caa4;
-  color: #062f29;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 26px;
+  padding: 0 11px;
+  border: 1px solid #31ddc1;
+  border-radius: 6px;
+  background: linear-gradient(135deg, #08cfac, #02a98a);
+  box-shadow: 0 2px 7px #02caa448;
+  color: #fff;
   font: 700 11px Pretendard, sans-serif;
+  letter-spacing: -.1px;
   cursor: pointer;
+  transition: transform 120ms ease, box-shadow 120ms ease, background 120ms ease;
+}
+
+.code-editor__toolbar button::before {
+  content: '▶';
+  font-size: 8px;
 }
 
 .code-editor__toolbar button:hover:not(:disabled) {
-  background: #39d8ba;
+  background: linear-gradient(135deg, #18d9b8, #02b995);
+  box-shadow: 0 4px 10px #02caa463;
+  transform: translateY(-1px);
 }
 
 .code-editor__toolbar button:disabled {
   opacity: .65;
   cursor: not-allowed;
+}
+
+.code-editor__toolbar button:focus-visible {
+  outline: 2px solid #8af5e3;
+  outline-offset: 2px;
 }
 
 .code-editor__toolbar i {
