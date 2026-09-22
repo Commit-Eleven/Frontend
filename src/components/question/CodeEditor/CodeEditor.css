@@ -67,15 +67,6 @@
   color: #69727b;
 }
 
-.code-editor .cm-activeLineGutter {
-  background: #2c313a;
-  color: #d5dce3;
-}
-
-.code-editor .cm-activeLine {
-  background: #2c313a80;
-}
-
 .code-editor .cm-content {
   padding: 16px 0 26px;
   caret-color: #f8f8f2;

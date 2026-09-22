@@ -45,14 +45,14 @@ function CodeEditor({ label, value, onChange, testInput, language = 'javascript'
           indentWithTab
           basicSetup={{
             lineNumbers,
-            highlightActiveLineGutter: lineNumbers,
+            highlightActiveLineGutter: false,
             foldGutter: lineNumbers,
             indentOnInput: true,
-            bracketMatching: true,
+            bracketMatching: false,
             closeBrackets: true,
             autocompletion: true,
-            highlightActiveLine: true,
-            highlightSelectionMatches: true,
+            highlightActiveLine: false,
+            highlightSelectionMatches: false,
             searchKeymap: true,
             tabSize: 2,
           }}
