@@ -1,15 +1,20 @@
 import { useState } from 'react';
 import './CodeFillPage.css';
-import CodeBlock from '../../../components/question/CodeBlock/CodeBlock';
+import CodeEditor from '../../../components/question/CodeEditor/CodeEditor';
 import QuestionActions from '../../../components/question/QuestionActions/QuestionActions';
 import QuestionFeedback from '../../../components/question/QuestionFeedback/QuestionFeedback';
 import QuestionProgress from '../../../components/question/QuestionProgress/QuestionProgress';
+
+/** 코드 조각 사이에 빈칸 토큰을 넣어 읽기 전용 지문 코드를 생성합니다. */
+function getPreviewCode(question) {
+  return question.codeParts.map((part, index) => `${part}${index < question.answers.length ? `__BLANK_${index + 1}__` : ''}`).join('');
+}
 
 function CodeFillPage({ question, elapsedTime, onNext }) {
   const [answers, setAnswers] = useState(() => question.answers.map(() => ''));
   const [feedback, setFeedback] = useState(null);
   const [status, setStatus] = useState(null);
-  const codeContent = [question.codeParts[0], <mark key="first">①</mark>, question.codeParts[1], <mark key="second">②</mark>, question.codeParts[2], <mark key="third">③</mark>, question.codeParts[3]];
+  const previewCode = getPreviewCode(question);
   /** 빈칸 입력값을 업데이트합니다. */
   const handleAnswerChange = (index, value) => !status && setAnswers((items) => items.map((item, itemIndex) => (itemIndex === index ? value : item)));
   /** 입력한 빈칸 답안을 채점하거나 다음 문제로 전환합니다. */
@@ -32,9 +37,7 @@ function CodeFillPage({ question, elapsedTime, onNext }) {
             </span>
           ))}
         </p>
-        <CodeBlock className="quiz-code--fill" code={question.codeParts.join('')} language={question.language ?? 'Python'} lineCount={question.codeParts.join('').split('\n').length}>
-          {codeContent}
-        </CodeBlock>
+        <CodeEditor label="문제 코드" value={previewCode} language={question.language ?? 'python'} readOnly showLabel={false} showTestInput={false} fitContent showBlankTokens className="code-fill-editor" />
         <div className="fill-fields">
           {answers.map((answer, index) => {
             const result = status && (answer === question.answers[index] ? ' fill-field--correct' : ' fill-field--wrong');

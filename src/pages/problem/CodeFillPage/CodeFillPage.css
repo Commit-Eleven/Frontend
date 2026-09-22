@@ -1,15 +1,7 @@
 .quiz-card--fill {
   min-height: 690px;
 }
-.quiz-code--fill mark {
-  display: inline-block;
-  min-width: 54px;
-  padding: 1px 12px;
-  border-radius: 999px;
-  background: #585858;
-  color: #fff;
-  text-align: center;
-}
+.code-fill-editor { margin-bottom: 28px; }
 .fill-fields {
   display: grid;
   gap: 13px;

@@ -113,6 +113,20 @@
   padding-left: 4px;
 }
 
+.code-editor .cm-code-fill-blank {
+  display: inline-flex;
+  min-width: 50px;
+  min-height: 22px;
+  align-items: center;
+  justify-content: center;
+  margin: 0 4px;
+  border-radius: 999px;
+  background: #5b6470;
+  color: #fff;
+  font: 700 12px/1 Pretendard, sans-serif;
+  vertical-align: middle;
+}
+
 .code-editor .cm-tooltip-autocomplete > ul > li[aria-selected] {
   background: #02a98a;
 }
