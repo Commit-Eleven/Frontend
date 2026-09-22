@@ -5,6 +5,7 @@ export const dummyMultipleChoiceQuestion = {
   text: '다음 파이썬 코드의 실행 결과로 옳은 것은?',
   hint: '반복문이 종료되는 시점에서 j의 값을 확인해보세요.',
   explanation: 'sum이 6이 되는 순간 반복문이 종료되므로 j의 값도 6입니다.',
+  language: 'python',
   code: `sum = 0
 j = 0
 

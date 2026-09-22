@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import './MultipleChoicePage.css';
-import CodeBlock from '../../../components/question/CodeBlock/CodeBlock';
+import CodeEditor from '../../../components/question/CodeEditor/CodeEditor';
 import QuestionActions from '../../../components/question/QuestionActions/QuestionActions';
 import QuestionFeedback from '../../../components/question/QuestionFeedback/QuestionFeedback';
 import QuestionProgress from '../../../components/question/QuestionProgress/QuestionProgress';
@@ -47,6 +47,7 @@ function MultipleChoicePage({ question, elapsedTime, onNext, onSubmitAnswer }) {
   const [correctChoiceIndex, setCorrectChoiceIndex] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submissionError, setSubmissionError] = useState(null);
+  const codeEditorHeight = question.code ? `${Math.max(question.code.split('\n').length * 27, 190)}px` : undefined;
   /** 선택한 답안을 채점하거나 다음 문제로 전환합니다. */
   const handleSubmit = async () => {
     if (status) return onNext(status);
@@ -70,7 +71,17 @@ function MultipleChoicePage({ question, elapsedTime, onNext, onSubmitAnswer }) {
       <QuestionProgress current={question.current} total={question.total} unit={question.unit} elapsedTime={elapsedTime} />
       <div className="quiz-body">
         <p className="quiz-question">{question.text}</p>
-        {question.code && <CodeBlock code={question.code} />}
+        {question.code && (
+          <CodeEditor
+            label="문제 코드"
+            value={question.code}
+            language={question.language ?? 'python'}
+            readOnly
+            showLabel={false}
+            showTestInput={false}
+            minHeight={codeEditorHeight}
+          />
+        )}
         <div className="choice-list" role="radiogroup" aria-label="답안 선택">
           {question.choices.map((choice, index) => {
             const result = status === 'correct' && index === selected ? ' choice--correct' : status === 'wrong' && index === selected ? ' choice--wrong' : status === 'wrong' && index === correctChoiceIndex ? ' choice--correct' : '';
