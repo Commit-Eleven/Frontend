@@ -12,8 +12,9 @@ function SubjectiveCodePage({ question, onNext }) {
   const [feedback, setFeedback] = useState(null);
   const [status, setStatus] = useState(null);
   const [notice, setNotice] = useState(null);
-  const { runCode, resetResult } = useCodeRunner();
+  const { runCode, runResult, resetResult } = useCodeRunner();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const canRunInBrowser = (question.language ?? 'javascript').toLowerCase() === 'javascript';
 
   /** 코드가 수정되면 이전 실행 결과를 초기화합니다. */
   const handleSourceChange = (value) => {
@@ -29,9 +30,24 @@ function SubjectiveCodePage({ question, onNext }) {
     if (result.status === 'error') setNotice(`실행 오류: ${result.output}`);
   };
 
+  /** 작성 중인 코드를 테스트 입력값으로 실행하고 결과를 표시합니다. */
+  const handleRun = () => {
+    if (!canRunInBrowser) {
+      setNotice('Python과 Java 실행은 서버 코드 실행 API 연결 후 지원됩니다.');
+      return;
+    }
+
+    setNotice(null);
+    runCode(source, question.testInput);
+  };
+
   /** 작성한 코드를 실행·채점하거나 다음 문제로 이동합니다. */
   const handleSubmit = () => {
     if (status) return onNext(status);
+    if (!canRunInBrowser) {
+      setNotice('Python과 Java 답안 채점은 서버 코드 실행 API 연결 후 지원됩니다.');
+      return;
+    }
     setNotice(null);
     setIsSubmitting(true);
     runCode(source, question.testInput, handleRunComplete);
@@ -51,6 +67,17 @@ function SubjectiveCodePage({ question, onNext }) {
           </ul>
         </section>
         <CodeEditor label="코드 작성" value={source} onChange={handleSourceChange} language={question.language} readOnly={Boolean(status) || isSubmitting} showLabel={false} showTestInput={false} />
+        <div className="code-execution">
+          <div><span>테스트 입력값</span><code>{JSON.stringify(question.testInput)}</code></div>
+          <button type="button" onClick={handleRun} disabled={Boolean(status) || isSubmitting || runResult.status === 'running'}>
+            {runResult.status === 'running' ? '실행 중...' : '실행하기'}
+          </button>
+        </div>
+        {runResult.status !== 'idle' && (
+          <output className={`code-execution__result code-execution__result--${runResult.status}`}>
+            {runResult.status === 'success' ? `실행 결과: ${runResult.output}` : `실행 오류: ${runResult.output}`}
+          </output>
+        )}
         {notice && <p className="code-question-notice">{notice}</p>}
         <QuestionFeedback type={feedback} hint={question.hint} explanation={status === 'correct' ? question.explanation : '테스트 결과가 기대한 값과 다릅니다. 조건을 다시 확인해보세요.'} />
       </div>
