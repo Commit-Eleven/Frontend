@@ -2,6 +2,7 @@
   display: grid;
   gap: 12px;
 }
+.multiple-choice-code { margin-bottom: 26px; }
 .choice {
   display: flex;
   align-items: center;

@@ -21,13 +21,13 @@ function getLanguageOption(language) {
 }
 
 /** 문법 강조와 편집 단축키를 제공하는 코드 편집기를 렌더링합니다. */
-function CodeEditor({ label, value, onChange, testInput, language = 'javascript', onRun, isRunning = false, isRunDisabled = false, readOnly = false, showLabel = true, showTestInput = true, lineNumbers = true, minHeight = '240px' }) {
+function CodeEditor({ label, value, onChange, testInput, language = 'javascript', onRun, isRunning = false, isRunDisabled = false, readOnly = false, showLabel = true, showTestInput = true, lineNumbers = true, minHeight = '240px', fitContent = false, className = '' }) {
   const lineCount = value.split('\n').length;
   const languageOption = getLanguageOption(language);
   const extensions = useMemo(() => [languageOption.extension()], [languageOption]);
 
   return (
-    <section className="code-editor" aria-label={label}>
+    <section className={`code-editor${className ? ` ${className}` : ''}`} aria-label={label}>
       {showLabel && <span className="code-editor__label">{label}</span>}
       <div className="code-editor__surface">
         <div className="code-editor__toolbar">
@@ -40,7 +40,7 @@ function CodeEditor({ label, value, onChange, testInput, language = 'javascript'
         <CodeMirror
           aria-label={label}
           value={value}
-          height={minHeight}
+          height={fitContent ? undefined : minHeight}
           theme={oneDark}
           extensions={extensions}
           editable={!readOnly}

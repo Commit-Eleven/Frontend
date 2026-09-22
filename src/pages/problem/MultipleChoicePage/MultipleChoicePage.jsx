@@ -47,7 +47,6 @@ function MultipleChoicePage({ question, elapsedTime, onNext, onSubmitAnswer }) {
   const [correctChoiceIndex, setCorrectChoiceIndex] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submissionError, setSubmissionError] = useState(null);
-  const codeEditorHeight = question.code ? `${Math.max((question.code.split('\n').length * 24) + 18, 120)}px` : undefined;
   /** 선택한 답안을 채점하거나 다음 문제로 전환합니다. */
   const handleSubmit = async () => {
     if (status) return onNext(status);
@@ -79,7 +78,8 @@ function MultipleChoicePage({ question, elapsedTime, onNext, onSubmitAnswer }) {
             readOnly
             showLabel={false}
             showTestInput={false}
-            minHeight={codeEditorHeight}
+            fitContent
+            className="multiple-choice-code"
           />
         )}
         <div className="choice-list" role="radiogroup" aria-label="답안 선택">
