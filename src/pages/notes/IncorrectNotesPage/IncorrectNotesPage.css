@@ -1,0 +1,16 @@
+.incorrect-notes-page { width: min(100%, 1120px); padding: 16px 0 64px; color: #0c2441; }
+.incorrect-notes-page__header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; padding: 30px 34px; overflow: hidden; border-radius: 18px; background: linear-gradient(118deg, #effffb, #e8fbf6); }
+.incorrect-notes-page__header p, .incorrect-notes-page__problems header p { margin: 0 0 7px; color: #02a98a; font-size: 13px; font-weight: 700; }
+.incorrect-notes-page__header h1 { margin: 0; color: #19342f; font-size: 28px; line-height: 1.35; letter-spacing: -.8px; }
+.incorrect-notes-page__icon { display: grid; width: 78px; height: 78px; border-radius: 24px; place-items: center; background: #02caa4; color: #fff; font-size: 45px; font-weight: 800; box-shadow: 0 12px 25px #02caa436; }
+.incorrect-notes-page__content { display: grid; grid-template-columns: minmax(0, 1fr) 310px; gap: 24px; margin-top: 24px; }
+.incorrect-notes-page__problems { min-width: 0; }
+.incorrect-notes-page__problems > header { display: flex; align-items: end; justify-content: space-between; margin: 0 0 15px; }
+.incorrect-notes-page__problems h2 { margin: 0; color: #263633; font-size: 21px; }
+.incorrect-notes-page__problems > header > span { color: #7d8986; font-size: 13px; }
+.incorrect-notes-page__filters { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 17px; }
+.incorrect-notes-page__filters button { min-height: 32px; padding: 0 12px; border: 1px solid #e1e9e7; border-radius: 99px; background: #fff; color: #6d7a77; font: inherit; font-size: 12px; cursor: pointer; }
+.incorrect-notes-page__filters button.is-active { border-color: #02caa4; background: #02caa4; color: #fff; font-weight: 700; }
+.incorrect-notes-page__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+@media (max-width: 920px) { .incorrect-notes-page__content { grid-template-columns: 1fr; } .incorrect-notes-page__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 640px) { .incorrect-notes-page { padding-top: 0; } .incorrect-notes-page__header { padding: 24px; } .incorrect-notes-page__header h1 { font-size: 22px; } .incorrect-notes-page__icon { display: none; } .incorrect-notes-page__grid { grid-template-columns: 1fr; } }

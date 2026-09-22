@@ -1,0 +1,17 @@
+.app-layout { min-height: 100dvh; }
+
+.app-content {
+  display: grid;
+  width: calc(100% - 72px);
+  min-height: 100dvh;
+  margin-left: 72px;
+  padding: 48px 24px;
+  background: #f8f9f9;
+  place-items: start center;
+}
+
+@media (max-width: 640px) {
+  .app-content {
+    padding: 20px 12px;
+  }
+}

@@ -1,0 +1,32 @@
+.notes-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.notes-summary article {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 92px;
+  padding: 18px 20px;
+  border: 1px solid #e6eeee;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.notes-summary article > strong {
+  color: #02b995;
+  font-size: 29px;
+  line-height: 1;
+}
+
+.notes-summary article div {
+  display: grid;
+  gap: 5px;
+}
+
+.notes-summary b { color: #263633; font-size: 14px; }
+.notes-summary p { margin: 0; color: #85918f; font-size: 12px; }
+
+@media (max-width: 760px) { .notes-summary { grid-template-columns: 1fr; } }
