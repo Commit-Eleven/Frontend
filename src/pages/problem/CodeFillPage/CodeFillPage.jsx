@@ -32,7 +32,7 @@ function CodeFillPage({ question, elapsedTime, onNext }) {
             </span>
           ))}
         </p>
-        <CodeBlock className="quiz-code--fill" code={question.codeParts.join('')} lineCount={question.codeParts.join('').split('\n').length}>
+        <CodeBlock className="quiz-code--fill" code={question.codeParts.join('')} language={question.language ?? 'Python'} lineCount={question.codeParts.join('').split('\n').length}>
           {codeContent}
         </CodeBlock>
         <div className="fill-fields">

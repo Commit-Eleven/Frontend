@@ -1,11 +1,11 @@
 .quiz-card { width: 100%; min-height: 650px; border: 1px solid #e5e7e7; border-radius: 14px; background: #fff; overflow: hidden; }
 .quiz-body { padding: 32px; }
 .quiz-question { margin: 0 0 17px; color: #252525; font-size: 15px; font-weight: 600; line-height: 1.45; }
-.quiz-code { min-height: 195px; margin: 0 0 26px; border-radius: 8px; background: #242424; }
+.quiz-code { margin: 0 0 26px; }
 
 @media (max-width: 640px) {
   .quiz-card { min-height: 0; }
   .quiz-progress, .quiz-body { padding-inline: 20px; }
   .quiz-actions { padding-inline: 20px; }
-  .quiz-code pre, .numbered-code-block__line-numbers { padding-top: 20px; padding-bottom: 20px; font-size: 11px; }
+  .quiz-code pre, .numbered-code-block__line-numbers { font-size: 11px; }
 }

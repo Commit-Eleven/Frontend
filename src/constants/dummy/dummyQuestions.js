@@ -27,6 +27,7 @@ export const dummyCodeFillQuestion = {
   text: '다음은 1부터 100까지의 자연수 중 짝수만을 더하여 출력하는 파이썬 코드입니다.\n코드의 빈칸을 올바르게 채워보세요.',
   hint: '반복 범위, 짝수 판별 조건, 누적 연산의 역할을 순서대로 확인해보세요.',
   explanation: '반복 범위, 짝수 판별 조건, 누적 연산을 순서대로 채우면 됩니다.',
+  language: 'python',
   codeParts: ['total = 0\n\nfor ', ':\n    if ', ':\n        ', '\n\nprint(total)'],
   answers: ['i in range(1, 101)', 'i % 2 == 0', 'total += i'],
 };
