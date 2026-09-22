@@ -49,29 +49,18 @@
 .code-editor__toolbar button {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
   min-height: 26px;
-  padding: 0 11px;
-  border: 1px solid #31ddc1;
-  border-radius: 6px;
-  background: linear-gradient(135deg, #08cfac, #02a98a);
-  box-shadow: 0 2px 7px #02caa448;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 5px;
   color: #fff;
   font: 700 11px Pretendard, sans-serif;
-  letter-spacing: -.1px;
   cursor: pointer;
-  transition: transform 120ms ease, box-shadow 120ms ease, background 120ms ease;
-}
-
-.code-editor__toolbar button::before {
-  content: '▶';
-  font-size: 8px;
+  background: #02caa4;
 }
 
 .code-editor__toolbar button:hover:not(:disabled) {
-  background: linear-gradient(135deg, #18d9b8, #02b995);
-  box-shadow: 0 4px 10px #02caa463;
-  transform: translateY(-1px);
+  background: #02b995;
 }
 
 .code-editor__toolbar button:disabled {
