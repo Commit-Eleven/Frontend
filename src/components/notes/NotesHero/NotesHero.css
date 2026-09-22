@@ -1,0 +1,27 @@
+.notes-hero {
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 31px 34px;
+  overflow: hidden;
+  border: 1px solid #d8f3ec;
+  border-radius: 18px;
+  background: linear-gradient(116deg, #fff 0%, #f0fffa 100%);
+}
+
+.notes-hero__copy > p { margin: 0 0 8px; color: #02ae90; font-size: 13px; font-weight: 800; }
+.notes-hero h1 { margin: 0; color: #18332e; font-size: 28px; line-height: 1.35; letter-spacing: -1px; }
+.notes-hero__copy > span { display: block; margin-top: 12px; color: #70807d; font-size: 13px; }
+.notes-hero__review { display: grid; flex: 0 0 180px; align-content: center; justify-items: center; padding: 15px 20px; border-radius: 13px; background: #fff; box-shadow: 0 12px 25px #0c24410d; }
+.notes-hero__review-count { display: flex; align-items: baseline; gap: 4px; color: #1d3631; }
+.notes-hero__review-count b { color: #02bd99; font-size: 34px; line-height: 1; }
+.notes-hero__review-count span { font-size: 13px; font-weight: 700; }
+.notes-hero__review p { margin: 6px 0 13px; color: #82908d; font-size: 12px; }
+.notes-hero__review a { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 9px 11px; border-radius: 7px; background: #02caa4; color: #fff; font-size: 12px; font-weight: 800; text-decoration: none; }
+
+@media (max-width: 640px) {
+  .notes-hero { padding: 25px 22px; }
+  .notes-hero h1 { font-size: 22px; }
+  .notes-hero__review { display: none; }
+}

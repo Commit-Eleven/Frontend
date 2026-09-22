@@ -1,16 +1,18 @@
-.incorrect-notes-page { width: min(100%, 1120px); padding: 16px 0 64px; color: #0c2441; }
-.incorrect-notes-page__header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; padding: 30px 34px; overflow: hidden; border-radius: 18px; background: linear-gradient(118deg, #effffb, #e8fbf6); }
-.incorrect-notes-page__header p, .incorrect-notes-page__problems header p { margin: 0 0 7px; color: #02a98a; font-size: 13px; font-weight: 700; }
-.incorrect-notes-page__header h1 { margin: 0; color: #19342f; font-size: 28px; line-height: 1.35; letter-spacing: -.8px; }
-.incorrect-notes-page__icon { display: grid; width: 78px; height: 78px; border-radius: 24px; place-items: center; background: #02caa4; color: #fff; font-size: 45px; font-weight: 800; box-shadow: 0 12px 25px #02caa436; }
-.incorrect-notes-page__content { display: grid; grid-template-columns: minmax(0, 1fr) 310px; gap: 24px; margin-top: 24px; }
+.incorrect-notes-page { display: grid; width: min(100%, 1080px); gap: 22px; padding: 12px 0 64px; color: #0c2441; }
+.incorrect-notes-page__content { display: grid; grid-template-columns: minmax(0, 1fr) 300px; align-items: start; gap: 22px; }
 .incorrect-notes-page__problems { min-width: 0; }
-.incorrect-notes-page__problems > header { display: flex; align-items: end; justify-content: space-between; margin: 0 0 15px; }
-.incorrect-notes-page__problems h2 { margin: 0; color: #263633; font-size: 21px; }
-.incorrect-notes-page__problems > header > span { color: #7d8986; font-size: 13px; }
-.incorrect-notes-page__filters { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 17px; }
-.incorrect-notes-page__filters button { min-height: 32px; padding: 0 12px; border: 1px solid #e1e9e7; border-radius: 99px; background: #fff; color: #6d7a77; font: inherit; font-size: 12px; cursor: pointer; }
-.incorrect-notes-page__filters button.is-active { border-color: #02caa4; background: #02caa4; color: #fff; font-weight: 700; }
-.incorrect-notes-page__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
-@media (max-width: 920px) { .incorrect-notes-page__content { grid-template-columns: 1fr; } .incorrect-notes-page__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (max-width: 640px) { .incorrect-notes-page { padding-top: 0; } .incorrect-notes-page__header { padding: 24px; } .incorrect-notes-page__header h1 { font-size: 22px; } .incorrect-notes-page__icon { display: none; } .incorrect-notes-page__grid { grid-template-columns: 1fr; } }
+.incorrect-notes-page__problems > header { display: flex; align-items: end; justify-content: space-between; margin: 0 0 14px; }
+.incorrect-notes-page__problems header p { margin: 0 0 6px; color: #02a98a; font-size: 12px; font-weight: 800; }
+.incorrect-notes-page__problems h2 { margin: 0; color: #263633; font-size: 21px; letter-spacing: -.4px; }
+.incorrect-notes-page__problems > header > span { padding: 6px 9px; border-radius: 6px; background: #eef7f5; color: #61716d; font-size: 11px; font-weight: 700; }
+.incorrect-notes-page__filters { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 13px; }
+.incorrect-notes-page__filters button { min-height: 32px; padding: 0 12px; border: 1px solid #e1e9e7; border-radius: 99px; background: #fff; color: #6d7a77; font: inherit; font-size: 12px; cursor: pointer; transition: border-color 140ms ease, background-color 140ms ease, color 140ms ease; }
+.incorrect-notes-page__filters button:hover { border-color: #80ddca; color: #02a98a; }
+.incorrect-notes-page__filters button.is-active { border-color: #02caa4; background: #02caa4; color: #fff; font-weight: 800; }
+.incorrect-notes-page__list { display: grid; gap: 10px; }
+.incorrect-notes-page__empty { display: grid; min-height: 240px; place-content: center; justify-items: center; gap: 7px; border: 1px dashed #cce5df; border-radius: 13px; background: #fbfefd; }
+.incorrect-notes-page__empty b { display: grid; width: 38px; height: 38px; border-radius: 50%; place-items: center; background: #e0fff8; color: #02ad90; }
+.incorrect-notes-page__empty strong { color: #334440; font-size: 14px; }
+.incorrect-notes-page__empty span { color: #96a29f; font-size: 12px; }
+@media (max-width: 920px) { .incorrect-notes-page__content { grid-template-columns: 1fr; } }
+@media (max-width: 640px) { .incorrect-notes-page { gap: 18px; padding-top: 0; } }
