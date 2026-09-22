@@ -46,4 +46,9 @@
   height: 100%;
   border-radius: inherit;
   background: #02caa4;
+  transition: width 420ms cubic-bezier(.22, 1, .36, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .quiz-progress__track i { transition: none; }
 }

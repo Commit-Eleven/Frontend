@@ -3,6 +3,7 @@ import { submitMultipleChoiceAnswer } from '../../../api/problemApi';
 import ProblemLoadState from '../../../components/question/ProblemLoadState/ProblemLoadState';
 import { dummyCodeAssemblyQuestion, dummyCodeFillQuestion, dummyMultipleChoiceQuestion, dummySpaghettiCodeQuestion, dummySubjectiveCodeQuestion } from '../../../constants/dummy/dummyQuestions';
 import useMultipleChoiceProblem from '../../../hooks/useMultipleChoiceProblem';
+import useElapsedTime from '../../../hooks/useElapsedTime';
 import CodeAssemblyPage from '../CodeAssemblyPage/CodeAssemblyPage';
 import CodeFillPage from '../CodeFillPage/CodeFillPage';
 import MultipleChoicePage from '../MultipleChoicePage/MultipleChoicePage';
@@ -32,6 +33,7 @@ function LearningPage({ onGoHome }) {
   const [correctCount, setCorrectCount] = useState(0);
   const [isStudyComplete, setIsStudyComplete] = useState(false);
   const isMultipleChoice = questionType === 'multiple';
+  const [elapsedTime, resetElapsedTime] = useElapsedTime('00 : 00', isStudyComplete);
   const { problem, isLoading, error, isUsingFallback, fetchProblem } = useMultipleChoiceProblem(isMultipleChoice, dummyMultipleChoiceQuestion);
 
   /** 채점 결과를 누적하고 다음 문제 또는 결과 화면으로 이동합니다. */
@@ -52,14 +54,15 @@ function LearningPage({ onGoHome }) {
     setQuestionType('multiple');
     setCorrectCount(0);
     setIsStudyComplete(false);
+    resetElapsedTime();
   };
 
   /** 객관식 선택지를 서버에 제출합니다. */
   const handleMultipleChoiceSubmit = (answer) => submitMultipleChoiceAnswer(answer);
 
-  const question = questionType === 'multiple' ? isLoading || error || !problem ? <ProblemLoadState isLoading={isLoading || !error} error={error} onRetry={fetchProblem} /> : <MultipleChoicePage question={withStageProgress(problem, questionType)} onNext={handleNextQuestion} onSubmitAnswer={isUsingFallback ? undefined : handleMultipleChoiceSubmit} /> : questionType === 'fill' ? <CodeFillPage question={withStageProgress(dummyCodeFillQuestion, questionType)} onNext={handleNextQuestion} /> : questionType === 'assembly' ? <CodeAssemblyPage question={withStageProgress(dummyCodeAssemblyQuestion, questionType)} onNext={handleNextQuestion} /> : questionType === 'subjective' ? <SubjectiveCodePage question={withStageProgress(dummySubjectiveCodeQuestion, questionType)} onNext={handleNextQuestion} /> : <SpaghettiCodePage question={withStageProgress(dummySpaghettiCodeQuestion, questionType)} onNext={handleNextQuestion} />;
+  const question = questionType === 'multiple' ? isLoading || error || !problem ? <ProblemLoadState isLoading={isLoading || !error} error={error} onRetry={fetchProblem} /> : <MultipleChoicePage question={withStageProgress(problem, questionType)} elapsedTime={elapsedTime} onNext={handleNextQuestion} onSubmitAnswer={isUsingFallback ? undefined : handleMultipleChoiceSubmit} /> : questionType === 'fill' ? <CodeFillPage question={withStageProgress(dummyCodeFillQuestion, questionType)} elapsedTime={elapsedTime} onNext={handleNextQuestion} /> : questionType === 'assembly' ? <CodeAssemblyPage question={withStageProgress(dummyCodeAssemblyQuestion, questionType)} elapsedTime={elapsedTime} onNext={handleNextQuestion} /> : questionType === 'subjective' ? <SubjectiveCodePage question={withStageProgress(dummySubjectiveCodeQuestion, questionType)} elapsedTime={elapsedTime} onNext={handleNextQuestion} /> : <SpaghettiCodePage question={withStageProgress(dummySpaghettiCodeQuestion, questionType)} elapsedTime={elapsedTime} onNext={handleNextQuestion} />;
 
-  return <div className="learning-page">{isStudyComplete ? <StudyCompletePage correctCount={correctCount} totalCount={questionSequence.length} onRestart={handleRestartStudy} onGoHome={onGoHome} /> : question}</div>;
+  return <div className="learning-page">{isStudyComplete ? <StudyCompletePage correctCount={correctCount} totalCount={questionSequence.length} elapsedTime={elapsedTime} onRestart={handleRestartStudy} onGoHome={onGoHome} /> : question}</div>;
 }
 
 export default LearningPage;

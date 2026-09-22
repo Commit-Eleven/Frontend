@@ -13,7 +13,7 @@ function formatElapsedTime(totalSeconds) {
   return `${String(minutes).padStart(2, '0')} : ${String(seconds).padStart(2, '0')}`;
 }
 
-/** 문항 풀이 시간을 1초 단위로 관리합니다. */
+/** 학습 세션의 풀이 시간을 1초 단위로 관리합니다. */
 function useElapsedTime(initialTime, isStopped) {
   const [elapsedSeconds, setElapsedSeconds] = useState(() => getSeconds(initialTime));
 
@@ -24,7 +24,10 @@ function useElapsedTime(initialTime, isStopped) {
     return () => window.clearInterval(intervalId);
   }, [isStopped]);
 
-  return formatElapsedTime(elapsedSeconds);
+  /** 새 학습 세션을 시작할 때 풀이 시간을 초기화합니다. */
+  const resetElapsedTime = () => setElapsedSeconds(getSeconds(initialTime));
+
+  return [formatElapsedTime(elapsedSeconds), resetElapsedTime];
 }
 
 export default useElapsedTime;

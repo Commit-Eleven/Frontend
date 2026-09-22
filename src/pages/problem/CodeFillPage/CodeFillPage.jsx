@@ -5,7 +5,7 @@ import QuestionActions from '../../../components/question/QuestionActions/Questi
 import QuestionFeedback from '../../../components/question/QuestionFeedback/QuestionFeedback';
 import QuestionProgress from '../../../components/question/QuestionProgress/QuestionProgress';
 
-function CodeFillPage({ question, onNext }) {
+function CodeFillPage({ question, elapsedTime, onNext }) {
   const [answers, setAnswers] = useState(() => question.answers.map(() => ''));
   const [feedback, setFeedback] = useState(null);
   const [status, setStatus] = useState(null);
@@ -22,7 +22,7 @@ function CodeFillPage({ question, onNext }) {
 
   return (
     <section className="quiz-card quiz-card--fill" aria-label="빈칸 채우기 문제">
-      <QuestionProgress current={question.current} total={question.total} unit={question.unit} elapsedTime={question.elapsedTime} isStopped={Boolean(status)} />
+      <QuestionProgress current={question.current} total={question.total} unit={question.unit} elapsedTime={elapsedTime} />
       <div className="quiz-body">
         <p className="quiz-question">
           {question.text.split('\n').map((line) => (

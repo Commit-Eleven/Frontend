@@ -4,7 +4,7 @@ import QuestionActions from '../../../components/question/QuestionActions/Questi
 import QuestionFeedback from '../../../components/question/QuestionFeedback/QuestionFeedback';
 import QuestionProgress from '../../../components/question/QuestionProgress/QuestionProgress';
 
-function CodeAssemblyPage({ question, onNext }) {
+function CodeAssemblyPage({ question, elapsedTime, onNext }) {
   const [placed, setPlaced] = useState([]);
   const [pool, setPool] = useState(question.codeBlocks);
   const [feedback, setFeedback] = useState(null);
@@ -23,7 +23,7 @@ function CodeAssemblyPage({ question, onNext }) {
 
   return (
     <section className="quiz-card quiz-card--assembly" aria-label="코드 조립 문제">
-      <QuestionProgress current={question.current} total={question.total} unit={question.unit} elapsedTime={question.elapsedTime} isStopped={Boolean(status)} />
+      <QuestionProgress current={question.current} total={question.total} unit={question.unit} elapsedTime={elapsedTime} />
       <div className="quiz-body">
         <p className="quiz-question">
           {question.text.split('\n').map((line) => (

@@ -40,7 +40,7 @@ function getSubmissionErrorMessage(error) {
   return '답안을 제출하지 못했습니다. 네트워크 연결을 확인한 뒤 다시 시도해주세요.';
 }
 
-function MultipleChoicePage({ question, onNext, onSubmitAnswer }) {
+function MultipleChoicePage({ question, elapsedTime, onNext, onSubmitAnswer }) {
   const [selected, setSelected] = useState(null);
   const [feedback, setFeedback] = useState(null);
   const [status, setStatus] = useState(null);
@@ -67,7 +67,7 @@ function MultipleChoicePage({ question, onNext, onSubmitAnswer }) {
 
   return (
     <section className="quiz-card" aria-label="객관식 문제">
-      <QuestionProgress current={question.current} total={question.total} unit={question.unit} elapsedTime={question.elapsedTime} isStopped={Boolean(status)} />
+      <QuestionProgress current={question.current} total={question.total} unit={question.unit} elapsedTime={elapsedTime} />
       <div className="quiz-body">
         <p className="quiz-question">{question.text}</p>
         {question.code && <CodeBlock code={question.code} />}

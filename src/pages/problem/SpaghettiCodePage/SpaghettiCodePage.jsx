@@ -7,7 +7,7 @@ import QuestionProgress from '../../../components/question/QuestionProgress/Ques
 import useCodeRunner from '../../../hooks/useCodeRunner';
 
 /** 동작을 유지하며 가독성 낮은 코드를 개선하는 문제를 렌더링합니다. */
-function SpaghettiCodePage({ question, onNext }) {
+function SpaghettiCodePage({ question, elapsedTime, onNext }) {
   const [source, setSource] = useState(question.starterCode);
   const [feedback, setFeedback] = useState(null);
   const [status, setStatus] = useState(null);
@@ -42,7 +42,7 @@ function SpaghettiCodePage({ question, onNext }) {
 
   return (
     <section className="quiz-card quiz-card--spaghetti" aria-label="스파게티 코드 소생 문제">
-      <QuestionProgress current={question.current} total={question.total} unit={question.unit} elapsedTime={question.elapsedTime} isStopped={Boolean(status)} />
+      <QuestionProgress current={question.current} total={question.total} unit={question.unit} elapsedTime={elapsedTime} />
       <div className="quiz-body">
         <p className="quiz-question">{question.text}</p>
         <section className="question-requirements" aria-label="개선 조건">

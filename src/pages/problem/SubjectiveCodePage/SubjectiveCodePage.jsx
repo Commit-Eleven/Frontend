@@ -7,7 +7,7 @@ import QuestionProgress from '../../../components/question/QuestionProgress/Ques
 import useCodeRunner from '../../../hooks/useCodeRunner';
 
 /** 사용자가 함수를 작성하고 테스트 입력값으로 실행하는 주관식 코딩 문제입니다. */
-function SubjectiveCodePage({ question, onNext }) {
+function SubjectiveCodePage({ question, elapsedTime, onNext }) {
   const [source, setSource] = useState(question.starterCode);
   const [feedback, setFeedback] = useState(null);
   const [status, setStatus] = useState(null);
@@ -55,7 +55,7 @@ function SubjectiveCodePage({ question, onNext }) {
 
   return (
     <section className="quiz-card quiz-card--subjective" aria-label="주관식 코드 작성 문제">
-      <QuestionProgress current={question.current} total={question.total} unit={question.unit} elapsedTime={question.elapsedTime} isStopped={Boolean(status)} />
+      <QuestionProgress current={question.current} total={question.total} unit={question.unit} elapsedTime={elapsedTime} />
       <div className="quiz-body">
         <p className="quiz-question">{question.text}</p>
         <section className="question-requirements" aria-label="문제 조건">

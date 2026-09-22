@@ -1,7 +1,7 @@
 import './StudyCompletePage.css';
 
 /** 전체 문항 풀이가 끝났을 때 학습 결과와 다음 행동을 안내합니다. */
-function StudyCompletePage({ correctCount, totalCount, onRestart, onGoHome }) {
+function StudyCompletePage({ correctCount, totalCount, elapsedTime, onRestart, onGoHome }) {
   const accuracy = Math.round((correctCount / totalCount) * 100);
   const experience = correctCount * 32;
   const incorrectCount = totalCount - correctCount;
@@ -18,6 +18,7 @@ function StudyCompletePage({ correctCount, totalCount, onRestart, onGoHome }) {
           <div><dt>푼 문제</dt><dd>{totalCount}문제</dd></div>
           <div><dt>정답</dt><dd>{correctCount} / {totalCount}</dd></div>
           <div><dt>정답률</dt><dd>{accuracy}%</dd></div>
+          <div><dt>풀이 시간</dt><dd>{elapsedTime}</dd></div>
         </dl>
       </div>
       <section className="study-complete__notes">
