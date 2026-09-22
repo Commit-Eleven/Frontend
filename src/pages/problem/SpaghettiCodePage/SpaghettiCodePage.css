@@ -34,7 +34,7 @@
 
 .spaghetti-editor-card .code-editor__surface {
   border: 0;
-  border-radius: 0;
+  border-radius: 10px;
 }
 
 .spaghetti-test-input {
