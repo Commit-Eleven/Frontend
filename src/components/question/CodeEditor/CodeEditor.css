@@ -115,15 +115,15 @@
 
 .code-editor .cm-code-fill-blank {
   display: inline-flex;
-  min-width: 50px;
-  min-height: 22px;
+  min-width: 62px;
+  min-height: 30px;
   align-items: center;
   justify-content: center;
   margin: 0 4px;
   border-radius: 999px;
   background: #5b6470;
   color: #fff;
-  font: 700 12px/1 Pretendard, sans-serif;
+  font: 700 16px/1 Pretendard, sans-serif;
   vertical-align: middle;
 }
 
