@@ -21,10 +21,17 @@ function withStageProgress(question, questionType) {
   return {
     ...question,
     unit: {
-      index: questionSequence.indexOf(questionType) + 1,
-      total: questionSequence.length,
+      index: Number(question.current) || questionSequence.indexOf(questionType) + 1,
+      total: Number(question.total) || questionSequence.length,
     },
   };
+}
+
+/** 현재 문제의 진행률을 상단 학습 헤더에서 사용할 값으로 변환합니다. */
+function getProgress(question) {
+  const total = Math.max(Number(question?.unit?.total ?? question?.total) || questionSequence.length, 1);
+  const current = Math.min(Math.max(Number(question?.unit?.index ?? question?.current) || 1, 1), total);
+  return { current, total, percent: `${(current / total) * 100}%` };
 }
 
 /** 문제 유형에 알맞은 화면을 렌더링하고 학습 진행 상태를 관리합니다. */
@@ -60,9 +67,25 @@ function LearningPage({ onGoHome }) {
   /** 객관식 선택지를 서버에 제출합니다. */
   const handleMultipleChoiceSubmit = (answer) => submitMultipleChoiceAnswer(answer);
 
-  const question = questionType === 'multiple' ? isLoading || error || !problem ? <ProblemLoadState isLoading={isLoading || !error} error={error} onRetry={fetchProblem} /> : <MultipleChoicePage question={withStageProgress(problem, questionType)} elapsedTime={elapsedTime} onNext={handleNextQuestion} onSubmitAnswer={isUsingFallback ? undefined : handleMultipleChoiceSubmit} /> : questionType === 'fill' ? <CodeFillPage question={withStageProgress(dummyCodeFillQuestion, questionType)} elapsedTime={elapsedTime} onNext={handleNextQuestion} /> : questionType === 'assembly' ? <CodeAssemblyPage question={withStageProgress(dummyCodeAssemblyQuestion, questionType)} elapsedTime={elapsedTime} onNext={handleNextQuestion} /> : questionType === 'subjective' ? <SubjectiveCodePage question={withStageProgress(dummySubjectiveCodeQuestion, questionType)} elapsedTime={elapsedTime} onNext={handleNextQuestion} /> : <SpaghettiCodePage question={withStageProgress(dummySpaghettiCodeQuestion, questionType)} elapsedTime={elapsedTime} onNext={handleNextQuestion} />;
+  const questionSource = questionType === 'multiple' ? problem ?? dummyMultipleChoiceQuestion : questionType === 'fill' ? dummyCodeFillQuestion : questionType === 'assembly' ? dummyCodeAssemblyQuestion : questionType === 'subjective' ? dummySubjectiveCodeQuestion : dummySpaghettiCodeQuestion;
+  const stagedQuestion = withStageProgress(questionSource, questionType);
+  const progress = getProgress(stagedQuestion);
+  const question = questionType === 'multiple' ? isLoading || error || !problem ? <ProblemLoadState isLoading={isLoading || !error} error={error} onRetry={fetchProblem} /> : <MultipleChoicePage question={stagedQuestion} elapsedTime={elapsedTime} onNext={handleNextQuestion} onSubmitAnswer={isUsingFallback ? undefined : handleMultipleChoiceSubmit} /> : questionType === 'fill' ? <CodeFillPage question={stagedQuestion} elapsedTime={elapsedTime} onNext={handleNextQuestion} /> : questionType === 'assembly' ? <CodeAssemblyPage question={stagedQuestion} elapsedTime={elapsedTime} onNext={handleNextQuestion} /> : questionType === 'subjective' ? <SubjectiveCodePage question={stagedQuestion} elapsedTime={elapsedTime} onNext={handleNextQuestion} /> : <SpaghettiCodePage question={stagedQuestion} elapsedTime={elapsedTime} onNext={handleNextQuestion} />;
 
-  return <div className="learning-page">{isStudyComplete ? <StudyCompletePage correctCount={correctCount} totalCount={questionSequence.length} elapsedTime={elapsedTime} onRestart={handleRestartStudy} onGoHome={onGoHome} /> : question}</div>;
+  return (
+    <div className="learning-page">
+      {!isStudyComplete && (
+        <header className="learning-page__header">
+          <div className="learning-page__progress" aria-label={`문제 ${progress.current} / ${progress.total}`}>
+            <i style={{ width: progress.percent }} />
+            <span>{progress.current}/{progress.total}</span>
+          </div>
+          <button type="button" onClick={onGoHome}>저장하고 나가기</button>
+        </header>
+      )}
+      <main className="learning-page__content">{isStudyComplete ? <StudyCompletePage correctCount={correctCount} totalCount={questionSequence.length} elapsedTime={elapsedTime} onRestart={handleRestartStudy} onGoHome={onGoHome} /> : question}</main>
+    </div>
+  );
 }
 
 export default LearningPage;

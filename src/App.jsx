@@ -11,7 +11,7 @@ function App() {
   };
 
   return (
-    <Layout activeItem="learn" contentLabel="문제 풀이">
+    <Layout activeItem="learn" contentClassName="app-content--learning" contentLabel="문제 풀이">
       <LearningPage onGoHome={handleGoHome} />
     </Layout>
   );

@@ -10,6 +10,11 @@
   place-items: start center;
 }
 
+.app-content--learning {
+  display: block;
+  padding: 0;
+}
+
 @media (max-width: 640px) {
   .app-content {
     padding: 20px 12px;
