@@ -135,3 +135,38 @@
   color: #69727b;
   font: 12px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
+
+/* 읽기 전용 지문은 코드 줄 수에 맞는 컴팩트한 비율을 사용합니다. */
+.multiple-choice-code .code-editor__toolbar,
+.code-fill-editor .code-editor__toolbar {
+  height: 26px;
+  padding-inline: 10px;
+  font-size: 10px;
+}
+
+.multiple-choice-code .code-editor__toolbar i,
+.code-fill-editor .code-editor__toolbar i {
+  width: 6px;
+  height: 6px;
+}
+
+.multiple-choice-code .cm-editor,
+.code-fill-editor .cm-editor {
+  font-size: 10px;
+  line-height: 1.6;
+}
+
+.multiple-choice-code .cm-content,
+.code-fill-editor .cm-content {
+  padding: 8px 0 10px;
+}
+
+.multiple-choice-code .cm-line,
+.code-fill-editor .cm-line {
+  padding-inline: 12px;
+}
+
+.multiple-choice-code .cm-gutters,
+.code-fill-editor .cm-gutters {
+  font-size: 10px;
+}
