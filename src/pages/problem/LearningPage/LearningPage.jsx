@@ -35,7 +35,7 @@ function getProgress(question) {
 }
 
 /** 문제 유형에 알맞은 화면을 렌더링하고 학습 진행 상태를 관리합니다. */
-function LearningPage({ onGoHome }) {
+function LearningPage({ onGoHome, isIncorrectReview = false }) {
   const [questionType, setQuestionType] = useState('multiple');
   const [correctCount, setCorrectCount] = useState(0);
   const [isStudyComplete, setIsStudyComplete] = useState(false);
@@ -75,12 +75,12 @@ function LearningPage({ onGoHome }) {
   return (
     <div className="learning-page">
       {!isStudyComplete && (
-        <header className="learning-page__header">
+        <header className={`learning-page__header${isIncorrectReview ? ' learning-page__header--review' : ''}`}>
           <div className="learning-page__progress" aria-label={`문제 ${progress.current} / ${progress.total}`}>
             <i style={{ width: progress.percent }} />
             <span>{progress.current}/{progress.total}</span>
           </div>
-          <button type="button" onClick={onGoHome}>저장하고 나가기</button>
+          <button type="button" onClick={onGoHome}>{isIncorrectReview ? '오답풀이 그만하기' : '저장하고 나가기'}</button>
         </header>
       )}
       <main className="learning-page__content">{isStudyComplete ? <StudyCompletePage correctCount={correctCount} totalCount={questionSequence.length} elapsedTime={elapsedTime} onRestart={handleRestartStudy} onGoHome={onGoHome} /> : question}</main>

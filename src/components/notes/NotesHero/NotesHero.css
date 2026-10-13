@@ -1,0 +1,25 @@
+.notes-hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  min-height: 184px;
+  padding: 36px 43px;
+  overflow: hidden;
+  border: 0;
+  border-radius: 20px;
+  background: #dcfbf6;
+}
+
+.notes-hero h1 { margin: 0; color: #02ae90; font-size: 25px; line-height: 1.35; letter-spacing: -.8px; }
+.notes-hero__copy > span { display: block; margin-top: 13px; color: #7fa29d; font-size: 15px; }
+.notes-hero__review { flex: 0 0 auto; }
+.notes-hero__review a { display: inline-flex; align-items: center; justify-content: center; gap: 11px; min-width: 174px; min-height: 49px; padding: 0 21px; border-radius: 12px; background: #02caa4; color: #fff; font-size: 16px; font-weight: 700; text-decoration: none; }
+.notes-hero__review a span { font-size: 27px; font-weight: 300; line-height: .5; }
+
+@media (max-width: 640px) {
+  .notes-hero { align-items: flex-start; flex-direction: column; padding: 25px 22px; }
+  .notes-hero h1 { font-size: 22px; }
+  .notes-hero__copy > span { font-size: 13px; }
+  .notes-hero__review a { min-height: 42px; font-size: 14px; }
+}

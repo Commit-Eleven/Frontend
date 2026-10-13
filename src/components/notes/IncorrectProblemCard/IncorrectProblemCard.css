@@ -1,0 +1,7 @@
+.incorrect-problem-card { border-bottom: 1px solid #d7d7d7; }
+.incorrect-problem-card:last-child { border-bottom: 0; }
+.incorrect-problem-card > a { display: block; padding: 14px 20px 13px; color: inherit; text-decoration: none; transition: background-color 140ms ease; }
+.incorrect-problem-card > a:hover { background: #fbfdfd; }
+.incorrect-problem-card__body { min-width: 0; }
+.incorrect-problem-card h3 { margin: 0 0 6px; overflow: hidden; color: #151c1b; font-size: 17px; font-weight: 500; line-height: 1.25; text-overflow: ellipsis; white-space: nowrap; }
+.incorrect-problem-card__body > span { display: block; overflow: hidden; color: #a0aaa7; font-size: 12px; line-height: 1.2; text-overflow: ellipsis; white-space: nowrap; }
