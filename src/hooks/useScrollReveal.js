@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-/** 스크롤 영역에 들어온 소개 요소를 한 번만 부드럽게 표시합니다. */
+/** 스크롤 영역에 들어온 소개 요소를 진입할 때마다 부드럽게 표시합니다. */
 export function useScrollReveal(scrollRef) {
   useEffect(() => {
     const root = scrollRef.current;
@@ -11,12 +11,10 @@ export function useScrollReveal(scrollRef) {
       '.auth-feature > *, .auth-final-cta > *',
     );
 
-    /** 화면에 들어온 요소를 표시한 뒤 관찰을 종료합니다. */
+    /** 화면 진입 시 표시하고, 화면을 벗어나면 다음 재생을 준비합니다. */
     const handleIntersection = (entries) => {
       entries.forEach((entry) => {
-        if (!entry.isIntersecting) return;
-        entry.target.classList.add('is-revealed');
-        observer.unobserve(entry.target);
+        entry.target.classList.toggle('is-revealed', entry.isIntersecting);
       });
     };
 
