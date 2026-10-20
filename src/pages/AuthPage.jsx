@@ -1,6 +1,7 @@
 import { AuthLanguageList } from '../components/auth/AuthLanguageList.jsx';
 import { AuthFeatures } from '../components/auth/AuthFeatures.jsx';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
+import { useScrollReveal } from '../hooks/useScrollReveal.js';
 import { AuthIllustration } from '../components/auth/AuthIllustration.jsx';
 import { GoogleLoginModal } from '../components/auth/GoogleLoginModal.jsx';
 import { useAuthModal } from '../hooks/useAuthModal.js';
@@ -8,6 +9,8 @@ import '../styles/AuthPage.css';
 
 /** 서비스 시작 화면과 Google 전용 로그인 진입점을 표시합니다. */
 export function AuthPage() {
+  const scrollRef = useRef(null);
+  useScrollReveal(scrollRef);
   const { isAuthModalOpen, handleOpenAuthModal, handleCloseAuthModal } =
     useAuthModal();
 
@@ -20,7 +23,7 @@ export function AuthPage() {
   }, []);
 
   return (
-    <main className="auth-page">
+    <main className="auth-page" ref={scrollRef}>
       <header className="auth-header">
         <img src="/coddy/sidebar/logo.svg" alt="Codegram" />
       </header>

@@ -799,3 +799,59 @@
   word-break: keep-all;
   overflow-wrap: break-word;
 }
+
+.auth-intro .auth-start {
+  max-width: 460px;
+  height: 70px;
+  font-size: 21px;
+  border-radius: 18px;
+  border-bottom-width: 6px;
+  transition:
+    transform 180ms ease,
+    background-color 180ms ease;
+}
+.auth-intro .auth-start:hover {
+  transform: translateY(-2px);
+}
+.auth-intro .auth-start:active {
+  transform: translateY(2px);
+}
+.is-reveal-ready {
+  opacity: 0;
+  transform: translateY(32px);
+  transition:
+    opacity 700ms ease,
+    transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.auth-feature > :nth-child(2).is-reveal-ready {
+  transition-delay: 100ms;
+}
+.is-reveal-ready.is-revealed,
+.is-reveal-ready:focus-within {
+  opacity: 1;
+  transform: translateY(0);
+}
+@media (max-width: 800px) {
+  .auth-intro .auth-start {
+    height: 62px;
+    font-size: 18px;
+    border-radius: 16px;
+  }
+  .auth-feature > :nth-child(2).is-reveal-ready {
+    transition-delay: 0ms;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .is-reveal-ready {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .auth-intro .auth-start {
+    transition: none;
+  }
+  .auth-intro .auth-start:hover,
+  .auth-intro .auth-start:active {
+    transform: none;
+  }
+}
