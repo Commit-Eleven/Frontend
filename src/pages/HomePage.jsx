@@ -68,7 +68,6 @@ export function HomePage({ completed, active, selectedId, onSelect, onOpen, onSe
         <div className="center-content">
           <div className="floating-course-card"><div><button className="course-link" onClick={onSyllabus}>강의 계획</button><span className="course-breadcrumb">› 섹션 1 · 챕터 {visibleChapter + 1}</span><h1>{chapterData[visibleChapter].title}</h1></div><button className="course-search" onClick={onSearch}>⌕ <kbd>⌘K</kbd></button></div>
           {chapterData.map((chapter, index) => <MapChapter key={chapter.title} chapter={chapter} chapterIndex={index} completed={completed} active={active} selectedId={selectedId} onSelect={onSelect} onOpen={onOpen} activeRef={activeRef} />)}
-          <div className="certificate-block"><div className="certificate-preview">♜<span>수료증</span><strong>HTML 기초</strong></div><h2>인증서 획득</h2><p>이 섹션을 끝내면 무료로 검증 가능한 인증서를 발급해 드려요. 이력서에 추가하거나 LinkedIn에 공유해 보세요.</p><small>{completed.length}/60개 레슨 완료. {Math.max(0, 60 - completed.length)}개를 더 완료하면 수료증을 받을 수 있습니다.</small><button disabled>인증서 보기</button></div>
           <div className="next-section"><small>다음  섹션 2</small><h2>CSS로 스타일링하기</h2><p>색상, 레이아웃, 스타일로 웹 페이지를 생동감 있게 만드세요</p><span>76 레슨</span></div>
         </div>
       </main>

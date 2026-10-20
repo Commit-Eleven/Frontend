@@ -424,56 +424,6 @@
   background: #d0d0d0;
   border-bottom-color: #b5b5b5;
 }
-.certificate-block {
-  text-align: center;
-  border: 2px solid #e2e2e2;
-  border-radius: 10px;
-  padding: 25px;
-  margin: 100px 0 22px;
-}
-.certificate-preview {
-  height: 140px;
-  border: 5px solid #d9b569;
-  background: #fcf8e9;
-  color: #9d7a38;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: 28px;
-  gap: 3px;
-}
-.certificate-preview span {
-  font-size: 13px;
-}
-.certificate-preview strong {
-  font-family: VarelaRound, sans-serif;
-  font-size: 24px;
-}
-.certificate-block h2 {
-  font-size: 23px;
-  margin: 18px 0 8px;
-}
-.certificate-block p {
-  color: #777;
-  line-height: 1.5;
-  font-size: 14px;
-  margin: 0 auto 12px;
-  max-width: 440px;
-}
-.certificate-block small {
-  display: block;
-  color: #888;
-  margin-bottom: 15px;
-}
-.certificate-block button {
-  background: #e8e8e8;
-  color: #999;
-  border: 0;
-  padding: 10px 28px;
-  border-radius: 8px;
-  font-weight: 700;
-}
 .next-section {
   border: 2px solid #e1e1e1;
   border-radius: 9px;
