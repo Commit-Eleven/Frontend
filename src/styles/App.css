@@ -978,17 +978,12 @@
   margin-left: 16px;
 }
 .lesson-body {
-  position: relative;
   display: grid;
   grid-template-columns: 400px minmax(0, 1fr);
   grid-template-rows: minmax(0, 1fr);
   height: calc(100vh - 49px);
   min-height: 0;
   overflow: hidden;
-  transition: grid-template-columns 220ms cubic-bezier(.2, .75, .25, 1);
-}
-.lesson-body.theory-collapsed {
-  grid-template-columns: 0 minmax(0, 1fr);
 }
 .lesson-iconbar {
   border-right: 2px solid #e5e5e5;
@@ -1020,9 +1015,6 @@
   overflow: auto;
   padding: 30px;
   color: #222;
-}
-.lesson-info.is-collapsed {
-  display: none;
 }
 .panel-edge-toggle {
   position: absolute;
@@ -1068,16 +1060,6 @@
 }
 .panel-edge-toggle:hover .panel-edge-toggle-grip {
   background: #bcbcbc;
-}
-.panel-edge-toggle--theory {
-  left: 0;
-  border-radius: 0 18px 18px 0;
-  transform: translateY(-50%);
-}
-.panel-edge-toggle--theory.is-open {
-  left: 400px;
-  border-radius: 18px 0 0 18px;
-  transform: translate(-100%, -50%);
 }
 .lesson-info h2 {
   font-size: 21px;
@@ -1236,7 +1218,6 @@
   font-size: 25px;
 }
 .lesson-workspace {
-  grid-column: 2;
   min-width: 0;
   min-height: 0;
   height: 100%;
@@ -1950,12 +1931,6 @@
   .lesson-body {
     grid-template-columns: 300px minmax(0, 1fr);
   }
-  .lesson-body.theory-collapsed {
-    grid-template-columns: 0 minmax(0, 1fr);
-  }
-  .panel-edge-toggle--theory.is-open {
-    left: 300px;
-  }
   .coding-workspace {
     grid-template-columns: minmax(0, 1fr);
   }
@@ -2105,41 +2080,6 @@
     border-bottom: 2px solid #e5e5e5;
     padding: 14px 20px;
     overflow: auto;
-  }
-  .lesson-info.is-collapsed {
-    display: flex;
-    height: 44px;
-    padding: 5px 10px;
-    align-items: center;
-    justify-content: flex-end;
-  }
-  .panel-edge-toggle--theory {
-    top: 22px;
-    width: 34px;
-    height: 36px;
-    border-radius: 0 10px 10px 0;
-    transform: translateY(-50%);
-  }
-  .panel-edge-toggle--theory.is-open {
-    top: 95px;
-    right: 0;
-    left: auto;
-    border-radius: 10px 0 0 10px;
-    transform: translateY(-50%);
-  }
-  .panel-edge-toggle--theory .panel-edge-toggle-grip {
-    right: -8px;
-    width: 5px;
-    height: 24px;
-  }
-  .panel-edge-toggle--theory.is-open .panel-edge-toggle-grip {
-    right: 4px;
-  }
-  .panel-edge-toggle--theory .panel-edge-toggle-arrow {
-    font-size: 18px;
-  }
-  .lesson-body.theory-collapsed {
-    grid-template-columns: 48px minmax(0, 1fr);
   }
   .lesson-info h2 {
     font-size: 18px;

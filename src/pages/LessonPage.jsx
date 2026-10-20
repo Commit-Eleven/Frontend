@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react'
 import { allNodes } from '../constants/dummy/journey.js'
 import { challengeFor, preChallengeQuestionFor, starterCode } from '../constants/dummy/challenges.js'
 import { LessonSidebar } from '../components/lesson/LessonSidebar.jsx'
-import { PanelEdgeToggle } from '../components/lesson/PanelEdgeToggle.jsx'
 import { CodeWorkspace } from '../components/lesson/CodeWorkspace.jsx'
 import { PreChallengeQuestion } from '../components/lesson/PreChallengeQuestion.jsx'
 import { QuizWorkspace } from '../components/lesson/QuizWorkspace.jsx'
@@ -17,7 +16,6 @@ export function LessonPage({ lessonId, onBack, onSuccess }) {
   const [mode, setMode] = useState(() => localStorage.getItem(precheckKey) === 'done' ? 'challenge' : 'precheck')
   const [tests, setTests] = useState(null)
   const [showSuccess, setShowSuccess] = useState(false)
-  const [theoryOpen, setTheoryOpen] = useState(true)
 
   useEffect(() => {
     localStorage.setItem('coddy-demo-code-' + lesson.id, code)
@@ -58,9 +56,8 @@ export function LessonPage({ lessonId, onBack, onSuccess }) {
         <button type="button" className="lesson-close" onClick={onBack} aria-label="여정으로 돌아가기">×</button>
         <strong>텍스트와 서식</strong>
       </header>
-      <div className={'lesson-body' + (theoryOpen ? '' : ' theory-collapsed')}>
-        <LessonSidebar lesson={lesson} challenge={challenge} onQuiz={() => setMode('quiz')} open={theoryOpen} />
-        <PanelEdgeToggle panel="theory" open={theoryOpen} onToggle={() => setTheoryOpen((open) => !open)} />
+      <div className="lesson-body">
+        <LessonSidebar lesson={lesson} challenge={challenge} onQuiz={() => setMode('quiz')} />
         <main className={'lesson-workspace ' + (mode === 'quiz' ? 'quiz-mode' : '')}>
           {mode === 'precheck' ? (
             <PreChallengeQuestion question={preChallengeQuestionFor(lesson)} onContinue={handlePrecheckContinue} />
