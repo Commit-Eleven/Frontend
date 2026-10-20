@@ -1,3 +1,4 @@
+import { AuthPage } from '../pages/AuthPage.jsx';
 import { lazy, Suspense } from 'react';
 import { useJourneyController } from '../hooks/useJourneyController.js';
 import { HomePage } from '../pages/HomePage.jsx';
@@ -13,10 +14,13 @@ const Lesson = lazy(() =>
 export default function App() {
   const journey = useJourneyController();
 
+  if (journey.view === 'auth') return <AuthPage />;
+
   return (
     <>
       {journey.view === 'home' ? (
         <HomePage
+          onLogin={journey.handleOpenAuth}
           completed={journey.completed}
           active={journey.active}
           selectedId={journey.selectedId}
