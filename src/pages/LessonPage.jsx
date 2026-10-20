@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { allNodes } from '../constants/dummy/journey.js'
 import { challengeFor, preChallengeQuestionFor, starterCode } from '../constants/dummy/challenges.js'
+import { fetchMCQProblems, mcqForLesson } from '../api/problems.js'
 import { LessonSidebar } from '../components/lesson/LessonSidebar.jsx'
 import { CodeWorkspace } from '../components/lesson/CodeWorkspace.jsx'
 import { PreChallengeQuestion } from '../components/lesson/PreChallengeQuestion.jsx'
@@ -9,6 +10,8 @@ import { QuizWorkspace } from '../components/lesson/QuizWorkspace.jsx'
 /** 레슨 화면의 학습 흐름과 코드 채점을 관리합니다. */
 export function LessonPage({ lessonId, onBack, onSuccess }) {
   const lesson = allNodes.find((node) => node.id === lessonId) || allNodes.find((node) => node.id === 'paragraphs')
+  const mcqLessonId = lesson.id
+  const mcqLessonTitle = lesson.title
   const challenge = challengeFor(lesson)
   const precheckKey = 'coddy-demo-precheck-' + lesson.id
   const [precheckPassed, setPrecheckPassed] = useState(() => localStorage.getItem(precheckKey) === 'done')
@@ -17,6 +20,25 @@ export function LessonPage({ lessonId, onBack, onSuccess }) {
   const [tests, setTests] = useState(null)
   const [showSuccess, setShowSuccess] = useState(false)
   const [theoryOpen, setTheoryOpen] = useState(true)
+  const [mcqRequest, setMcqRequest] = useState(0)
+  const [mcqState, setMcqState] = useState({ status: 'loading', question: null })
+
+  useEffect(() => {
+    if (mode !== 'precheck') return undefined
+    const controller = new AbortController()
+
+    fetchMCQProblems({ signal: controller.signal })
+      .then((problems) => {
+        const question = mcqForLesson(problems, { id: mcqLessonId, title: mcqLessonTitle })
+        if (!question) throw new Error('이 레슨에 표시할 MCQ가 없습니다.')
+        setMcqState({ status: 'ready', question })
+      })
+      .catch((error) => {
+        if (error.name !== 'AbortError') setMcqState({ status: 'error', question: null })
+      })
+
+    return () => controller.abort()
+  }, [mcqLessonId, mcqLessonTitle, mcqRequest, mode])
 
   useEffect(() => {
     localStorage.setItem('coddy-demo-code-' + lesson.id, code)
@@ -61,7 +83,16 @@ export function LessonPage({ lessonId, onBack, onSuccess }) {
         <LessonSidebar lesson={lesson} challenge={challenge} onQuiz={() => setMode('quiz')} open={theoryOpen} onToggleTheory={() => setTheoryOpen((open) => !open)} />
         <main className={'lesson-workspace ' + (mode === 'quiz' ? 'quiz-mode' : '')}>
           {mode === 'precheck' ? (
-            <PreChallengeQuestion question={preChallengeQuestionFor(lesson)} onContinue={handlePrecheckContinue} />
+            <PreChallengeQuestion
+              key={mcqState.question ? `${mcqState.question.id}:${mcqState.question.prompt}` : lesson.id}
+              question={mcqState.question || preChallengeQuestionFor(lesson)}
+              apiStatus={mcqState.status}
+              onRetry={() => {
+                setMcqState({ status: 'loading', question: null })
+                setMcqRequest((request) => request + 1)
+              }}
+              onContinue={handlePrecheckContinue}
+            />
           ) : mode === 'quiz' ? (
             <QuizWorkspace onExit={handleQuizExit} />
           ) : (

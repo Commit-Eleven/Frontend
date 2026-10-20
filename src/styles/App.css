@@ -1245,6 +1245,30 @@
   border-radius: 50%;
   background: var(--primary-soft);
 }
+.precheck-api-status {
+  min-height: 18px;
+  margin-top: 8px;
+  color: #777;
+  font-size: 12px;
+  line-height: 18px;
+}
+.precheck-api-status.is-error {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  color: #8b5d37;
+}
+.precheck-api-status button {
+  border: 0;
+  padding: 2px 0;
+  background: transparent;
+  color: var(--primary-strong);
+  font: inherit;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+}
 .precheck-card h1 {
   margin: 22px 0 0;
   font-size: 26px;
