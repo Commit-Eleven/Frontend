@@ -16,7 +16,6 @@ export function LessonPage({ lessonId, onBack, onSuccess }) {
   const [mode, setMode] = useState(() => localStorage.getItem(precheckKey) === 'done' ? 'challenge' : 'precheck')
   const [tests, setTests] = useState(null)
   const [showSuccess, setShowSuccess] = useState(false)
-  const [theoryOpen, setTheoryOpen] = useState(true)
 
   useEffect(() => {
     localStorage.setItem('coddy-demo-code-' + lesson.id, code)
@@ -57,8 +56,8 @@ export function LessonPage({ lessonId, onBack, onSuccess }) {
         <button type="button" className="lesson-close" onClick={onBack} aria-label="여정으로 돌아가기">×</button>
         <strong>텍스트와 서식</strong>
       </header>
-      <div className={'lesson-body' + (theoryOpen ? '' : ' theory-collapsed')}>
-        <LessonSidebar lesson={lesson} challenge={challenge} onQuiz={() => setMode('quiz')} open={theoryOpen} onToggleTheory={() => setTheoryOpen((open) => !open)} />
+      <div className="lesson-body">
+        <LessonSidebar lesson={lesson} challenge={challenge} onQuiz={() => setMode('quiz')} />
         <main className={'lesson-workspace ' + (mode === 'quiz' ? 'quiz-mode' : '')}>
           {mode === 'precheck' ? (
             <PreChallengeQuestion question={preChallengeQuestionFor(lesson)} onContinue={handlePrecheckContinue} />
