@@ -7,12 +7,13 @@ export function AuthLanguageList() {
       <ul>
         {authLanguages.map((language) => (
           <li key={language.name}>
-            <span
-              className={`auth-language-icon ${language.className}`}
-              aria-hidden="true"
-            >
-              {language.symbol}
-            </span>
+            <img
+              className="auth-language-icon"
+              src={language.logo}
+              alt=""
+              width="42"
+              height="45"
+            />
             <span>{language.name}</span>
           </li>
         ))}

@@ -88,7 +88,7 @@
 }
 .auth-mascot:before,
 .auth-mascot:after {
-  content: "";
+  content: '';
   position: absolute;
   top: 90px;
   width: 62px;
@@ -127,7 +127,7 @@
   position: relative;
 }
 .auth-eye i:after {
-  content: "";
+  content: '';
   position: absolute;
   top: 3px;
   right: 0;
@@ -434,34 +434,11 @@
   color: #727b76;
 }
 .auth-language-icon {
-  display: grid;
-  place-items: center;
+  display: block;
   width: 42px;
   height: 45px;
-  border-radius: 10px;
-  border-bottom: 4px solid #00000012;
-  font-weight: 900;
-  font-size: 19px;
-}
-.language-html {
-  background: #fff0db;
-  color: #d78228;
-}
-.language-css {
-  background: #e3f4ff;
-  color: #2993cc;
-}
-.language-javascript {
-  background: #fff7ce;
-  color: #9c8012;
-}
-.language-java {
-  background: #ffebe5;
-  color: #d37050;
-}
-.language-python {
-  background: #e9e8ff;
-  color: #7564bf;
+  object-fit: contain;
+  flex-shrink: 0;
 }
 .auth-features {
   width: 100%;
