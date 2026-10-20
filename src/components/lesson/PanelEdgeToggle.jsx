@@ -1,18 +1,15 @@
-/** 패널 가장자리에 붙는 열기/닫기 핸들입니다. */
-export function PanelEdgeToggle({ panel, open, onToggle }) {
-  const label = panel === 'theory' ? '이론' : '웹 뷰 미리보기'
-
+/** 웹 뷰 미리보기 영역 안쪽 가장자리에서 여닫는 버튼입니다. */
+export function PanelEdgeToggle({ open, onToggle }) {
   return (
     <button
       type="button"
-      className={`panel-edge-toggle panel-edge-toggle--${panel}${open ? ' is-open' : ''}`}
-      aria-label={`${label} ${open ? '접기' : '열기'}`}
+      className="panel-edge-toggle--preview"
+      aria-label={`웹 뷰 미리보기 ${open ? '접기' : '열기'}`}
       aria-expanded={open}
-      title={`${label} ${open ? '접기' : '열기'}`}
+      title={`웹 뷰 미리보기 ${open ? '접기' : '열기'}`}
       onClick={onToggle}
     >
-      <span className="panel-edge-toggle-arrow" aria-hidden="true">{open ? '‹' : '›'}</span>
-      <span className="panel-edge-toggle-grip" aria-hidden="true" />
+      <span aria-hidden="true">{open ? '‹' : '›'}</span>
     </button>
   )
 }

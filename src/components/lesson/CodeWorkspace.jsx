@@ -53,8 +53,8 @@ export function CodeWorkspace({ code, onCodeChange, onRun, checks, tests }) {
         <div className="editor-actions"><button type="button" className="handleRunCode-button" onClick={handleRunCode}>▶ 코드 실행</button></div>
         <TestPanel checks={checks} tests={tests} tab={testTab} onTabChange={setTestTab} open={testOpen} onToggle={() => setTestOpen(!testOpen)} />
       </div>
-      {previewOpen && <PreviewPane code={code} />}
-      <PanelEdgeToggle panel="preview" open={previewOpen} onToggle={() => previewOpen ? handlePreviewCollapse() : setPreviewOpen(true)} />
+      {previewOpen && <PreviewPane code={code} onClose={handlePreviewCollapse} />}
+      {!previewOpen && <PanelEdgeToggle open={false} onToggle={() => setPreviewOpen(true)} />}
     </div>
   )
 }
