@@ -1661,6 +1661,10 @@
 }
 .coding-workspace.preview-collapsed {
   grid-template-columns: minmax(0, 1fr) 0;
+  background: #1e1e1e;
+}
+.coding-workspace.preview-collapsed .code-pane {
+  border-right: 0;
 }
 .preview-pane .panel-edge-toggle--preview {
   right: auto;
