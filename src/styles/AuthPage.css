@@ -20,14 +20,7 @@
   height: 48px;
   object-fit: contain;
 }
-.auth-header > span {
-  font-size: 14px;
-  font-weight: 700;
-  color: #aaa;
-}
-.auth-header > span span {
-  margin-left: 8px;
-}
+
 .auth-hero {
   width: 100%;
   max-width: 1120px;
@@ -54,8 +47,7 @@
   margin: 0 0 38px;
   line-height: 1.7;
 }
-.auth-start,
-.auth-existing {
+.auth-start {
   display: block;
   width: 100%;
   max-width: 400px;
@@ -74,16 +66,6 @@
 }
 .auth-start:hover {
   background: var(--primary-hover);
-}
-.auth-existing {
-  margin-top: 15px;
-  background: white;
-  border: 2px solid #e5e5e5;
-  border-bottom-width: 5px;
-  color: var(--primary-strong);
-}
-.auth-existing:hover {
-  background: var(--primary-wash);
 }
 .auth-art {
   position: relative;
@@ -312,13 +294,7 @@
 .auth-dialog h2 {
   font-size: 25px;
   letter-spacing: -0.8px;
-  margin: 0 0 12px;
-}
-.auth-dialog > p {
-  font-size: 14px;
-  color: #929292;
   margin: 0 0 30px;
-  line-height: 1.6;
 }
 .auth-google {
   width: 100%;
@@ -356,9 +332,7 @@
   .auth-header > img {
     width: 125px;
   }
-  .auth-header > span {
-    font-size: 11px;
-  }
+
   .auth-hero {
     grid-template-columns: 1fr;
     gap: 30px;
@@ -372,8 +346,7 @@
     font-size: 12px;
     margin-bottom: 28px;
   }
-  .auth-start,
-  .auth-existing {
+  .auth-start {
     font-size: 15px;
     height: 53px;
   }

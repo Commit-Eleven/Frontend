@@ -21,7 +21,6 @@ export function AuthPage() {
     <main className="auth-page">
       <header className="auth-header">
         <img src="/coddy/sidebar/logo.svg" alt="Codegram" />
-        <span>사이트 언어: 한국어</span>
       </header>
       <section className="auth-hero" aria-labelledby="auth-title">
         <AuthIllustration />
@@ -38,13 +37,6 @@ export function AuthPage() {
             onClick={handleOpenAuthModal}
           >
             시작하기
-          </button>
-          <button
-            type="button"
-            className="auth-existing"
-            onClick={handleOpenAuthModal}
-          >
-            계정이 이미 있습니다
           </button>
         </div>
       </section>

@@ -37,7 +37,6 @@ export function GoogleLoginModal({ onClose }) {
       ref={dialogRef}
       className="auth-dialog"
       aria-labelledby="auth-dialog-title"
-      aria-describedby="auth-dialog-description"
       onCancel={handleCancel}
       onClick={handleBackdropClick}
     >
@@ -53,7 +52,6 @@ export function GoogleLoginModal({ onClose }) {
         &lt;/&gt;
       </div>
       <h2 id="auth-dialog-title">코딩 여정을 시작해요</h2>
-      <p id="auth-dialog-description">Google 계정으로 간편하게 시작하세요.</p>
       <button type="button" className="auth-google" onClick={handleGoogleLogin}>
         <svg aria-hidden="true" viewBox="0 0 48 48">
           <path

@@ -49,7 +49,7 @@ npm ci
 npm run dev
 ```
 
-터미널에 표시된 개발 서버의 `/` 또는 `/auth`에 접속합니다. ‘시작하기’와 ‘계정이 이미 있습니다’를 누르면 Google 로그인 버튼만 있는 모달이 열립니다. 기존 학습 화면은 `/journeys/html/fundamentals`에서 확인할 수 있습니다.
+터미널에 표시된 개발 서버의 `/` 또는 `/auth`에 접속합니다. ‘시작하기’를 누르면 Google 로그인 버튼만 있는 모달이 열립니다. 기존 학습 화면은 `/journeys/html/fundamentals`에서 확인할 수 있습니다.
 
 현재는 UI만 구현되어 있습니다. Google 로그인 버튼은 안내 문구만 표시하며, OAuth 요청·토큰 저장·로그인 성공 처리·학습 경로 접근 제어는 수행하지 않습니다. 후속 연동 시 `GoogleLoginModal`의 `handleGoogleLogin`에서 `api` 폴더의 인증 함수를 호출하고, 서버 명세에 맞춰 콜백·세션·실패 처리를 추가해야 합니다.
 
