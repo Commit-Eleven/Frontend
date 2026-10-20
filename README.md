@@ -46,12 +46,17 @@ npm run dev
 
 ```bash
 npm ci
+cp .env.example .env.local
 npm run dev
 ```
 
 터미널에 표시된 개발 서버의 `/` 또는 `/auth`에 접속합니다. ‘시작하기’를 누르면 Google 로그인 버튼만 있는 모달이 열립니다. 기존 학습 화면은 `/journeys/html/fundamentals`에서 확인할 수 있습니다.
 
-현재는 UI만 구현되어 있습니다. Google 로그인 버튼은 안내 문구만 표시하며, OAuth 요청·토큰 저장·로그인 성공 처리·학습 경로 접근 제어는 수행하지 않습니다. 후속 연동 시 `GoogleLoginModal`의 `handleGoogleLogin`에서 `api` 폴더의 인증 함수를 호출하고, 서버 명세에 맞춰 콜백·세션·실패 처리를 추가해야 합니다.
+`.env.example`에는 공개된 인증 서버 주소 `https://codegram.me`가 설정되어 있습니다. `.env.local`은 Git에 포함되지 않습니다.
+
+Google 로그인 버튼은 브라우저를 백엔드의 `/api/social/login/google`로 이동시킵니다 (GET 리다이렉트 방식). 다른 서버를 사용하면 `.env.local`에 `VITE_API_BASE_URL=https://실제-백엔드-주소`를 설정한 뒤 개발 서버를 재시작하세요. 비워 두면 현재 사이트의 동일 경로를 사용합니다. Vite 개발 서버 자체에는 이 API가 없으므로 로컬 인증 검증에는 실제 백엔드 주소가 필요합니다.
+
+OAuth 완료 후의 콜백·토큰/세션 처리·학습 경로 접근 제어는 아직 구현하지 않았습니다. Google 인증 완료까지의 동작은 백엔드의 리다이렉트와 콜백 명세에 맞춰 별도로 검증해야 합니다.
 
 검증: `npm run lint`, `npm run build`, `npm test`.
 
