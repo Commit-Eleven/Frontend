@@ -1,5 +1,5 @@
 /** 레슨 이론과 학습 목표, 단계별 안내를 표시합니다. */
-export function LessonSidebar({ lesson, challenge, onQuiz, open, onToggleTheory }) {
+export function LessonSidebar({ lesson, challenge, onQuiz, open }) {
   return (
     <aside className={'lesson-info' + (open ? '' : ' is-collapsed')}>
       {open ? (
@@ -7,7 +7,6 @@ export function LessonSidebar({ lesson, challenge, onQuiz, open, onToggleTheory 
           <div className="theory-heading">
             <span className="theory-label">이론</span>
             {lesson.id === 'paragraphs' && <button type="button" onClick={onQuiz}>퀴즈 풀기</button>}
-            <button type="button" className="panel-toggle" aria-label="이론 접기" title="이론 접기" onClick={onToggleTheory}>‹</button>
           </div>
           <h2>{lesson.title}</h2>
           <p>{challenge.theory}</p>
@@ -28,7 +27,7 @@ export function LessonSidebar({ lesson, challenge, onQuiz, open, onToggleTheory 
           )}
         </div>
       ) : (
-        <button type="button" className="panel-toggle theory-expand" aria-label="이론 열기" title="이론 열기" onClick={onToggleTheory}>›</button>
+        null
       )}
     </aside>
   )

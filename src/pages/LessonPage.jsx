@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { allNodes } from '../constants/dummy/journey.js'
 import { challengeFor, preChallengeQuestionFor, starterCode } from '../constants/dummy/challenges.js'
 import { LessonSidebar } from '../components/lesson/LessonSidebar.jsx'
+import { PanelEdgeToggle } from '../components/lesson/PanelEdgeToggle.jsx'
 import { CodeWorkspace } from '../components/lesson/CodeWorkspace.jsx'
 import { PreChallengeQuestion } from '../components/lesson/PreChallengeQuestion.jsx'
 import { QuizWorkspace } from '../components/lesson/QuizWorkspace.jsx'
@@ -58,7 +59,8 @@ export function LessonPage({ lessonId, onBack, onSuccess }) {
         <strong>텍스트와 서식</strong>
       </header>
       <div className={'lesson-body' + (theoryOpen ? '' : ' theory-collapsed')}>
-        <LessonSidebar lesson={lesson} challenge={challenge} onQuiz={() => setMode('quiz')} open={theoryOpen} onToggleTheory={() => setTheoryOpen((open) => !open)} />
+        <LessonSidebar lesson={lesson} challenge={challenge} onQuiz={() => setMode('quiz')} open={theoryOpen} />
+        <PanelEdgeToggle panel="theory" open={theoryOpen} onToggle={() => setTheoryOpen((open) => !open)} />
         <main className={'lesson-workspace ' + (mode === 'quiz' ? 'quiz-mode' : '')}>
           {mode === 'precheck' ? (
             <PreChallengeQuestion question={preChallengeQuestionFor(lesson)} onContinue={handlePrecheckContinue} />

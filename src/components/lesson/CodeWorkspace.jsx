@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { HtmlEditor } from './HtmlEditor.jsx'
 import { TestPanel } from './TestPanel.jsx'
 import { PreviewPane } from './PreviewPane.jsx'
+import { PanelEdgeToggle } from './PanelEdgeToggle.jsx'
 
 /** 코드 편집기, 미리보기, 테스트 결과 패널을 조합합니다. */
 export function CodeWorkspace({ code, onCodeChange, onRun, checks, tests }) {
@@ -43,7 +44,6 @@ export function CodeWorkspace({ code, onCodeChange, onRun, checks, tests }) {
         <div className="code-toolbar">
           <span className="code-language" title="Emmet 약어는 Tab 키로 확장합니다">HTML</span>
           <div>
-            {!previewOpen && <button type="button" className="preview-expand-trigger" aria-label="웹 뷰 미리보기 열기" title="웹 뷰 미리보기 열기" onClick={() => setPreviewOpen(true)}>›</button>}
             <button type="button" className="mobile-preview-trigger" aria-label="웹 뷰 미리보기 열기" title="웹 뷰 미리보기 열기" onClick={() => { setPreviewOpen(true); setMobilePreviewOpen(true) }}>›</button>
           </div>
         </div>
@@ -53,7 +53,8 @@ export function CodeWorkspace({ code, onCodeChange, onRun, checks, tests }) {
         <div className="editor-actions"><button type="button" className="handleRunCode-button" onClick={handleRunCode}>▶ 코드 실행</button></div>
         <TestPanel checks={checks} tests={tests} tab={testTab} onTabChange={setTestTab} open={testOpen} onToggle={() => setTestOpen(!testOpen)} />
       </div>
-      {previewOpen && <PreviewPane code={code} onCollapse={handlePreviewCollapse} />}
+      {previewOpen && <PreviewPane code={code} />}
+      <PanelEdgeToggle panel="preview" open={previewOpen} onToggle={() => previewOpen ? handlePreviewCollapse() : setPreviewOpen(true)} />
     </div>
   )
 }
