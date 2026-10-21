@@ -63,3 +63,28 @@ test('submits a short text answer to its API', async (context) => {
   const result = await submitPracticeAnswer('short', { id: 'short1', content: {} }, 'p')
   assert.equal(result.correct, true)
 })
+
+test('submits an MCQ answer and reads the backend correction', async (context) => {
+  mockApi(context, async (config) => {
+    assert.equal(apiClient.getUri(config), '/api/problems/mcq')
+    assert.deepEqual(config.data, { id: 'mcq1', answer: 1 })
+    return { data: { answer: 0 } }
+  })
+
+  const result = await submitPracticeAnswer('mcq', { id: 'mcq1', content: {} }, 1)
+  assert.equal(result.correct, false)
+  assert.equal(result.answer, 0)
+})
+
+test('passes the selected language and access token to the problem API', async (context) => {
+  const originalStorage = globalThis.sessionStorage
+  globalThis.sessionStorage = { getItem: () => 'sample-token' }
+  mockApi(context, async (config) => {
+    assert.equal(apiClient.getUri(config), '/api/problems/blank?language=python')
+    assert.equal(config.headers.Authorization, 'Bearer sample-token')
+    return { data: { problem } }
+  })
+  context.after(() => { globalThis.sessionStorage = originalStorage })
+
+  assert.equal((await fetchPracticeProblem('blank', { language: 'python' })).id, 'blank1')
+})
