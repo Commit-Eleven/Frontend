@@ -9,8 +9,11 @@ test('opens the auth screen for entry and auth URLs', () => {
   }
 });
 
-test('keeps the existing journey and valid lesson routes available', () => {
+test('keeps each language journey and valid lesson routes available', () => {
   assert.equal(getViewFromPath('/journeys/html/fundamentals'), 'home');
   assert.equal(getViewFromPath('/journeys/html/fundamentals/paragraphs'), 'lesson');
+  assert.equal(getViewFromPath('/journeys/javascript/fundamentals/javascript-output'), 'lesson');
+  assert.equal(getViewFromPath('/journeys/python/fundamentals/python-output'), 'lesson');
+  assert.equal(getViewFromPath('/journeys/java/fundamentals/java-output'), 'lesson');
   assert.equal(getViewFromPath('/journeys/html/fundamentals/not-a-lesson'), 'home');
 });

@@ -1,0 +1,150 @@
+.practice-parsons-instruction {
+  margin: 0 0 16px;
+  color: #777;
+  font-size: 14px;
+  line-height: 1.5;
+}
+.practice-parsons-slots {
+  display: grid;
+  gap: 11px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.practice-line-number {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  flex: none;
+  border-radius: 7px;
+  background: #f2f2f2;
+  color: #777;
+  font-size: 13px;
+  font-weight: 700;
+}
+.practice-parsons-slot {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  min-width: 0;
+  min-height: 58px;
+  padding: 9px 14px;
+  border: 2px solid #d5d5d5;
+  border-bottom-width: 4px;
+  border-radius: 10px;
+  background: #fff;
+  color: #262626;
+  text-align: left;
+  transition:
+    border-color 0.14s ease,
+    background-color 0.14s ease;
+}
+.practice-parsons-slot > span:not(.practice-line-number) {
+  color: #777;
+  font-size: 14px;
+}
+.practice-parsons-slot:hover:not(:disabled),
+.practice-parsons-slot:focus-visible {
+  border-color: #bdbdbd;
+  background: #f4f4f4;
+  outline: none;
+}
+.practice-parsons-slot.is-filled,
+.practice-parsons-slot.is-filled:hover:not(:disabled) {
+  border-color: var(--primary);
+  background: var(--primary-soft);
+  color: var(--primary-strong);
+}
+.practice-parsons-slot.is-filled .practice-line-number {
+  background: var(--primary);
+  color: #fff;
+}
+.practice-parsons-slot.is-filled code,
+.practice-parsons-block code {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+  font:
+    600 15px/1.4 ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    Consolas,
+    monospace;
+}
+.practice-parsons-slot[draggable='true'] {
+  cursor: grab;
+}
+.practice-parsons-slot[draggable='true']:active {
+  cursor: grabbing;
+}
+.practice-parsons-slot.is-dragging,
+.practice-parsons-block.is-dragging {
+  opacity: 0.45;
+}
+.practice-parsons-bank {
+  display: grid;
+  gap: 12px;
+  margin-top: 20px;
+  padding: 16px;
+  border: 2px solid #d5d5d5;
+  border-radius: 10px;
+  background: #fafafa;
+  transition:
+    border-color 0.14s ease,
+    background-color 0.14s ease;
+}
+.practice-parsons-bank.is-drop-target {
+  border-color: var(--primary);
+  background: var(--primary-soft);
+}
+.practice-parsons-bank > strong {
+  color: #262626;
+  font-size: 15px;
+}
+.practice-parsons-blocks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-height: 38px;
+}
+.practice-parsons-block {
+  max-width: 100%;
+  min-height: 38px;
+  padding: 7px 12px;
+  border: 2px solid #d5d5d5;
+  border-bottom-width: 3px;
+  border-radius: 8px;
+  background: #fff;
+  color: #333;
+  cursor: grab;
+  transition:
+    border-color 0.14s ease,
+    background-color 0.14s ease,
+    color 0.14s ease,
+    opacity 0.14s ease;
+}
+.practice-parsons-block:hover,
+.practice-parsons-block:focus-visible {
+  border-color: var(--primary);
+  background: var(--primary-soft);
+  color: var(--primary-strong);
+  outline: none;
+}
+.practice-parsons-block:active {
+  cursor: grabbing;
+}
+.practice-parsons-block:disabled {
+  cursor: default;
+  opacity: 0.65;
+}
+@media (max-width: 700px) {
+  .practice-parsons-slot {
+    min-height: 52px;
+    padding: 8px 10px;
+  }
+  .practice-parsons-bank {
+    padding: 12px;
+  }
+}

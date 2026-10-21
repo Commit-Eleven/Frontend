@@ -219,7 +219,6 @@ export const navItems = [
   { label: '스토어', asset: 'store', dot: true },
 ];
 
-/** 완료·활성·잠금 상태를 기준으로 레슨 상태를 반환합니다. */
 export function statusFor(node, completed, active) {
   if (node.id === active) return 'active';
   if (completed.includes(node.id)) return 'done';
