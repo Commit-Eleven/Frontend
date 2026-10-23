@@ -40,17 +40,6 @@
 .wrong-notes-feature button:disabled { cursor: default; opacity: .58; }
 .wrong-notes-feature button span { margin-left: 7px; }
 .wrong-notes-feature-art { position: absolute; inset: 0 0 0 auto; width: 155px; pointer-events: none; }
-.wrong-notes-feature-art::before,
-.wrong-notes-feature-art::after {
-  content: '';
-  position: absolute;
-  width: 150px;
-  height: 150px;
-  border: 1px solid #ffffff38;
-  border-radius: 50%;
-}
-.wrong-notes-feature-art::before { top: -64px; right: -43px; }
-.wrong-notes-feature-art::after { bottom: -91px; right: 31px; }
 .wrong-notes-feature-card {
   position: absolute;
   display: grid;

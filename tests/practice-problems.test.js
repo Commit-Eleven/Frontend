@@ -76,15 +76,15 @@ test('submits an MCQ answer and reads the backend correction', async (context) =
   assert.equal(result.answer, 0)
 })
 
-test('passes the selected language and access token to the problem API', async (context) => {
+test('uses the documented problem endpoint and passes the access token', async (context) => {
   const originalStorage = globalThis.sessionStorage
   globalThis.sessionStorage = { getItem: () => 'sample-token' }
   mockApi(context, async (config) => {
-    assert.equal(apiClient.getUri(config), '/api/problems/blank?language=python')
+    assert.equal(apiClient.getUri(config), '/api/problems/blank')
     assert.equal(config.headers.Authorization, 'Bearer sample-token')
     return { data: { problem } }
   })
   context.after(() => { globalThis.sessionStorage = originalStorage })
 
-  assert.equal((await fetchPracticeProblem('blank', { language: 'python' })).id, 'blank1')
+  assert.equal((await fetchPracticeProblem('blank')).id, 'blank1')
 })

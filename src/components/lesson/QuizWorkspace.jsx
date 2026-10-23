@@ -28,12 +28,12 @@ function selectedLanguage(code) {
 
 function supportsQuestionType(type, problem) {
   const content = problem?.content;
-  if (!content) return false;
+  if (!content || typeof content !== 'object') return false;
   if (type === 'mcq') return Array.isArray(content.choices) && content.choices.length > 1;
   if (type === 'blank') return typeof content.template === 'string' && Array.isArray(content.blanks);
   if (type === 'parsons')
-    return Array.isArray(content.fragments) && Array.isArray(content.answer_order);
-  return typeof content.answer === 'string';
+    return Array.isArray(content.fragments) && content.fragments.length > 0;
+  return !('starter_code' in content) && !('runtime' in content) && !('testcases' in content);
 }
 
 export function QuizWorkspace({ lesson, languageCode, onExit, onComplete, onLogin }) {
@@ -64,7 +64,7 @@ export function QuizWorkspace({ lesson, languageCode, onExit, onComplete, onLogi
       setFeedback(null);
       setError('');
     };
-    fetchPracticeProblem(type, { signal: controller.signal, language: language.code })
+    fetchPracticeProblem(type, { signal: controller.signal })
       .then((nextProblem) => {
         if (
           String(nextProblem.language ?? '').toLowerCase() !== language.code ||

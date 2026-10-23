@@ -11,9 +11,9 @@ async function requestProblem(type, options = {}) {
   return apiRequest({ url: `/problems/${type}`, ...options })
 }
 
-export async function fetchPracticeProblem(type, { signal, language } = {}) {
+export async function fetchPracticeProblem(type, { signal } = {}) {
   const payload = await requestProblem(type, {
-    method: 'GET', signal, params: language ? { language } : undefined,
+    method: 'GET', signal,
   })
   const problem = payload?.problem ?? payload?.data?.problem ?? payload?.data ?? payload
   if (!problem || typeof problem !== 'object' || !problem.id || !problem.content) {
