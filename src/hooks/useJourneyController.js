@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { allMainLessons, allNodes, statusFor } from '../constants/dummy/journey.js'
 import { readSaved } from '../utils/progress.js'
-import { getLessonIdFromPath, getLessonPath, journeyPath } from '../app/routes.js'
+import { getLessonIdFromPath, getLessonPath, journeyPath, authPath, getViewFromPath } from '../app/routes.js'
 
 
 /** 홈과 레슨 간 이동, 진행 상태, 검색·강의 계획 상태를 관리합니다. */
@@ -11,7 +11,7 @@ export function useJourneyController() {
   const [active, setActive] = useState(saved.active)
   const [selectedId, setSelectedId] = useState(saved.active)
   const [lessonId, setLessonId] = useState(getLessonIdFromPath() || 'paragraphs')
-  const [view, setView] = useState(getLessonIdFromPath() ? 'lesson' : 'home')
+  const [view, setView] = useState(getViewFromPath)
   const [searchOpen, setSearchOpen] = useState(false)
   const [syllabusOpen, setSyllabusOpen] = useState(false)
   const [jumpTo, setJumpTo] = useState(null)
@@ -26,7 +26,7 @@ export function useJourneyController() {
       const id = getLessonIdFromPath()
       if (id) setLessonId(id)
       else setJumpTo(null)
-      setView(id ? 'lesson' : 'home')
+      setView(getViewFromPath())
     }
     window.addEventListener('popstate', handlePopState)
     return () => window.removeEventListener('popstate', handlePopState)
@@ -35,6 +35,7 @@ export function useJourneyController() {
   useEffect(() => {
     /** 전역 단축키로 검색창과 모달을 제어합니다. */
     const handleKeyDown = (event) => {
+      if (getViewFromPath() === 'auth') return
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
         event.preventDefault()
         setSearchOpen(true)
@@ -55,6 +56,14 @@ export function useJourneyController() {
     setLessonId(id)
     setView('lesson')
     window.history.pushState({}, '', getLessonPath(id))
+  }
+
+  /** 인증 시작 화면으로 이동하고 기존 모달을 닫습니다. */
+  const handleOpenAuth = () => {
+    setSearchOpen(false)
+    setSyllabusOpen(false)
+    setView('auth')
+    window.history.pushState({}, '', authPath)
   }
 
   /** 여정 홈으로 돌아가고 주소를 갱신합니다. */
@@ -90,6 +99,6 @@ export function useJourneyController() {
   return {
     view, lessonId, completed, active, selectedId, searchOpen, syllabusOpen, jumpTo,
     setSelectedId, setSearchOpen, setSyllabusOpen, setJumpTo,
-    handleOpenLesson, handleGoHome, handleLessonComplete, handleSearchPick,
+    handleOpenLesson, handleOpenAuth, handleGoHome, handleLessonComplete, handleSearchPick,
   }
 }

@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { sidebarItems } from '../../constants/dummy/navigation.js'
 
 /** 데스크톱용 기본 내비게이션 사이드바를 표시합니다. */
-export function Sidebar() {
+export function Sidebar({ onLogin }) {
   const [moreOpen, setMoreOpen] = useState(false)
   const [activeItem, setActiveItem] = useState(null)
   const moreRef = useRef(null)
@@ -68,7 +68,7 @@ export function Sidebar() {
             <div className="sidebar-more-menu" role="menu" aria-label="더보기 메뉴">
               <button type="button" role="menuitem" onClick={() => setMoreOpen(false)}>설정</button>
               <button type="button" role="menuitem" onClick={() => setMoreOpen(false)}>도움말</button>
-              <button type="button" role="menuitem" onClick={() => setMoreOpen(false)}>로그아웃</button>
+              <button type="button" role="menuitem" onClick={onLogin}>로그인</button>
             </div>
           )}
         </div>

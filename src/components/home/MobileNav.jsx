@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { sidebarItems } from '../../constants/dummy/navigation.js'
 
 /** 모바일 화면용 하단 내비게이션을 표시합니다. */
-export function MobileNav() {
+export function MobileNav({ onLogin }) {
   const [moreOpen, setMoreOpen] = useState(false)
   const [activeItem, setActiveItem] = useState('학습')
   const moreRef = useRef(null)
@@ -61,7 +61,7 @@ export function MobileNav() {
           <div className="mobile-more-menu" role="menu" aria-label="더보기 메뉴">
             <button type="button" role="menuitem" onClick={() => setMoreOpen(false)}>설정</button>
             <button type="button" role="menuitem" onClick={() => setMoreOpen(false)}>도움말</button>
-            <button type="button" role="menuitem" onClick={() => setMoreOpen(false)}>로그아웃</button>
+            <button type="button" role="menuitem" onClick={onLogin}>로그인</button>
           </div>
         )}
       </div>

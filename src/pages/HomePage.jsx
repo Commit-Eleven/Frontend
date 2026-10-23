@@ -7,7 +7,7 @@ import { RightRail } from '../components/home/RightRail.jsx'
 import { MapChapter } from '../components/home/JourneyMap.jsx'
 
 /** 여정 지도와 홈 화면의 공통 UI를 조합합니다. */
-export function HomePage({ completed, active, selectedId, onSelect, onOpen, onSearch, onSyllabus, jumpTo }) {
+export function HomePage({ completed, active, selectedId, onSelect, onOpen, onSearch, onSyllabus, jumpTo, onLogin }) {
   const centerRef = useRef(null)
   const activeRef = useRef(null)
   const [visibleChapter, setVisibleChapter] = useState(1)
@@ -63,7 +63,7 @@ export function HomePage({ completed, active, selectedId, onSelect, onOpen, onSe
   }
   return (
     <div className="home-layout">
-      <Sidebar />
+      <Sidebar onLogin={onLogin} />
       <main className="center-pane" ref={centerRef} onScroll={handleScroll}>
         <div className="center-content">
           <div className="floating-course-card"><div><button className="course-link" onClick={onSyllabus}>강의 계획</button><span className="course-breadcrumb">› 섹션 1 · 챕터 {visibleChapter + 1}</span><h1>{chapterData[visibleChapter].title}</h1></div><button className="course-search" onClick={onSearch}>⌕ <kbd>⌘K</kbd></button></div>
@@ -74,7 +74,7 @@ export function HomePage({ completed, active, selectedId, onSelect, onOpen, onSe
       </main>
       <RightRail completedCount={completed.length} />
       <div className="mobile-stats"><Stats compact /></div>
-      <MobileNav />
+      <MobileNav onLogin={onLogin} />
     </div>
   )
 }
