@@ -1,18 +1,15 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
+import { beginGoogleLogin } from '../../api/auth.js';
 
 /** Google 로그인 진입 버튼과 모달 키보드 동작을 제공합니다. */
 export function GoogleLoginModal({ onClose }) {
   const dialogRef = useRef(null);
-  const [notice, setNotice] = useState('');
 
   useEffect(() => {
     const dialog = dialogRef.current;
     dialog.showModal();
     return () => dialog.close();
   }, []);
-
-  /** 인증 API 연결 전에는 안내만 표시하며 로그인 성공을 처리하지 않습니다. */
-  const handleGoogleLogin = () => setNotice('Google 로그인은 준비 중이에요.');
 
   /** 기본 취소 동작 대신 부모의 모달 상태를 정리합니다. */
   const handleCancel = (event) => {
@@ -52,7 +49,7 @@ export function GoogleLoginModal({ onClose }) {
         &lt;/&gt;
       </div>
       <h2 id="auth-dialog-title">코딩 여정을 시작해요</h2>
-      <button type="button" className="auth-google" onClick={handleGoogleLogin}>
+      <button type="button" className="auth-google" onClick={() => beginGoogleLogin()}>
         <svg aria-hidden="true" viewBox="0 0 48 48">
           <path
             fill="#4285F4"
@@ -73,9 +70,6 @@ export function GoogleLoginModal({ onClose }) {
         </svg>
         구글로 로그인하기
       </button>
-      <div className="auth-status" role="status">
-        {notice}
-      </div>
     </dialog>
   );
 }

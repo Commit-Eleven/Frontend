@@ -1,3 +1,5 @@
+import { languageChallengeFor, languageStarterCode } from './languageChallenges.js';
+
 export const starterCode =
   '<!DOCTYPE html>\n<html>\n  <body>\n    <!-- 여기에 코드를 작성하세요 -->\n  </body>\n</html>';
 const lessonChallenges = {
@@ -43,8 +45,15 @@ const lessonChallenges = {
     ],
   },
 };
-/** 레슨에 연결된 문제와 테스트 조건을 반환합니다. */
-export function challengeFor(lesson) {
+export function starterCodeFor(language = 'html') {
+  return languageStarterCode[language] || starterCode;
+}
+
+export function challengeFor(lesson, language = 'html') {
+  if (language !== 'html') {
+    const languageChallenge = languageChallengeFor(language, lesson);
+    if (languageChallenge) return languageChallenge;
+  }
   return (
     lessonChallenges[lesson.id] || {
       instruction: 'p 요소를 하나 만들고 "' + lesson.title + '"이라고 작성하세요.',
@@ -80,16 +89,17 @@ const preChallengeQuestions = {
     correct: '<strong>',
     explanation: '<strong>은 내용의 중요성을 의미로 전달합니다.',
   },
-}
+};
 
-/** 레슨에 연결된 사전 선택형 문제를 반환합니다. */
 export function preChallengeQuestionFor(lesson) {
-  return preChallengeQuestions[lesson.id] || {
-    prompt: 'HTML 태그는 보통 어떤 형태로 콘텐츠를 감싸나요?',
-    choices: ['<tag>내용</tag>', '{tag} 내용', '[tag] 내용'],
-    correct: '<tag>내용</tag>',
-    explanation: 'HTML 요소는 여는 태그와 닫는 태그 사이에 콘텐츠를 넣어 작성합니다.',
-  }
+  return (
+    preChallengeQuestions[lesson.id] || {
+      prompt: 'HTML 태그는 보통 어떤 형태로 콘텐츠를 감싸나요?',
+      choices: ['<tag>내용</tag>', '{tag} 내용', '[tag] 내용'],
+      correct: '<tag>내용</tag>',
+      explanation: 'HTML 요소는 여는 태그와 닫는 태그 사이에 콘텐츠를 넣어 작성합니다.',
+    }
+  );
 }
 
 export const quizQuestions = [
