@@ -1,4 +1,6 @@
 /** 웹 뷰 미리보기 영역 안쪽 가장자리에서 여닫는 버튼입니다. */
+import './PanelEdgeToggle.css';
+
 export function PanelEdgeToggle({ open, onToggle }) {
   return (
     <button
@@ -11,5 +13,5 @@ export function PanelEdgeToggle({ open, onToggle }) {
     >
       <span aria-hidden="true">{open ? '‹' : '›'}</span>
     </button>
-  )
+  );
 }

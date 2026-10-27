@@ -1,29 +1,13 @@
 import { useEffect, useRef, useState } from 'react'
-import { codingLanguages } from '../../constants/dummy/navigation.js'
-import { icon } from '../../utils/assets.js'
+import { codingLanguages } from '../../data/navigation.js'
+import { icon } from '../../lib/assets.js'
+import { selectCodingLanguage, useCodingLanguage } from '../../hooks/useCodingLanguage.js'
+import './Stats.css'
 
-/** 브라우저에 저장된 선택 언어를 읽습니다. */
-function readLanguage() {
-  const saved = localStorage.getItem('codegram-language')
-  return codingLanguages.find((language) => language.code === saved) || codingLanguages[0]
-}
-
-/** 학습 언어 선택 메뉴와 사용자 학습 통계를 표시합니다. */
 export function Stats({ compact = false }) {
-  const [language, setLanguage] = useState(readLanguage)
+  const language = useCodingLanguage()
   const [languageOpen, setLanguageOpen] = useState(false)
   const languageRef = useRef(null)
-
-  useEffect(() => {
-    /** 다른 탭의 언어 선택 변경을 현재 화면에 반영합니다. */
-    const syncLanguage = () => setLanguage(readLanguage())
-    window.addEventListener('codegram-language-change', syncLanguage)
-    window.addEventListener('storage', syncLanguage)
-    return () => {
-      window.removeEventListener('codegram-language-change', syncLanguage)
-      window.removeEventListener('storage', syncLanguage)
-    }
-  }, [])
 
   useEffect(() => {
     if (!languageOpen) return undefined
@@ -43,11 +27,8 @@ export function Stats({ compact = false }) {
     }
   }, [languageOpen])
 
-  /** 선택한 코딩 언어를 저장하고 메뉴를 닫습니다. */
-  const handleLanguageSelect = (nextLanguage) => {
-    localStorage.setItem('codegram-language', nextLanguage.code)
-    setLanguage(nextLanguage)
-    window.dispatchEvent(new Event('codegram-language-change'))
+  const selectLanguage = (nextLanguage) => {
+    selectCodingLanguage(nextLanguage)
     setLanguageOpen(false)
   }
 
@@ -80,7 +61,7 @@ export function Stats({ compact = false }) {
                       className={'language-menu-item' + (isSelected ? ' is-selected' : '')}
                       role="menuitemradio"
                       aria-checked={isSelected}
-                      onClick={() => handleLanguageSelect(option)}
+                      onClick={() => selectLanguage(option)}
                     >
                       <img src={option.icon} alt="" />
                       <span>{option.label}</span>

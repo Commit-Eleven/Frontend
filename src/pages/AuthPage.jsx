@@ -5,7 +5,7 @@ import { useScrollReveal } from '../hooks/useScrollReveal.js';
 import { AuthIllustration } from '../components/auth/AuthIllustration.jsx';
 import { GoogleLoginModal } from '../components/auth/GoogleLoginModal.jsx';
 import { useAuthModal } from '../hooks/useAuthModal.js';
-import '../styles/AuthPage.css';
+import './AuthPage.css';
 
 /** 서비스 시작 화면과 Google 전용 로그인 진입점을 표시합니다. */
 export function AuthPage() {
