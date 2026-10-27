@@ -1,6 +1,6 @@
 export const GROUPS_KEY = 'codegram.groups.v1'
 export const categories = ['스터디', '프로젝트', '알고리즘', '취업 준비', '기타']
-export const languages = ['HTML', 'CSS', 'JavaScript', 'TypeScript', 'Python', 'Java', 'C', 'C++', 'Go', 'Kotlin', 'Swift']
+export const languages = ['HTML', 'JavaScript', 'Java', 'Python']
 
 export function validateGroup(group) {
   if (!group.name.trim() || group.name.trim().length > 30) return '팀명은 1~30자로 입력해 주세요.'
