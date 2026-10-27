@@ -17,6 +17,7 @@ export function Home({
   selectedId,
   onSelect,
   onOpen,
+  onLogout,
   onSearch,
   onSyllabus,
   jumpTo,
@@ -79,7 +80,7 @@ export function Home({
   };
   return (
     <div className="home-layout">
-      <Sidebar activeItem={activeItem} onNavigate={navigate} />
+      <Sidebar activeItem={activeItem} onNavigate={navigate} onLogout={onLogout} />
       <main className="center-pane" ref={centerRef} onScroll={handleScroll}>
         <div className="center-content">
           {activeItem === '오답 노트' ? (
@@ -130,7 +131,7 @@ export function Home({
       <div className="mobile-stats">
         <Stats compact />
       </div>
-      <MobileNav activeItem={activeItem} onNavigate={navigate} />
+      <MobileNav activeItem={activeItem} onNavigate={navigate} onLogout={onLogout} />
     </div>
   );
 }

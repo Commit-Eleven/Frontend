@@ -6,6 +6,7 @@ import { SyllabusModal } from '../components/home/SyllabusModal.jsx';
 import { useCodingLanguage } from '../hooks/useCodingLanguage.js';
 import { getViewFromPath } from './routes.js';
 import { AuthPage } from '../pages/AuthPage.jsx';
+import { logoutFromApp } from '../api/authSession.js';
 import './App.css';
 
 const Lesson = lazy(() =>
@@ -56,6 +57,7 @@ function JourneyApp({ language, activeHomeItem, onHomeItemChange }) {
           selectedId={journey.selectedId}
           onSelect={journey.setSelectedId}
           onOpen={journey.openLesson}
+          onLogout={logoutFromApp}
           onSearch={() => journey.setSearchOpen(true)}
           onSyllabus={() => journey.setSyllabusOpen(true)}
           jumpTo={journey.jumpTo}

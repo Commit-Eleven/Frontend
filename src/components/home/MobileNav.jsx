@@ -3,7 +3,7 @@ import { sidebarItems } from '../../data/navigation.js';
 import { MoreIcon } from '../common/MoreIcon.jsx';
 import './MobileNav.css';
 
-export function MobileNav({ activeItem = '학습', onNavigate = () => {} }) {
+export function MobileNav({ activeItem = '학습', onNavigate = () => {}, onLogout = () => {} }) {
   const [moreOpen, setMoreOpen] = useState(false);
   const moreRef = useRef(null);
 
@@ -63,7 +63,14 @@ export function MobileNav({ activeItem = '학습', onNavigate = () => {} }) {
             <button type="button" role="menuitem" onClick={() => setMoreOpen(false)}>
               도움말
             </button>
-            <button type="button" role="menuitem" onClick={() => setMoreOpen(false)}>
+            <button
+              type="button"
+              role="menuitem"
+              onClick={() => {
+                setMoreOpen(false);
+                onLogout();
+              }}
+            >
               로그아웃
             </button>
           </div>
