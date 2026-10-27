@@ -1,5 +1,6 @@
 import { lazy, Suspense, useEffect, useState } from 'react';
 import { useJourneyController } from '../hooks/useJourneyController.js';
+import { Groups } from '../components/groups/Groups.jsx';
 import { Home } from '../components/home/Home.jsx';
 import { SearchModal } from '../components/home/SearchModal.jsx';
 import { SyllabusModal } from '../components/home/SyllabusModal.jsx';
@@ -46,7 +47,9 @@ function JourneyApp({ language, activeHomeItem, onHomeItemChange }) {
 
   return (
     <>
-      {journey.view === 'home' ? (
+      {journey.view === 'home' && activeHomeItem === '그룹' ? (
+        <Groups onNavigate={onHomeItemChange} onLogout={logoutFromApp} />
+      ) : journey.view === 'home' ? (
         <Home
           language={language}
           activeItem={activeHomeItem}
