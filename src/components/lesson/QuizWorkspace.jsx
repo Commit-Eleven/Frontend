@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react';
 import { codingLanguages } from '../../data/navigation.js';
 import {
+  fetchProblemTags,
   fetchPracticeProblem,
+  normalizeProblemLanguage,
+  problemTagForLanguage,
   practiceTypes,
   submitPracticeAnswer,
 } from '../../api/practiceProblems.js';
@@ -64,10 +67,20 @@ export function QuizWorkspace({ lesson, languageCode, onExit, onComplete, onLogi
       setFeedback(null);
       setError('');
     };
-    fetchPracticeProblem(type, { signal: controller.signal })
+    fetchProblemTags({ signal: controller.signal })
+      .then((tags) => {
+        const languageTag = problemTagForLanguage(language.code);
+        if (!tags.includes(languageTag)) {
+          show(examplePracticeProblem(type, lesson, language.code), 'language-unavailable');
+          return null;
+        }
+        return fetchPracticeProblem(type, { language: language.code, signal: controller.signal });
+      })
       .then((nextProblem) => {
+        if (!nextProblem || controller.signal.aborted) return;
+        const problemLanguage = normalizeProblemLanguage(nextProblem.language);
         if (
-          String(nextProblem.language ?? '').toLowerCase() !== language.code ||
+          (problemLanguage && problemLanguage !== language.code) ||
           !supportsQuestionType(type, nextProblem)
         ) {
           show(examplePracticeProblem(type, lesson, language.code), 'language-unavailable');

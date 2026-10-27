@@ -1,19 +1,48 @@
 import { apiRequest } from './client.js'
 
 export const practiceTypes = ['mcq', 'blank', 'parsons', 'short']
+const languageTags = { html: 'html', javascript: 'js', python: 'python', java: 'java' }
+let cachedTags = null
 
 function assertType(type) {
   if (!practiceTypes.includes(type)) throw new Error('지원하지 않는 문제 형식입니다.')
 }
 
-async function requestProblem(type, options = {}) {
-  assertType(type)
-  return apiRequest({ url: `/problems/${type}`, ...options })
+export function problemTagForLanguage(language) {
+  return languageTags[language] ?? language
 }
 
-export async function fetchPracticeProblem(type, { signal } = {}) {
+export function normalizeProblemLanguage(language) {
+  const normalized = String(language ?? '').toLowerCase()
+  return normalized === 'js' ? 'javascript' : normalized
+}
+
+export async function fetchProblemTags({ signal } = {}) {
+  if (cachedTags) return cachedTags
+
+  const payload = await apiRequest({ url: '/tags', method: 'GET', signal })
+  const tags = payload?.data?.tags ?? payload?.tags
+  if (!Array.isArray(tags)) throw new Error('태그 응답 형식이 올바르지 않습니다.')
+  cachedTags = tags.map((tag) => String(tag).toLowerCase())
+  return cachedTags
+}
+
+async function requestProblem(type, { language, ...options } = {}) {
+  assertType(type)
+  return apiRequest({
+    url: `/problems/${type}`,
+    ...options,
+    ...(language
+      ? { params: { ...options.params, language } }
+      : {}),
+  })
+}
+
+export async function fetchPracticeProblem(type, { language, signal } = {}) {
   const payload = await requestProblem(type, {
-    method: 'GET', signal,
+    method: 'GET',
+    language,
+    signal,
   })
   const problem = payload?.problem ?? payload?.data?.problem ?? payload?.data ?? payload
   if (!problem || typeof problem !== 'object' || !problem.id || !problem.content) {
@@ -42,8 +71,8 @@ export function practiceAnswerBody(type, problem, answer) {
     if (!Array.isArray(blanks) || !blanks.length) throw new Error('빈칸 정보가 없습니다.')
     const values = blanks.map(({ no }) => String(answer?.[no] ?? '').trim())
     if (values.some((value) => !value)) throw new Error('모든 빈칸을 채워 주세요.')
-    // The current backend grades blank answers as an array ordered by blank number.
-    return { id, answer: values }
+    if (values.length !== 1) throw new Error('빈칸 문제는 답안을 문자열 하나로 제출할 수 있어야 합니다.')
+    return { id, answer: values[0] }
   }
   const shortAnswer = String(answer ?? '').trim()
   if (!shortAnswer) throw new Error('답을 입력해 주세요.')
