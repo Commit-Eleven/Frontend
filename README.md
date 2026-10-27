@@ -22,7 +22,7 @@ npm run dev
 
 ## 소스 구조
 
-- `src/app/App.tsx`, `src/app/routes.js`: 인증·학습 경로 연결
+- `src/app/App.jsx`, `src/app/routes.js`: 인증·학습 경로 연결
 - `src/components/auth/`, `src/pages/AuthPage.jsx`: 시작 화면과 Google 로그인
 - `src/components/home/`: 학습 지도, 오답 노트, 언어 선택
 - `src/components/lesson/`: 코드 편집기와 문제 유형별 컴포넌트
