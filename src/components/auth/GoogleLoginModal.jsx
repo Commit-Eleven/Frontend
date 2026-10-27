@@ -1,37 +1,15 @@
-import { startGoogleLogin } from '../../api/auth.js';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
+import { beginGoogleLogin } from '../../api/auth.js';
 
 /** Google 로그인 진입 버튼과 모달 키보드 동작을 제공합니다. */
 export function GoogleLoginModal({ onClose }) {
   const dialogRef = useRef(null);
-  const [notice, setNotice] = useState('');
-  const [isRedirecting, setIsRedirecting] = useState(false);
 
   useEffect(() => {
     const dialog = dialogRef.current;
     dialog.showModal();
-
-    /** Google 화면에서 뒤로 돌아오면 로그인 버튼을 다시 활성화합니다. */
-    const handlePageShow = () => setIsRedirecting(false);
-    window.addEventListener('pageshow', handlePageShow);
-    return () => {
-      dialog.close();
-      window.removeEventListener('pageshow', handlePageShow);
-    };
+    return () => dialog.close();
   }, []);
-
-  /** 백엔드의 Google 로그인 시작 API로 이동합니다. */
-  const handleGoogleLogin = () => {
-    if (isRedirecting) return;
-    setNotice('');
-    setIsRedirecting(true);
-    try {
-      startGoogleLogin();
-    } catch {
-      setIsRedirecting(false);
-      setNotice('로그인을 시작할 수 없어요. 잠시 후 다시 시도해 주세요.');
-    }
-  };
 
   /** 기본 취소 동작 대신 부모의 모달 상태를 정리합니다. */
   const handleCancel = (event) => {
@@ -71,13 +49,7 @@ export function GoogleLoginModal({ onClose }) {
         &lt;/&gt;
       </div>
       <h2 id="auth-dialog-title">코딩 여정을 시작해요</h2>
-      <button
-        type="button"
-        className="auth-google"
-        onClick={handleGoogleLogin}
-        disabled={isRedirecting}
-        aria-busy={isRedirecting}
-      >
+      <button type="button" className="auth-google" onClick={() => beginGoogleLogin()}>
         <svg aria-hidden="true" viewBox="0 0 48 48">
           <path
             fill="#4285F4"
@@ -96,11 +68,8 @@ export function GoogleLoginModal({ onClose }) {
             d="M24 11.2c3 0 5.6 1 7.7 3l5.8-5.8A19.5 19.5 0 0 0 24 3a20.4 20.4 0 0 0-18.3 11.2l6.9 5.4c1.6-4.8 6.1-8.4 11.4-8.4Z"
           />
         </svg>
-        {isRedirecting ? 'Google로 이동 중…' : '구글로 로그인하기'}
+        구글로 로그인하기
       </button>
-      <div className="auth-status" role="status">
-        {notice}
-      </div>
     </dialog>
   );
 }

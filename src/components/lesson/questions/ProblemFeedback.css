@@ -1,0 +1,36 @@
+.precheck-feedback {
+  margin-top: 16px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+}
+.precheck-feedback.is-correct {
+  background: #e7fbf5;
+  color: #08785d;
+}
+.precheck-feedback.is-wrong {
+  background: #fff2ee;
+  color: #a74b3d;
+}
+.precheck-feedback.is-error {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: #fff2ee;
+  color: #a74b3d;
+}
+.precheck-feedback.is-error button {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.precheck-feedback p {
+  margin: 5px 0 0;
+  line-height: 1.45;
+}

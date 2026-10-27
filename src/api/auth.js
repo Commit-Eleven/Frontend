@@ -1,15 +1,33 @@
-/** 설정된 백엔드에서 Google OAuth 로그인 시작 주소를 반환합니다. */
-export function getGoogleLoginUrl() {
-  const apiBaseUrl =
-    import.meta.env.VITE_API_BASE_URL?.trim() || window.location.origin;
-  const loginUrl = new URL('/api/social/login/google', apiBaseUrl);
-  if (!['http:', 'https:'].includes(loginUrl.protocol)) {
-    throw new Error('지원하지 않는 인증 서버 주소입니다.');
-  }
-  return loginUrl.href;
+const tokenKey = 'codegram-access-token'
+const returnPathKey = 'codegram-login-return-path'
+export const returnModeKey = 'codegram-login-return-mode'
+const defaultJourneyPath = '/journeys/html/fundamentals'
+const journeyPathPattern = /^\/journeys\/(?:html|javascript|python|java)\/fundamentals(?:\/[^/?#]+)?$/
+
+export function authorizationHeaders() {
+  const token = typeof sessionStorage === 'undefined' ? null : sessionStorage.getItem(tokenKey)
+  return token ? { Authorization: `Bearer ${token}` } : {}
 }
 
-/** 서버의 리다이렉트를 따라 Google 인증 페이지로 이동합니다. */
-export function startGoogleLogin() {
-  window.location.assign(getGoogleLoginUrl());
+export function clearAccessToken() {
+  if (typeof sessionStorage !== 'undefined') sessionStorage.removeItem(tokenKey)
+}
+
+export function beginGoogleLogin(returnMode) {
+  sessionStorage.setItem(returnPathKey, location.pathname)
+  if (returnMode === 'quiz') sessionStorage.setItem(returnModeKey, 'quiz')
+  else sessionStorage.removeItem(returnModeKey)
+  location.assign('https://codegram.me/api/social/login/google')
+}
+
+export function completeGoogleLogin() {
+  if (location.pathname !== '/auth/callback') return
+
+  const token = new URLSearchParams(location.search).get('token')
+  if (token) sessionStorage.setItem(tokenKey, token)
+
+  const savedPath = sessionStorage.getItem(returnPathKey)
+  sessionStorage.removeItem(returnPathKey)
+  const returnPath = journeyPathPattern.test(savedPath || '') ? savedPath : defaultJourneyPath
+  location.replace(returnPath)
 }
