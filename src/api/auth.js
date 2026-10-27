@@ -17,7 +17,7 @@ export function beginGoogleLogin(returnMode) {
   sessionStorage.setItem(returnPathKey, location.pathname)
   if (returnMode === 'quiz') sessionStorage.setItem(returnModeKey, 'quiz')
   else sessionStorage.removeItem(returnModeKey)
-  location.assign('https://codegram.me/api/social/login/google')
+  location.assign('/api/social/login/google')
 }
 
 export function completeGoogleLogin() {
