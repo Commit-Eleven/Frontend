@@ -23,7 +23,7 @@ test('starts Google login at the backend and returns to the current lesson', (co
   })
 
   beginGoogleLogin('quiz')
-  assert.equal(loginUrl, 'https://codegram.me/api/social/login/google')
+  assert.equal(loginUrl, '/api/social/login/google')
   assert.equal(values.get(returnModeKey), 'quiz')
 
   globalThis.location = {
