@@ -22,18 +22,13 @@ export function Lesson({ lessonId, language, journey, onBack, onSuccess }) {
     description: challenge.instruction,
     content: { example: challenge.example, checks: challenge.checks },
   };
-  const conceptKey = `coddy-demo-concept-check-v2-${language}-${lesson.id}`;
   const codeKey = `coddy-demo-code-${language}-${lesson.id}`;
   const [code, setCode] = useState(
     () => localStorage.getItem(codeKey) || starterCodeFor(language),
   );
-  const [mode, setMode] = useState(() =>
-    sessionStorage.getItem(returnModeKey) === 'quiz'
-      ? 'concept'
-      : localStorage.getItem(conceptKey) === 'done'
-        ? 'challenge'
-        : 'concept',
-  );
+  // Every entry from the journey map starts with the server-backed concept check.
+  // Completing it only advances this lesson visit to the coding challenge.
+  const [mode, setMode] = useState('concept');
   const [tests, setTests] = useState(null);
   const [showSuccess, setShowSuccess] = useState(false);
   const lessonBodyRef = useRef(null);
@@ -137,7 +132,6 @@ export function Lesson({ lessonId, language, journey, onBack, onSuccess }) {
     });
 
   const finishConceptCheck = () => {
-    localStorage.setItem(conceptKey, 'done');
     setMode('challenge');
     focusCodeEditor();
   };

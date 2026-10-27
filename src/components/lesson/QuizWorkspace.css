@@ -253,6 +253,37 @@
   margin-top: 28px;
   color: #777;
 }
+.practice-auth-gate {
+  display: grid;
+  justify-items: start;
+  gap: 12px;
+  margin-top: 36px;
+  padding: 24px;
+  border: 1px solid #e5e5e5;
+  border-radius: 12px;
+  background: #fafafa;
+}
+.practice-auth-gate h1,
+.practice-auth-gate p {
+  margin: 0;
+}
+.practice-auth-gate h1 {
+  font-size: 22px;
+}
+.practice-auth-gate p {
+  color: #666;
+  line-height: 1.5;
+}
+.practice-auth-gate button {
+  min-height: 42px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--primary);
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+}
 .practice-api-status {
   display: flex;
   align-items: center;

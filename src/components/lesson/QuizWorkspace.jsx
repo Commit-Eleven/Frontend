@@ -50,7 +50,7 @@ export function QuizWorkspace({ lesson, languageCode, onExit, onComplete, onLogi
   const [submitting, setSubmitting] = useState(false);
   const type = practiceTypes[step];
   const problem = loaded.problem;
-  const example = loaded.status !== 'loading' && loaded.status !== 'ready';
+  const example = loaded.status === 'language-unavailable' || loaded.status === 'error';
 
   useEffect(() => {
     const controller = new AbortController();
@@ -59,7 +59,7 @@ export function QuizWorkspace({ lesson, languageCode, onExit, onComplete, onLogi
       setLoaded({ status, problem: nextProblem });
       setSelected(null);
       setBlankValues({});
-      setOrder(type === 'parsons' ? initialOrder(nextProblem) : []);
+      setOrder(type === 'parsons' && nextProblem ? initialOrder(nextProblem) : []);
       setShortAnswer('');
       setFeedback(null);
       setError('');
@@ -78,7 +78,7 @@ export function QuizWorkspace({ lesson, languageCode, onExit, onComplete, onLogi
       .catch((caught) => {
         if (!controller.signal.aborted)
           show(
-            examplePracticeProblem(type, lesson, language.code),
+            caught.status === 401 ? null : examplePracticeProblem(type, lesson, language.code),
             caught.status === 401
               ? 'auth-required'
               : caught.status === 404
@@ -201,6 +201,14 @@ export function QuizWorkspace({ lesson, languageCode, onExit, onComplete, onLogi
             <p className="practice-loading" role="status">
               문제를 불러오고 있어요...
             </p>
+          ) : loaded.status === 'auth-required' ? (
+            <div className="practice-auth-gate" role="alert">
+              <h1>로그인이 필요해요</h1>
+              <p>서버 문제를 불러오려면 로그인해 주세요.</p>
+              <button type="button" onClick={onLogin}>
+                Google로 로그인
+              </button>
+            </div>
           ) : (
             <>
               {example && (
