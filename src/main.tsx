@@ -1,6 +1,9 @@
 import { createRoot } from 'react-dom/client'
-import './styles/global.css'
+import { completeGoogleLogin } from './api/auth.js'
+import './index.css'
 import App from './app/App.tsx'
+
+completeGoogleLogin()
 
 createRoot(document.getElementById('root')).render(
     <App />

@@ -1,43 +1,33 @@
-# Codegram — HTML 기초 학습 화면
+# Codegram 프런트엔드
 
-React와 Vite로 만든 HTML 기초 학습 서비스의 프런트엔드입니다. 여정 홈에서 레슨을 선택하고, 선택형 개념 확인과 코드 문제를 풀 수 있습니다.
+React와 Vite로 만든 코딩 학습 화면입니다. 시작 화면, 언어별 학습 여정, 개념 문제, 코드 실습, 오답 노트를 제공합니다.
 
-## 실행
+## 실행과 검증
 
 ```bash
-npm install
+npm ci
 npm run dev
 ```
 
-검사 명령은 `npm run lint`, `npm run test`, `npm run build`입니다.
+개발 서버 주소는 Vite가 터미널에 표시합니다. 검증에는 `npm run lint`, `npm test`, `npm run build`를 사용합니다.
 
-## 주요 기능
+## 화면
 
-- 여정 지도, 레슨 선택, 강의 계획, 콘텐츠 검색
-- 선택형 개념 확인, HTML 코드 편집, 웹 미리보기 및 테스트 케이스
-- CodeMirror 문법 강조와 HTML 태그 자동 완성
-- Emmet 약어 확장
-- 레슨 진행률과 코드 초안 브라우저 저장
-- 작은 화면에서 메뉴와 학습 화면을 사용할 수 있는 반응형 레이아웃
+- `/`, `/auth`, `/login`: 시작 및 Google 로그인 화면
+- `/journeys/html/fundamentals`: HTML 여정과 웹 미리보기가 있는 실습
+- `/journeys/javascript/fundamentals`, `/journeys/python/fundamentals`, `/journeys/java/fundamentals`: 언어별 여정과 코드 실습
+- 각 여정의 사이드 메뉴 `오답 노트`: 틀린 개념 문제 복습과 코드 문제 재방문
+
+학습 화면에서는 선택형, 빈칸 채우기, 순서 맞추기, 단답형 문제를 코드 실습 전에 풀 수 있습니다. 문제 조회와 제출은 `/api/problems/{mcq|blank|parsons|short}`를 사용하며, 개발 서버는 `/api` 요청을 `https://codegram.me`로 전달합니다. 서버 응답이 없으면 예시 문제를 표시합니다.
 
 ## 소스 구조
 
-- `src/app/App.tsx`: 홈·레슨 화면 전환과 전역 모달
-- `src/pages/`: 홈 및 레슨 페이지
-- `src/components/common/`: 공통 UI
-- `src/components/home/`, `src/components/lesson/`: 화면별 재사용 UI
-- `src/constants/dummy/`: 여정, 문제, 메뉴 더미 데이터
-- `src/hooks/`: 재사용 가능한 상태·화면 로직
-- `src/utils/`: 진행 저장, 에셋 경로, Emmet 처리 함수
-- `src/styles/`: 전역 폰트·스타일과 화면 스타일
-- `src/main.tsx`: Vite 앱 진입점
+- `src/app/App.tsx`, `src/app/routes.js`: 인증·학습 경로 연결
+- `src/components/auth/`, `src/pages/AuthPage.jsx`: 시작 화면과 Google 로그인
+- `src/components/home/`: 학습 지도, 오답 노트, 언어 선택
+- `src/components/lesson/`: 코드 편집기와 문제 유형별 컴포넌트
+- `src/data/`: 언어별 커리큘럼과 예시 문제
+- `src/api/`: 인증 요청과 공통 Axios 클라이언트를 통한 문제 서버 통신
+- `src/lib/`: 진행 상태, 오답 기록, 편집기 지원 기능
 
-## 코드 규칙
-
-- React 컴포넌트와 컴포넌트 파일은 PascalCase, 함수·변수는 camelCase를 사용합니다.
-- 이벤트 핸들러는 `handle` 접두사를, 이벤트 콜백 props는 `on` 접두사를 사용합니다.
-- 색상과 폰트, 화면 스타일은 `src/styles/`에서 관리합니다. 런타임 값이 필요한 위치·진행률 표시는 계산된 인라인 값으로 전달합니다.
-- 정적 학습 데이터는 `src/constants/dummy/`에서 관리합니다. 아직 연결된 서버 API가 없어 문제와 진행 상태는 브라우저에서 처리합니다. 실제 API를 연결할 때는 `src/api/`에 Axios 클라이언트를 두고 기존 문제 데이터를 폴백으로 사용합니다.
-- 새 작업은 `feature/#이슈번호-설명` 브랜치에서 진행하며 `main`에 직접 커밋하지 않습니다. PR에는 화면, 컴포넌트, 함수, 더미 데이터와 기타 처리 내용을 적고 최소 한 명의 리뷰 승인을 받은 뒤 리뷰어가 병합합니다.
-
-레슨 진행 상태와 코드 초안은 브라우저의 `localStorage`에 저장됩니다. 계정, 서버 채점, 결제 기능은 연결되어 있지 않습니다.
+컴포넌트 스타일은 해당 컴포넌트와 같은 폴더의 CSS 파일에 둡니다. 진행 상태, 코드 초안, 오답 기록은 현재 브라우저의 저장소에 보관됩니다. 다른 기기와 동기화되지는 않습니다.

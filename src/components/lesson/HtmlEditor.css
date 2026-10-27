@@ -1,0 +1,47 @@
+.html-editor {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+  overflow: hidden;
+}
+.html-editor .cm-editor {
+  height: 100%;
+  min-height: 0;
+}
+.html-editor .cm-scroller {
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+.html-editor .cm-editor > .cm-scroller > .cm-selectionLayer .cm-selectionBackground {
+  background-color: #264f78 !important;
+}
+.html-editor .cm-editor .cm-content::selection,
+.html-editor .cm-editor .cm-content ::selection {
+  background-color: transparent !important;
+}
+.html-editor .cm-tooltip.cm-tooltip-autocomplete {
+  border: 1px solid #454545;
+  border-radius: 6px;
+  background: #252526;
+  color: #d8e5ed;
+  box-shadow: 0 8px 24px rgb(0 0 0 / 28%);
+}
+.html-editor .cm-tooltip-autocomplete ul li {
+  min-height: 27px;
+  padding: 4px 10px;
+}
+.html-editor .cm-tooltip-autocomplete ul li[aria-selected] {
+  background: #094771;
+  color: #fff;
+}
+.html-editor .cm-completionLabel {
+  color: #d8e5ed;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+.html-editor .cm-completionDetail {
+  margin-left: 12px;
+  color: #9b9b9b;
+  font-family: sans-serif;
+}

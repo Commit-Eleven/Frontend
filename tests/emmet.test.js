@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { getEmmetExpansion } from '../src/utils/emmet.js'
+import { getEmmetExpansion } from '../src/lib/emmet.js'
 
 test('expands a nested, repeated Emmet abbreviation with numbered classes', () => {
   const abbreviation = 'ul>li.item$*3'

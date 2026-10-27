@@ -1,36 +1,34 @@
-import { useEffect, useRef, useState } from 'react'
-import { sidebarItems } from '../../constants/dummy/navigation.js'
+import { useEffect, useRef, useState } from 'react';
+import { sidebarItems } from '../../data/navigation.js';
+import { MoreIcon } from '../common/MoreIcon.jsx';
+import './MobileNav.css';
 
-/** 모바일 화면용 하단 내비게이션을 표시합니다. */
-export function MobileNav() {
-  const [moreOpen, setMoreOpen] = useState(false)
-  const [activeItem, setActiveItem] = useState('학습')
-  const moreRef = useRef(null)
+export function MobileNav({ activeItem = '학습', onNavigate = () => {}, onLogout = () => {} }) {
+  const [moreOpen, setMoreOpen] = useState(false);
+  const moreRef = useRef(null);
 
   useEffect(() => {
-    if (!moreOpen) return undefined
+    if (!moreOpen) return undefined;
 
-    /** 하단 메뉴 바깥을 누르면 더보기 메뉴를 닫습니다. */
     const handlePointerDown = (event) => {
-      if (!moreRef.current?.contains(event.target)) setMoreOpen(false)
-    }
-    /** Escape 키를 눌렀을 때 더보기 메뉴를 닫습니다. */
+      if (!moreRef.current?.contains(event.target)) setMoreOpen(false);
+    };
     const handleKeyDown = (event) => {
-      if (event.key === 'Escape') setMoreOpen(false)
-    }
+      if (event.key === 'Escape') setMoreOpen(false);
+    };
 
-    document.addEventListener('pointerdown', handlePointerDown)
-    document.addEventListener('keydown', handleKeyDown)
+    document.addEventListener('pointerdown', handlePointerDown);
+    document.addEventListener('keydown', handleKeyDown);
     return () => {
-      document.removeEventListener('pointerdown', handlePointerDown)
-      document.removeEventListener('keydown', handleKeyDown)
-    }
-  }, [moreOpen])
+      document.removeEventListener('pointerdown', handlePointerDown);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [moreOpen]);
 
   return (
     <nav className="mobile-nav" aria-label="하단 메뉴">
       {sidebarItems.map((item) => {
-        const isActive = activeItem === item.label
+        const isActive = activeItem === item.label;
         return (
           <button
             key={item.label}
@@ -39,11 +37,11 @@ export function MobileNav() {
             aria-label={item.label}
             aria-current={isActive ? 'page' : undefined}
             title={item.label}
-            onClick={() => setActiveItem(item.label)}
+            onClick={() => onNavigate(item.label)}
           >
             <img src={'/coddy/sidebar/' + item.asset} alt="" />
           </button>
-        )
+        );
       })}
       <div className="mobile-more-wrap" ref={moreRef}>
         <button
@@ -55,16 +53,29 @@ export function MobileNav() {
           title="더보기"
           onClick={() => setMoreOpen((open) => !open)}
         >
-          <span className="sidebar-more-icon" aria-hidden="true">•••</span>
+          <MoreIcon />
         </button>
         {moreOpen && (
           <div className="mobile-more-menu" role="menu" aria-label="더보기 메뉴">
-            <button type="button" role="menuitem" onClick={() => setMoreOpen(false)}>설정</button>
-            <button type="button" role="menuitem" onClick={() => setMoreOpen(false)}>도움말</button>
-            <button type="button" role="menuitem" onClick={() => setMoreOpen(false)}>로그아웃</button>
+            <button type="button" role="menuitem" onClick={() => setMoreOpen(false)}>
+              설정
+            </button>
+            <button type="button" role="menuitem" onClick={() => setMoreOpen(false)}>
+              도움말
+            </button>
+            <button
+              type="button"
+              role="menuitem"
+              onClick={() => {
+                setMoreOpen(false);
+                onLogout();
+              }}
+            >
+              로그아웃
+            </button>
           </div>
         )}
       </div>
     </nav>
-  )
+  );
 }

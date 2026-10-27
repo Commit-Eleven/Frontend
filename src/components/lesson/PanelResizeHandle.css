@@ -1,0 +1,59 @@
+.panel-resize-handle {
+  position: relative;
+  z-index: 3;
+  width: 10px;
+  min-width: 10px;
+  height: 100%;
+  cursor: col-resize;
+  touch-action: none;
+  outline: none;
+}
+
+.panel-resize-handle::before {
+  content: '';
+  position: absolute;
+  inset: 0 4px;
+  background: #e5e5e5;
+  transition: background-color 120ms ease, inset 120ms ease;
+}
+
+.panel-resize-handle:hover::before,
+.panel-resize-handle:focus-visible::before,
+.panel-resize-handle.is-dragging::before {
+  inset: 0 3px;
+  background: var(--primary);
+}
+
+.lesson-theory-resizer {
+  background: #fff;
+}
+
+.lesson-theory-resizer::before,
+.lesson-theory-resizer:hover::before,
+.lesson-theory-resizer:focus-visible::before,
+.lesson-theory-resizer.is-dragging::before {
+  inset: 0 0 0 auto;
+  width: 1px;
+  background: #c9c9c9;
+  box-shadow: -2px 0 4px rgb(0 0 0 / 12%);
+}
+
+.preview-resizer {
+  background: #1e1e1e;
+}
+
+.preview-resizer::before,
+.preview-resizer:hover::before,
+.preview-resizer:focus-visible::before,
+.preview-resizer.is-dragging::before {
+  inset: 0 0 0 auto;
+  width: 1px;
+  background: #777;
+  box-shadow: -2px 0 4px rgb(0 0 0 / 22%);
+}
+
+@media (max-width: 700px) {
+  .lesson-theory-resizer {
+    display: none;
+  }
+}
