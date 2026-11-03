@@ -38,3 +38,9 @@
 .settings-delete-confirm button { flex: 1; min-height: 36px; border: 1px solid #e5e5e5; border-radius: 9px; background: #fff; color: #555; font-size: 11px; font-weight: 650; cursor: pointer; }
 .settings-delete-confirm button.is-danger { border-color: #b55454; background: #b55454; color: #fff; }
 .settings-delete-notice { margin: 10px 0 0; color: #b55454; font-size: 11px; }
+
+.settings-learning-hint {
+  margin: 14px 0 0;
+  font-size: 13px;
+  color: var(--muted);
+}

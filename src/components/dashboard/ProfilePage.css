@@ -87,3 +87,14 @@
   .profile-stat-grid { gap: 6px; }
   .profile-stat-card { min-height: 82px; }
 }
+.profile-history-list { display: grid; margin: 12px 0 0; padding: 0; list-style: none; }
+.profile-history-list li { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid #f0f0f0; font-size: 12px; }
+.profile-history-list li:last-child { border-bottom: 0; }
+.profile-history-list li > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.profile-history-list small { color: #999; font-size: 10px; }
+.profile-history-list b { min-width: 36px; padding: 3px 7px; border-radius: 6px; font-size: 10px; text-align: center; }
+.profile-history-list b.is-plus { background: #fff5dc; color: #b9801a; }
+.profile-history-list b.is-correct { background: var(--primary-soft); color: var(--primary-strong); }
+.profile-history-list b.is-wrong { background: #fff1ef; color: #b55454; }
+.profile-more-button { display: block; width: 100%; margin-top: 10px; min-height: 34px; border: 1px solid #e5e5e5; border-radius: 8px; background: #fff; color: var(--primary-strong); font-size: 11px; font-weight: 700; }
+.profile-more-button:hover { background: var(--primary-wash); }

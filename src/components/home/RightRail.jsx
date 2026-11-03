@@ -1,64 +1,119 @@
 import { useEffect, useState } from 'react';
-import { fetchMyExp, fetchRanking, levelSummary } from '../../api/learning.js';
+import { authorizationHeaders } from '../../api/auth.js';
+import { expSummary, fetchHome, fetchMyExp, fetchRanking } from '../../api/learning.js';
 import { icon } from '../../lib/assets.js';
 import { Stats } from '../common/Stats.jsx';
+import { UnitDetailModal } from './UnitDetailModal.jsx';
 import './RightRail.css';
 
-export function RightRail({ completedCount, initialCompletedCount = 0 }) {
+const tierNames = { normal: '학습자', creator: '크리에이터', admin: '관리자' };
+
+export function RightRail({ onNavigate }) {
+  const loggedIn = Boolean(authorizationHeaders().Authorization);
   const [exp, setExp] = useState(null);
-  const [ranking, setRanking] = useState([]);
+  const [home, setHome] = useState(null);
+  const [ranking, setRanking] = useState(null);
+  const [unitOpen, setUnitOpen] = useState(false);
 
   useEffect(() => {
+    if (!loggedIn) return undefined;
     const controller = new AbortController();
-    fetchMyExp({ signal: controller.signal }).then(setExp).catch(() => {});
-    fetchRanking({ signal: controller.signal }).then(setRanking).catch(() => {});
+    const { signal } = controller;
+    fetchMyExp({ signal }).then((data) => setExp(expSummary(data))).catch(() => {});
+    fetchHome({ signal }).then(setHome).catch(() => {});
+    fetchRanking({ page: 1, size: 3 }, { signal }).then(setRanking).catch(() => {});
     return () => controller.abort();
-  }, []);
+  }, [loggedIn]);
 
-  const earned = Math.max(0, completedCount - initialCompletedCount);
-  const earnedXp = earned * 20;
-  const server = levelSummary(exp);
-  const level = server?.level ?? 2;
-  const percent = server?.percent ?? Math.min(100, 72 + earnedXp * 0.54);
-  const remaining = server?.remaining ?? Math.max(0, 52 - earnedXp);
-  const topRanks = ranking.slice(0, 3);
+  const latest = exp?.recent[0];
+  const unit = home?.currentUnit;
+  const recommendations = home?.recommendations.slice(0, 2) ?? [];
+  const topRanks = ranking?.items.slice(0, 3) ?? [];
+  const meInTop = topRanks.some((row) => row.isMe);
+
   return (
     <aside className="right-rail">
       <Stats />
       <div className="rail-card level-card">
-        <div className="level-avatar">⋯</div>
+        <div className="level-avatar">XP</div>
         <div className="level-info">
-          <div className="level-top">
-            <strong>레벨 {level}</strong>
-            <div className="level-progress">
-              <span style={{ width: percent + '%' }} />
-            </div>
-          </div>
-          <small>킬로 {remaining} XP 남음</small>
+          {exp ? (
+            <>
+              <div className="level-top">
+                <strong>{exp.totalExp.toLocaleString()} XP</strong>
+                <span className="level-tier">{tierNames[exp.tier] || exp.tier}</span>
+              </div>
+              <small>{latest ? `최근 +${latest.amount} XP${latest.problemTitle ? ' · ' + latest.problemTitle : ''}` : '문제를 맞히면 XP가 쌓여요.'}</small>
+            </>
+          ) : (
+            <>
+              <div className="level-top"><strong>내 경험치</strong></div>
+              <small>{loggedIn ? '경험치를 불러오는 중…' : '로그인하면 XP가 기록돼요.'}</small>
+            </>
+          )}
         </div>
       </div>
+
+      {unit && (
+        <div className="rail-card unit-card">
+          <div className="rail-heading">
+            <strong>이어서 학습</strong>
+            <button type="button" onClick={() => setUnitOpen(true)}>단원 보기</button>
+          </div>
+          <p className="unit-card-course">{unit.courseTitle}</p>
+          <h3>{unit.title}</h3>
+          <div className="unit-card-track" aria-label={`${unit.total}문제 중 ${unit.solved}문제 해결`}>
+            <span style={{ width: (unit.total ? Math.round((unit.solved / unit.total) * 100) : 0) + '%' }} />
+          </div>
+          <small className="unit-card-meta">
+            {unit.solved} / {unit.total}문제
+            {unit.nextStageTitle ? ` · ${unit.remainingToUnlock}문제 더 맞히면 '${unit.nextStageTitle}' 열림` : ''}
+          </small>
+          {recommendations.length > 0 && (
+            <ul className="unit-card-list">
+              {recommendations.map((item) => (
+                <li key={item.problemId}>
+                  <span>{item.title}<small>{item.typeLabel}</small></span>
+                  <b>+{item.xp} XP</b>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
+
       <div className="rail-card leaderboard-card">
         <div className="rail-heading">
           <strong>리더보드</strong>
-          <span>보기</span>
+          {onNavigate && <button type="button" onClick={() => onNavigate('랭킹')}>보기</button>}
         </div>
         {topRanks.length ? (
-          <ol className="rail-rank-list">
-            {topRanks.map((user, index) => (
-              <li className={'rail-rank-row' + (user.isMe ? ' is-me' : '')} key={user.id}>
-                <span className="rail-rank-number">{user.rank || index + 1}</span>
-                <span className="rail-rank-name">{user.nickname || '학습자'}</span>
-                <b>{user.totalExp.toLocaleString()} XP</b>
-              </li>
-            ))}
-          </ol>
+          <>
+            <ol className="rail-rank-list">
+              {topRanks.map((user) => (
+                <li className={'rail-rank-row' + (user.isMe ? ' is-me' : '')} key={user.userId ?? user.rank}>
+                  <span className="rail-rank-number">{user.rank}</span>
+                  <span className="rail-rank-name">{user.nickname || '학습자'}</span>
+                  <b>{user.totalExp.toLocaleString()} XP</b>
+                </li>
+              ))}
+            </ol>
+            {ranking.me && !meInTop && (
+              <div className="rail-rank-row is-me rail-rank-me">
+                <span className="rail-rank-number">{ranking.me.rank}</span>
+                <span className="rail-rank-name">나</span>
+                <b>{ranking.me.totalExp.toLocaleString()} XP</b>
+              </div>
+            )}
+          </>
         ) : (
           <div className="leaderboard-inner">
             <img src={icon('leaderboard/locked')} alt="" />
-            <p>학습을 시작하여 XP를 획득하고 이번 주 리더보드에 참여하세요!</p>
+            <p>{loggedIn ? '학습을 시작하여 XP를 획득하고 리더보드에 참여하세요!' : '로그인하면 리더보드에 참여할 수 있어요!'}</p>
           </div>
         )}
       </div>
+      {unitOpen && unit && <UnitDetailModal unitId={unit.unitId} onClose={() => setUnitOpen(false)} />}
     </aside>
   );
 }

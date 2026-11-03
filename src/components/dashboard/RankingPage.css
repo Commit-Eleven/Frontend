@@ -1,0 +1,29 @@
+.ranking-page { padding-bottom: 26px; }
+.ranking-me { display: grid; grid-template-columns: auto 1fr auto; grid-template-rows: auto auto; align-items: center; column-gap: 14px; margin-bottom: 12px; padding: 18px 20px; border: 1px solid var(--primary-border); border-radius: 13px; background: var(--primary-wash); }
+.ranking-me > span:first-child { grid-row: 1 / 3; color: var(--primary-strong); font-size: 12px; font-weight: 700; }
+.ranking-me strong { font-size: 28px; line-height: 1.1; }
+.ranking-me strong small { margin-left: 2px; font-size: 14px; }
+.ranking-me-exp { grid-row: 1 / 3; grid-column: 3; font-size: 14px; font-weight: 700; }
+.ranking-me-total { color: var(--muted); font-size: 11px; }
+.ranking-list-card { padding: 6px 17px; border: 1px solid #e4e4e4; border-radius: 13px; background: #fff; }
+.ranking-list { margin: 0; padding: 0; list-style: none; }
+.ranking-list[aria-busy='true'] { opacity: .6; }
+.ranking-list li { display: grid; grid-template-columns: 34px minmax(0, 1fr) auto; align-items: center; gap: 10px; min-height: 48px; border-bottom: 1px solid #f0f0f0; font-size: 13px; }
+.ranking-list li:last-child { border-bottom: 0; }
+.ranking-list li.is-me { margin: 0 -9px; padding: 0 9px; border-radius: 9px; background: var(--primary-wash); }
+.ranking-list b { color: #999; text-align: center; }
+.ranking-list b.is-top { color: var(--primary-strong); font-size: 15px; }
+.ranking-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ranking-name small { color: #999; font-size: 11px; }
+.ranking-exp { font-weight: 700; }
+.ranking-muted { margin: 16px 0; color: #888; font-size: 12px; }
+.ranking-text-button { margin-left: 6px; border: 0; background: none; color: var(--primary-strong); font-size: 12px; font-weight: 700; }
+.ranking-pagination { display: flex; align-items: center; justify-content: center; gap: 14px; margin-top: 14px; color: #888; font-size: 12px; }
+.ranking-pagination button { min-height: 32px; padding: 0 14px; border: 1px solid #e0e0e0; border-radius: 8px; background: #fff; color: #444; font-size: 12px; font-weight: 700; }
+.ranking-pagination button:hover:not(:disabled) { background: var(--primary-wash); }
+.ranking-pagination button:disabled { opacity: .45; }
+.ranking-state { display: grid; min-height: 240px; align-content: center; justify-items: center; gap: 4px; padding: 24px; border: 1px solid #e4e4e4; border-radius: 13px; text-align: center; }
+.ranking-state h2 { margin: 0; font-size: 17px; }
+.ranking-state p { margin: 6px 0 14px; color: #888; font-size: 12px; }
+.ranking-primary { min-height: 38px; padding: 0 16px; border: 1px solid var(--primary); border-radius: 9px; background: var(--primary); color: #fff; font-size: 13px; font-weight: 700; }
+.ranking-primary:hover { background: var(--primary-hover); }

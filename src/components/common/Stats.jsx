@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
-import { codingLanguages } from '../../data/navigation.js'
+import { authorizationHeaders } from '../../api/auth.js'
 import { fetchHome } from '../../api/learning.js'
+import { codingLanguages } from '../../data/navigation.js'
 import { icon } from '../../lib/assets.js'
 import { selectCodingLanguage, useCodingLanguage } from '../../hooks/useCodingLanguage.js'
 import './Stats.css'
@@ -10,17 +11,15 @@ export function Stats({ compact = false }) {
   const [languageOpen, setLanguageOpen] = useState(false)
   const languageRef = useRef(null)
   const [streak, setStreak] = useState(0)
+  const loggedIn = Boolean(authorizationHeaders().Authorization)
 
+  // GET /users/me/home 의 연속 학습 일수
   useEffect(() => {
+    if (!loggedIn) return undefined
     const controller = new AbortController()
-    fetchHome({ signal: controller.signal })
-      .then((home) => {
-        const value = Number(home?.streak ?? home?.streakDays ?? home?.streakCount)
-        if (Number.isFinite(value)) setStreak(value)
-      })
-      .catch(() => {})
+    fetchHome({ signal: controller.signal }).then((home) => setStreak(home.stats.streakDays)).catch(() => {})
     return () => controller.abort()
-  }, [])
+  }, [loggedIn])
 
   useEffect(() => {
     if (!languageOpen) return undefined

@@ -1,15 +1,12 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { levelSummary, normalizeRanking, normalizeServerWrongNotes, toLanguageCode } from '../src/api/learning.js'
+import { expSummary, normalizeHome, normalizeRanking, normalizeServerWrongNotes, normalizeUnit, toLanguageCode } from '../src/api/learning.js'
 
-test('랭킹 응답을 화면용 행으로 바꾼다', () => {
-  const rows = normalizeRanking({ items: [{ rank: 1, user: { id: 7, nickname: '민트', tag: '0001' }, totalExp: 120 }] })
-  assert.deepEqual(rows, [{ id: '7', rank: 1, nickname: '민트', tag: '0001', totalExp: 120, isMe: false }])
-})
-
-test('내 경험치 응답에 없는 값은 null로 둔다', () => {
-  assert.deepEqual(levelSummary({ level: 3, totalExp: 80, nextLevelExp: 100 }), { level: 3, totalExp: 80, remaining: 20, percent: null })
-  assert.equal(levelSummary(null), null)
+test('내 경험치 응답을 화면용으로 맞춘다', () => {
+  const summary = expSummary({ totalExp: 120, tier: 'normal', recent: [{ amount: 10, reason: 'solve', problemTitle: '변수' }] })
+  assert.equal(summary.totalExp, 120)
+  assert.equal(summary.recent[0].amount, 10)
+  assert.equal(expSummary(null), null)
 })
 
 test('서버 오답 노트는 다시 풀 수 없는 읽기 전용 기록이 된다', () => {
@@ -29,4 +26,29 @@ test('로그인 토큰에서 내 사용자 ID를 꺼낸다', async () => {
   const payload = btoa(JSON.stringify({ sub: 12 })).replace(/=+$/, '')
   assert.equal(tokenUserId({ Authorization: 'Bearer head.' + payload + '.sign' }), 12)
   assert.equal(tokenUserId({}), null)
+})
+
+test('메인 페이지 응답에서 연속 학습과 현재 단원을 꺼낸다', () => {
+  const home = normalizeHome({
+    stats: { solvedCount: 3, accuracy: 75, streakDays: 2, totalExp: 30 },
+    currentUnit: { unitId: 'vars-types', title: '변수와 자료형', courseTitle: 'Python 초급', solved: 3, total: 10, remainingToUnlock: 7, nextStageTitle: '조건문' },
+    recommendations: [{ problemId: 'mc-001', title: '변수', type: 'mcq', typeLabel: '객관식', xp: 10, progress: { solved: 1, total: 4 } }],
+  })
+  assert.equal(home.stats.streakDays, 2)
+  assert.equal(home.currentUnit.unitId, 'vars-types')
+  assert.equal(home.recommendations[0].total, 4)
+  assert.equal(normalizeHome({}).currentUnit, null)
+})
+
+test('랭킹 응답에서 내 행을 표시한다', () => {
+  const ranking = normalizeRanking({ items: [{ rank: 1, userId: 7, nickname: '민트', tag: '0001', totalExp: 120 }, { rank: 2, userId: 9, nickname: '나', totalExp: 80 }], page: 1, size: 20, total: 2, me: { rank: 2, userId: 9, totalExp: 80 } })
+  assert.equal(ranking.items[0].isMe, false)
+  assert.equal(ranking.items[1].isMe, true)
+  assert.equal(ranking.me.rank, 2)
+})
+
+test('단원 상세의 문제 상태와 다음 단원 잠금을 맞춘다', () => {
+  const unit = normalizeUnit({ unitId: 'vars-types', title: '변수와 자료형', completePercent: 30, problems: [{ index: 1, id: 'mc-001', status: 'correct' }, { index: 2, id: 'mc-002', status: 'x' }], nextUnit: { unitId: 'conditionals', title: '조건문', unlocked: false } })
+  assert.equal(unit.problems[1].status, 'todo')
+  assert.equal(unit.nextUnit.unlocked, false)
 })

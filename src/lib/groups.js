@@ -1,25 +1,21 @@
-export const GROUPS_KEY = 'codegram.groups.v1'
-export const categories = ['스터디', '프로젝트', '알고리즘', '취업 준비', '기타']
-export const languages = ['HTML', 'JavaScript', 'Java', 'Python']
+import { GROUP_CAPACITY_MAX, GROUP_CAPACITY_MIN, GROUP_DESCRIPTION_MAX, GROUP_NAME_MAX } from '../api/groups.js'
 
+/** 그룹 생성 폼 입력을 서버 규칙대로 검증합니다. 문제가 없으면 빈 문자열을 반환합니다. */
 export function validateGroup(group) {
-  if (!group.name.trim() || group.name.trim().length > 30) return '팀명은 1~30자로 입력해 주세요.'
-  if (group.description.length > 500) return '팀 소개는 500자 이내로 입력해 주세요.'
-  if (!categories.includes(group.category)) return '카테고리를 선택해 주세요.'
-  if (!group.languages.length || group.languages.some(language => !languages.includes(language))) return '사용 언어를 하나 이상 선택해 주세요.'
-  if (group.members.length > 30 || group.members.some(member => !member.trim() || member.length > 40)) return '팀원은 40자 이내의 이름으로 최대 30명까지 추가할 수 있어요.'
-  if (new Set(group.members.map(member => member.toLowerCase())).size !== group.members.length) return '같은 팀원을 중복해서 추가할 수 없어요.'
+  const name = String(group.name ?? '').trim()
+  if (!name || name.length > GROUP_NAME_MAX) return `팀명은 1~${GROUP_NAME_MAX}자로 입력해 주세요.`
+  if (String(group.description ?? '').trim().length > GROUP_DESCRIPTION_MAX) return `팀 소개는 ${GROUP_DESCRIPTION_MAX}자 이내로 입력해 주세요.`
+  const capacity = String(group.capacity ?? '').trim()
+  if (capacity && !(Number.isInteger(Number(capacity)) && Number(capacity) >= GROUP_CAPACITY_MIN && Number(capacity) <= GROUP_CAPACITY_MAX)) {
+    return `정원은 ${GROUP_CAPACITY_MIN}~${GROUP_CAPACITY_MAX}명 사이로 입력해 주세요.`
+  }
   return ''
 }
 
-export function readGroups(storage) {
-  try {
-    const parsed = JSON.parse(storage.getItem(GROUPS_KEY) || '[]')
-    if (!Array.isArray(parsed)) return []
-    return parsed.filter(group => group && typeof group.id === 'string' && typeof group.name === 'string' && typeof group.description === 'string' && Array.isArray(group.members) && group.members.every(member => typeof member === 'string') && Array.isArray(group.languages) && typeof group.image === 'string' && (!group.image || /^data:image\/(png|jpeg|webp);base64,/.test(group.image)) && !validateGroup(group))
-  } catch { return [] }
-}
-
-export function persistGroups(storage, groups) {
-  storage.setItem(GROUPS_KEY, JSON.stringify(groups))
+/** 서버 오류를 그룹 화면에서 보여줄 문장으로 바꿉니다. */
+export function groupErrorMessage(error, fallback) {
+  if (error?.status === 401) return '로그인이 만료됐어요. 다시 로그인해 주세요.'
+  if (error?.status === 403) return '이 작업을 할 권한이 없어요.'
+  if (error?.status === 404) return '그룹을 찾을 수 없어요.'
+  return error?.message || fallback
 }
