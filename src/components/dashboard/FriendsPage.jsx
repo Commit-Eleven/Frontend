@@ -53,6 +53,7 @@ export function FriendsPage() {
   const [actionId, setActionId] = useState(null)
   const [confirmRemove, setConfirmRemove] = useState(null)
   const [notice, setNotice] = useState('')
+  const [removeError, setRemoveError] = useState('')
   const [reloadKey, setReloadKey] = useState(0)
 
   const reloadFriends = () => {
@@ -143,16 +144,24 @@ export function FriendsPage() {
   const handleRemove = async (item) => {
     if (confirmRemove !== item.friendshipId) {
       setConfirmRemove(item.friendshipId)
+      setRemoveError('')
+      setNotice('')
       return
     }
     setActionId(item.friendshipId)
-    setConfirmRemove(null)
+    setRemoveError('')
     try {
       await removeFriend(item.friendshipId)
-      setNotice('친구 요청을 정리했어요.')
-      reloadFriends()
+      setFriends((current) => current.filter((friend) => friend.friendshipId !== item.friendshipId))
+      setRequestedIds((current) => {
+        const next = new Set(current)
+        next.delete(item.user.id)
+        return next
+      })
+      setConfirmRemove(null)
+      setNotice(item.status === 'accepted' ? item.user.nickname + ' 님을 친구 목록에서 삭제했습니다.' : '친구 요청을 정리했어요.')
     } catch (error) {
-      setLoadError(error)
+      setRemoveError(error.status === 401 ? '로그인이 만료되었습니다. 다시 로그인해 주세요.' : '삭제하지 못했습니다. 다시 시도해 주세요.')
     } finally {
       setActionId(null)
     }
@@ -217,7 +226,7 @@ export function FriendsPage() {
                   <button
                     type="button"
                     className={requested ? 'friends-small-button is-sent' : 'friends-small-button'}
-                    disabled={requested || actionId === user.id}
+                    disabled={requested || actionId !== null}
                     onClick={() => handleSendRequest(user)}
                   >
                     {requested ? '요청됨' : actionId === user.id ? '전송 중' : '친구 추가'}
@@ -232,22 +241,23 @@ export function FriendsPage() {
       <div className="friends-list-section">
         <div className="friends-list-heading">
           <h2>내 네트워크</h2>
-          <button type="button" className="friends-refresh" onClick={reloadFriends} disabled={loading}>
+          <button type="button" className="friends-refresh" onClick={reloadFriends} disabled={loading || actionId !== null}>
             새로고침
           </button>
         </div>
         <div className="friends-tabs" role="tablist" aria-label="친구 목록">
-          <button type="button" role="tab" aria-selected={activeTab === 'friends'} className={activeTab === 'friends' ? 'is-active' : ''} onClick={() => setActiveTab('friends')}>
+          <button type="button" role="tab" aria-selected={activeTab === 'friends'} className={activeTab === 'friends' ? 'is-active' : ''} onClick={() => { setActiveTab('friends'); setConfirmRemove(null); setRemoveError('') }}>
             친구 <span>{accepted.length}</span>
           </button>
-          <button type="button" role="tab" aria-selected={activeTab === 'incoming'} className={activeTab === 'incoming' ? 'is-active' : ''} onClick={() => setActiveTab('incoming')}>
+          <button type="button" role="tab" aria-selected={activeTab === 'incoming'} className={activeTab === 'incoming' ? 'is-active' : ''} onClick={() => { setActiveTab('incoming'); setConfirmRemove(null); setRemoveError('') }}>
             받은 요청 <span>{incoming.length}</span>
           </button>
-          <button type="button" role="tab" aria-selected={activeTab === 'outgoing'} className={activeTab === 'outgoing' ? 'is-active' : ''} onClick={() => setActiveTab('outgoing')}>
+          <button type="button" role="tab" aria-selected={activeTab === 'outgoing'} className={activeTab === 'outgoing' ? 'is-active' : ''} onClick={() => { setActiveTab('outgoing'); setConfirmRemove(null); setRemoveError('') }}>
             보낸 요청 <span>{outgoing.length}</span>
           </button>
         </div>
 
+        {removeError && <p className="friends-remove-error" role="alert">{removeError}</p>}
         {loadError?.status === 401 ? (
           <div className="friends-auth-card">
             <h3>친구 기능을 사용하려면 로그인해 주세요</h3>
@@ -270,19 +280,31 @@ export function FriendsPage() {
                 <div className="friend-row-actions">
                   {activeTab === 'incoming' ? (
                     <>
-                      <button type="button" className="friends-small-button" disabled={actionId === item.friendshipId} onClick={() => handleAccept(item)}>
+                      <button type="button" className="friends-small-button" disabled={actionId !== null} onClick={() => handleAccept(item)}>
                         {actionId === item.friendshipId ? '처리 중' : '수락'}
                       </button>
-                      <button type="button" className="friends-text-button" disabled={actionId === item.friendshipId} onClick={() => handleRemove(item)}>
+                      <button type="button" className="friends-text-button" disabled={actionId !== null} onClick={() => handleRemove(item)}>
                         {confirmRemove === item.friendshipId ? '요청 거절' : '거절'}
                       </button>
                     </>
                   ) : activeTab === 'outgoing' ? (
-                    <button type="button" className="friends-text-button" disabled={actionId === item.friendshipId} onClick={() => handleRemove(item)}>
+                    <button type="button" className="friends-text-button" disabled={actionId !== null} onClick={() => handleRemove(item)}>
                       {confirmRemove === item.friendshipId ? '취소 확인' : '요청 대기'}
                     </button>
                   ) : (
-                    <span className="friends-xp-badge">친구</span>
+                    <div className="friend-remove-actions">
+                      {confirmRemove === item.friendshipId ? (
+                        <>
+                          <span className="friend-remove-prompt">친구를 삭제할까요?</span>
+                          <button type="button" className="friends-text-button" disabled={actionId !== null} onClick={() => { setConfirmRemove(null); setRemoveError('') }}>취소</button>
+                          <button type="button" className="friends-remove-button" aria-label={`${item.user.nickname} 친구 삭제 확인`} disabled={actionId !== null} onClick={() => handleRemove(item)}>
+                            {actionId === item.friendshipId ? '삭제 중…' : '삭제 확인'}
+                          </button>
+                        </>
+                      ) : (
+                        <button type="button" className="friends-text-button" aria-label={`${item.user.nickname} 친구 삭제`} disabled={actionId !== null} onClick={() => handleRemove(item)}>친구 삭제</button>
+                      )}
+                    </div>
                   )}
                 </div>
               </article>

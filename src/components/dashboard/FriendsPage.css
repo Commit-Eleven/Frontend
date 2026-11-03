@@ -91,3 +91,14 @@
   .friends-tabs button { font-size: 10px; }
   .friends-text-button { font-size: 10px; }
 }
+
+.friend-remove-actions { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 8px; }
+.friend-remove-prompt { color: #777; font-size: 11px; }
+.friends-remove-button { min-height: 31px; padding: 0 10px; border: 1px solid #e2bcbc; border-radius: 8px; background: #fff; color: #ae3636; font-size: 11px; white-space: nowrap; }
+.friends-remove-button:hover:not(:disabled) { background: #fff3f3; }
+.friends-remove-button:disabled { opacity: .5; }
+.friends-remove-error { color: #ae3636; font-size: 12px; line-height: 1.6; }
+@media (max-width: 480px) {
+  .friend-row { flex-wrap: wrap; padding: 12px 0; }
+  .friend-row-actions { margin-left: auto; }
+}
