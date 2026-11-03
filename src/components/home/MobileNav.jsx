@@ -46,7 +46,7 @@ export function MobileNav({ activeItem = '학습', onNavigate = () => {}, onLogo
       <div className="mobile-more-wrap" ref={moreRef}>
         <button
           type="button"
-          className={'mobile-nav-item mobile-more-trigger' + (moreOpen || activeItem === '설정' || activeItem === '도움말' ? ' selected' : '')}
+          className={'mobile-nav-item mobile-more-trigger' + (moreOpen || activeItem === '설정' || activeItem === '도움말' || activeItem === '랭킹' ? ' selected' : '')}
           aria-label="더보기"
           aria-expanded={moreOpen}
           aria-haspopup="menu"
@@ -57,6 +57,9 @@ export function MobileNav({ activeItem = '학습', onNavigate = () => {}, onLogo
         </button>
         {moreOpen && (
           <div className="mobile-more-menu" role="menu" aria-label="더보기 메뉴">
+            <button type="button" role="menuitem" onClick={() => { setMoreOpen(false); onNavigate('랭킹'); }}>
+              랭킹
+            </button>
             <button type="button" role="menuitem" onClick={() => { setMoreOpen(false); onNavigate('설정'); }}>
                 설정
               </button>

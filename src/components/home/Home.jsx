@@ -9,6 +9,7 @@ import { FriendsPage } from '../dashboard/FriendsPage.jsx';
 import { ProfilePage } from '../dashboard/ProfilePage.jsx';
 import { SettingsPage } from '../dashboard/SettingsPage.jsx';
 import { HelpPage } from '../dashboard/HelpPage.jsx';
+import { RankingPage } from '../dashboard/RankingPage.jsx';
 import './Home.css';
 
 export function Home({
@@ -97,6 +98,8 @@ export function Home({
             <SettingsPage language={language} onNavigate={navigate} onLogout={onLogout} />
           ) : activeItem === '도움말' ? (
             <HelpPage onNavigate={navigate} />
+          ) : activeItem === '랭킹' ? (
+            <RankingPage />
           ) : (
             <>
               <div className="floating-course-card">
@@ -136,10 +139,7 @@ export function Home({
           )}
         </div>
       </main>
-      <RightRail
-        completedCount={completed.length}
-        initialCompletedCount={journey.initialCompleted.length}
-      />
+      <RightRail onNavigate={navigate} />
       <div className="mobile-stats">
         <Stats compact />
       </div>

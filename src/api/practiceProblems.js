@@ -1,7 +1,8 @@
 import { apiRequest } from './client.js'
 
 export const practiceTypes = ['mcq', 'blank', 'parsons', 'short']
-const languageTags = { html: 'html', javascript: 'js', python: 'python', java: 'java' }
+// 서버 /tags 는 html, javascript, java, python 을 그대로 돌려줍니다.
+const languageTags = { html: 'html', javascript: 'javascript', python: 'python', java: 'java' }
 let cachedTags = null
 
 function assertType(type) {
@@ -71,8 +72,7 @@ export function practiceAnswerBody(type, problem, answer) {
     if (!Array.isArray(blanks) || !blanks.length) throw new Error('빈칸 정보가 없습니다.')
     const values = blanks.map(({ no }) => String(answer?.[no] ?? '').trim())
     if (values.some((value) => !value)) throw new Error('모든 빈칸을 채워 주세요.')
-    if (values.length !== 1) throw new Error('빈칸 문제는 답안을 문자열 하나로 제출할 수 있어야 합니다.')
-    return { id, answer: values[0] }
+    return { id, answer: values.join(',') }
   }
   const shortAnswer = String(answer ?? '').trim()
   if (!shortAnswer) throw new Error('답을 입력해 주세요.')

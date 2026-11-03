@@ -1,7 +1,6 @@
-import { useState } from 'react'
-import { clearAccessToken } from '../../api/auth.js'
-import { updateStudyLanguage } from '../../api/community.js'
-import { deleteMyAccount } from '../../api/learning.js'
+import { useEffect, useState } from 'react'
+import { authorizationHeaders, clearAccessToken } from '../../api/auth.js'
+import { deleteMyAccount, fetchLearningSettings, updateLearningSettings } from '../../api/learning.js'
 import { readStudyLevel, saveStudyLevel, studyLevels } from '../../lib/studyLevel.js'
 import { codingLanguages } from '../../data/navigation.js'
 import { selectCodingLanguage } from '../../hooks/useCodingLanguage.js'
@@ -13,17 +12,42 @@ export function SettingsPage({ language, onNavigate, onLogout }) {
   const [deleting, setDeleting] = useState(false)
   const [notice, setNotice] = useState('')
   const [level, setLevel] = useState(readStudyLevel)
+  const [learningNotice, setLearningNotice] = useState('')
+  const loggedIn = Boolean(authorizationHeaders().Authorization)
+
+  // 로그인 상태면 서버에 저장된 학습 등급을 불러옵니다.
+  useEffect(() => {
+    if (!loggedIn) return undefined
+    const controller = new AbortController()
+    fetchLearningSettings({ signal: controller.signal })
+      .then((settings) => {
+        if (!settings?.studyLevel) return
+        setLevel(settings.studyLevel)
+        saveStudyLevel(settings.studyLevel)
+      })
+      .catch(() => {})
+    return () => controller.abort()
+  }, [loggedIn])
+
+  const saveLearning = async (change) => {
+    if (!loggedIn) return
+    setLearningNotice('')
+    try {
+      await updateLearningSettings(change)
+    } catch (requestError) {
+      setLearningNotice(requestError.message || '학습 설정을 저장하지 못했어요.')
+    }
+  }
 
   const chooseLanguage = (option) => {
     selectCodingLanguage(option)
-    // 로그인 상태면 서버의 학습 언어도 함께 바꿉니다.
-    updateStudyLanguage(option.code).catch(() => {})
+    saveLearning({ language: option.code })
   }
 
   const chooseLevel = (code) => {
     setLevel(code)
-    // TODO(API): 온보딩 이후 등급을 바꾸는 API가 아직 없어 이 기기에만 저장합니다.
     saveStudyLevel(code)
+    saveLearning({ level: code })
   }
 
   const deleteAccount = async () => {
@@ -100,6 +124,8 @@ export function SettingsPage({ language, onNavigate, onLogout }) {
             )
           })}
         </div>
+        {learningNotice && <p className="settings-delete-notice" role="alert">{learningNotice}</p>}
+        {!loggedIn && <p className="settings-learning-hint">로그인하면 학습 언어와 등급이 계정에 저장돼요.</p>}
       </article>
 
       <article className="settings-section-card settings-account-card">

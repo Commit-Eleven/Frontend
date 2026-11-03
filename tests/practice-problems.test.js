@@ -18,7 +18,7 @@ const problem = {
 test('builds the answer bodies expected by all four problem graders', () => {
   assert.deepEqual(practiceAnswerBody('mcq', { id: 'mcq1' }, 2), { id: 'mcq1', answer: 2 })
   assert.deepEqual(practiceAnswerBody('blank', problem, { 1: 'range', 2: 'print' }), {
-    id: 'blank1', answer: ['range', 'print'],
+    id: 'blank1', answer: 'range,print',
   })
   assert.deepEqual(practiceAnswerBody('parsons', { id: 'parsons1' }, [3, 0, 2, 1]), {
     id: 'parsons1', answer: [3, 0, 2, 1],
@@ -44,7 +44,7 @@ test('submits a blank answer and reads the backend correction response', async (
   mockApi(context, async (config) => {
     assert.equal(apiClient.getUri(config), '/api/problems/blank')
     assert.equal(config.method, 'POST')
-    assert.deepEqual(config.data, { id: 'blank1', answer: ['range', 'print'] })
+    assert.deepEqual(config.data, { id: 'blank1', answer: 'range,print' })
     return { data: { answer: [{ no: 1, answers: ['range'] }] } }
   })
 

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { beginGoogleLogin } from '../../api/auth.js'
 import { fetchMyProfile, fetchMyStats, updateMyNickname } from '../../api/community.js'
+import { expSummary, fetchMyExp, fetchMySubmissions } from '../../api/learning.js'
 import { DashboardPageHeader } from './DashboardPageHeader.jsx'
 import './ProfilePage.css'
 
@@ -16,6 +17,110 @@ const languageNames = {
 
 const levelNames = { beginner: '초급', intermediate: '중급', advanced: '고급' }
 const typeNames = { mcq: '선택형', blank: '빈칸 채우기', parsons: '순서 맞추기', short: '단답형' }
+const tierNames = { normal: '학습자', creator: '크리에이터', admin: '관리자' }
+
+const formatDate = (value) => {
+  const date = value ? new Date(value) : null
+  return date && !Number.isNaN(date.getTime())
+    ? date.toLocaleString('ko-KR', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' })
+    : ''
+}
+
+/** GET /users/me/exp — 최근에 얻은 경험치 */
+function ExpHistory() {
+  const [exp, setExp] = useState(null)
+  const [failed, setFailed] = useState(false)
+
+  useEffect(() => {
+    const controller = new AbortController()
+    fetchMyExp({ signal: controller.signal })
+      .then((data) => setExp(expSummary(data)))
+      .catch((requestError) => {
+        if (requestError.name !== 'CanceledError' && requestError.name !== 'AbortError') setFailed(true)
+      })
+    return () => controller.abort()
+  }, [])
+
+  const rows = exp?.recent.slice(0, 5) ?? []
+  return (
+    <article className="profile-type-card">
+      <div className="profile-section-heading">
+        <div><h3>최근 획득 XP</h3><p>문제를 맞혀 얻은 경험치예요.</p></div>
+        {exp && <strong>{exp.totalExp.toLocaleString()} <span>XP</span></strong>}
+      </div>
+      {rows.length ? (
+        <ul className="profile-history-list">
+          {rows.map((row, index) => (
+            <li key={(row.createdAt ?? '') + index}>
+              <span>{row.problemTitle || row.reason || '학습 보상'}</span>
+              <small>{formatDate(row.createdAt)}</small>
+              <b className="is-plus">+{row.amount}</b>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="profile-no-history">{failed ? '경험치 기록을 불러오지 못했어요.' : exp ? '아직 얻은 경험치가 없어요.' : '불러오는 중…'}</p>
+      )}
+    </article>
+  )
+}
+
+/** GET /users/me/submissions — 내 제출 이력(더 보기로 다음 페이지) */
+function SubmissionHistory() {
+  const [items, setItems] = useState([])
+  const [nextCursor, setNextCursor] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [failed, setFailed] = useState(false)
+
+  const load = async (cursor, signal) => {
+    try {
+      const page = await fetchMySubmissions({ cursor, limit: 10 }, { signal })
+      setItems((current) => (cursor ? [...current, ...page.items] : page.items))
+      setNextCursor(page.nextCursor)
+      setFailed(false)
+    } catch (requestError) {
+      if (requestError.name === 'CanceledError' || requestError.name === 'AbortError') return
+      setFailed(true)
+    }
+    setLoading(false)
+  }
+
+  useEffect(() => {
+    const controller = new AbortController()
+    fetchMySubmissions({ limit: 10 }, { signal: controller.signal })
+      .then((page) => { setItems(page.items); setNextCursor(page.nextCursor); setLoading(false) })
+      .catch((requestError) => {
+        if (requestError.name === 'CanceledError' || requestError.name === 'AbortError') return
+        setFailed(true); setLoading(false)
+      })
+    return () => controller.abort()
+  }, [])
+
+  return (
+    <article className="profile-type-card">
+      <div className="profile-section-heading">
+        <div><h3>제출 기록</h3><p>최근에 제출한 답안이에요.</p></div>
+      </div>
+      {items.length ? (
+        <ul className="profile-history-list">
+          {items.map((item) => (
+            <li key={item.id}>
+              <span>{item.title || item.problemId}<small> · {typeNames[item.type] || item.type || '문제'}{item.language ? ' · ' + (languageNames[item.language] || item.language) : ''}</small></span>
+              <small>{formatDate(item.createdAt)}</small>
+              <b className={item.isCorrect ? 'is-correct' : 'is-wrong'}>{item.isCorrect ? '정답' : '오답'}</b>
+            </li>
+          ))}
+        </ul>
+      ) : !loading ? (
+        <p className="profile-no-history">{failed ? '제출 기록을 불러오지 못했어요.' : '아직 제출한 답안이 없어요.'}</p>
+      ) : null}
+      {loading && <p className="profile-no-history">불러오는 중…</p>}
+      {!loading && nextCursor && (
+        <button type="button" className="profile-more-button" onClick={() => { setLoading(true); load(nextCursor) }}>더 보기</button>
+      )}
+    </article>
+  )
+}
 
 export function ProfilePage({ onNavigate }) {
   const [profile, setProfile] = useState(null)
@@ -134,7 +239,7 @@ export function ProfilePage({ onNavigate }) {
           <div className="profile-identity-copy">
             <div className="profile-name-row">
               <h2>{profile?.nickname || '코드 학습자'}</h2>
-              <span className="profile-tier">{profile?.tier === 'pro' ? 'PRO' : profile?.tier === 'plus' ? 'PLUS' : '학습자'}</span>
+              <span className="profile-tier">{tierNames[profile?.tier] || '학습자'}</span>
             </div>
             <p>#{profile?.tag || '----'} · {languageNames[profile?.studyLanguage] || '학습 언어 미설정'}</p>
             <span className="profile-level">{levelNames[profile?.studyLevel] || '기초부터 차근차근'}</span>
@@ -205,6 +310,9 @@ export function ProfilePage({ onNavigate }) {
           <p className="profile-no-history">문제를 풀면 유형별 기록이 여기에 쌓여요.</p>
         )}
       </article>
+
+      <ExpHistory />
+      <SubmissionHistory />
     </section>
   )
 }

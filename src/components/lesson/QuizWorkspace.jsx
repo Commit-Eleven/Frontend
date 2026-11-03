@@ -286,6 +286,7 @@ export function QuizWorkspace({ lesson, languageCode, onExit, onComplete, onLogi
                   )}
                   {type === 'short' && (
                     <ShortAnswerQuestion
+                      code={problem?.content?.code}
                       value={shortAnswer}
                       onChange={(value) => {
                         setShortAnswer(value);

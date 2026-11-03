@@ -8,6 +8,7 @@ import { useCodingLanguage } from '../hooks/useCodingLanguage.js';
 import { getViewFromPath } from './routes.js';
 import { AuthPage } from '../pages/AuthPage.jsx';
 import { logoutFromApp } from '../api/authSession.js';
+import { OnboardingModal } from '../components/onboarding/OnboardingModal.jsx';
 import './App.css';
 
 const Lesson = lazy(() =>
@@ -77,6 +78,7 @@ function JourneyApp({ language, activeHomeItem, onHomeItemChange }) {
           />
         </Suspense>
       )}
+      <OnboardingModal />
       {journey.searchOpen && (
         <SearchModal
           journey={journey.journey}

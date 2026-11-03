@@ -122,6 +122,7 @@ function WrongNoteStep({ note, isLast, onCorrect, onNext }) {
           )}
           {type === 'short' && (
             <ShortAnswerQuestion
+              code={problem?.content?.code}
               value={shortAnswer}
               onChange={(value) => changeAnswer(setShortAnswer, value)}
               disabled={submitting || Boolean(feedback?.correct)}
