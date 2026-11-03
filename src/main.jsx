@@ -1,10 +1,10 @@
-import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
+import { completeGoogleLogin } from './api/auth.js'
 import './index.css'
-import App from './App.jsx'
+import App from './app/App.jsx'
+
+completeGoogleLogin()
 
 createRoot(document.getElementById('root')).render(
-  <StrictMode>
     <App />
-  </StrictMode>,
 )

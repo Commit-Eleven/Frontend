@@ -1,0 +1,94 @@
+.syllabus-modal {
+  width: min(560px, 100%);
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 14px 40px #0003;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+.syllabus-heading {
+  padding: 22px;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+}
+.syllabus-heading small {
+  color: var(--primary-strong);
+  font-weight: 700;
+}
+.syllabus-heading h2 {
+  margin: 6px 0;
+  font-size: 23px;
+}
+.syllabus-heading p {
+  margin: 0;
+  color: #777;
+  font-size: 13px;
+}
+.syllabus-heading button {
+  border: 0;
+  background: #fff;
+  font-size: 24px;
+  align-self: flex-start;
+}
+.syllabus-heading button:hover {
+  color: var(--primary-strong);
+}
+.syllabus-progress {
+  padding: 15px 22px;
+  color: #666;
+  font-size: 13px;
+}
+.syllabus-progress div {
+  height: 7px;
+  background: #e5e5e5;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-top: 8px;
+}
+.syllabus-progress i {
+  display: block;
+  height: 100%;
+  background: var(--primary);
+}
+.syllabus-list {
+  padding: 0 10px 12px;
+}
+.syllabus-list button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: #fff;
+  border: 0;
+  border-bottom: 1px solid #eee;
+  padding: 11px;
+  text-align: left;
+}
+.syllabus-list button:hover {
+  background: var(--primary-wash);
+}
+.syllabus-list button > span:last-child {
+  margin-left: auto;
+  color: #aaa;
+  font-size: 22px;
+}
+.syllabus-list b,
+.syllabus-list small {
+  display: block;
+}
+.syllabus-list small {
+  color: #999;
+  margin-top: 3px;
+}
+.syllabus-number {
+  background: var(--primary-soft);
+  border-radius: 50%;
+  color: var(--primary-strong);
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}

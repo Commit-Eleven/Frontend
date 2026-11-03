@@ -1,0 +1,23 @@
+:root {
+  --primary: #03cba4;
+  --primary-hover: #02b58e;
+  --primary-strong: #029b7e;
+  --primary-soft: #e1fff8;
+  --primary-wash: #f0fffb;
+  --primary-border: #b6f3e6;
+  --blue: var(--primary);
+  --blue-soft: var(--primary-hover);
+  --line: #dedede;
+  --muted: #777;
+  --light-blue: var(--primary-soft);
+}
+#root {
+  height: 100vh;
+  overflow: hidden;
+}
+.lesson-loading {
+  height: 100vh;
+  display: grid;
+  place-items: center;
+  color: #777;
+}

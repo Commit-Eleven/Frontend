@@ -1,0 +1,125 @@
+.sidebar {
+  height: 100vh;
+  min-width: 0;
+  padding: 42px 20px 20px;
+  position: relative;
+  z-index: 30;
+  background: #fff;
+  border-right: 2px solid #e5e5e5;
+}
+.sidebar-brand {
+  width: 132px;
+  height: 44px;
+  display: block;
+  margin: 0 auto 30px;
+}
+.sidebar-brand img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.sidebar-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.sidebar-link {
+  width: 100%;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 14px;
+  border: 1px solid transparent;
+  border-radius: 14px;
+  background: transparent;
+  color: #222;
+  text-align: left;
+  text-decoration: none;
+  font: inherit;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.2;
+  cursor: pointer;
+  transition:
+    background-color 0.12s ease,
+    border-color 0.12s ease,
+    color 0.12s ease;
+}
+.sidebar-link:hover:not(:disabled):not(.is-active),
+.sidebar-link:focus-visible:not(:disabled):not(.is-active) {
+  background: #f4f4f4;
+  border-color: #cfcfcf;
+  outline: none;
+}
+.sidebar-link:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+.sidebar-link.is-active:not(:disabled) {
+  background: var(--primary-soft);
+  border-color: var(--primary);
+  color: var(--primary-strong);
+}
+.sidebar-link:disabled {
+  background: #fff;
+  border-color: transparent;
+  color: #969696;
+  cursor: not-allowed;
+}
+.sidebar-link img {
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
+  flex: none;
+}
+.sidebar-link[aria-current='page']:not(.is-active) {
+  color: #222;
+}
+.sidebar-more-wrap {
+  position: relative;
+}
+.sidebar-more-trigger.is-open,
+.sidebar-more-trigger:hover:not(:disabled) {
+  background: #f4f4f4;
+  border-color: #cfcfcf;
+}
+.sidebar-more-menu {
+  position: absolute;
+  z-index: 50;
+  top: 4px;
+  left: calc(100% + 8px);
+  width: 160px;
+  padding: 5px 0;
+  border: 1px solid #d7d7d7;
+  border-radius: 7px;
+  background: #fff;
+  box-shadow: 0 2px 5px #00000012;
+}
+.sidebar-more-menu button {
+  display: block;
+  width: 100%;
+  height: 40px;
+  padding: 0 18px;
+  border: 0;
+  background: #fff;
+  color: #222;
+  text-align: left;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1;
+  cursor: pointer;
+}
+.sidebar-more-menu button:hover,
+.sidebar-more-menu button:focus-visible {
+  background: var(--primary-wash);
+  color: var(--primary-strong);
+  outline: none;
+}
+@media (max-width: 700px) {
+  .sidebar {
+    display: none;
+  }
+}

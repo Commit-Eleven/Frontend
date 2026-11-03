@@ -1,0 +1,223 @@
+.map-chapter {
+  position: relative;
+}
+.first-chapter-title {
+  text-align: center;
+  font-size: 24px;
+  margin: 0 0 65px;
+  font-weight: 750;
+}
+.chapter-divider {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 84px 0 76px;
+  color: #777;
+  font-size: 17px;
+  font-weight: 700;
+  text-align: center;
+}
+.chapter-divider::before,
+.chapter-divider::after {
+  content: '';
+  height: 1px;
+  background: #ccc;
+  flex: 1;
+}
+.chapter-divider span {
+  white-space: nowrap;
+}
+.path-canvas {
+  position: relative;
+  width: 380px;
+  margin: 0 auto;
+}
+.path-lines {
+  position: absolute;
+  inset: 0;
+  width: 380px;
+  height: 100%;
+  overflow: visible;
+}
+.node-position {
+  position: absolute;
+  width: 72px;
+  height: 68px;
+  z-index: 2;
+}
+.hex-node {
+  display: block;
+  position: relative;
+  width: 72px;
+  height: 68px;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  transform: translateY(0);
+  transition: transform 0.18s cubic-bezier(0.2, 0.75, 0.25, 1);
+  filter: drop-shadow(0 1px 1px #00000017);
+  -webkit-tap-highlight-color: transparent;
+}
+.hex-node:hover:not(:disabled) {
+  transform: translateY(0);
+}
+.hex-node:active:not(:disabled) {
+  transform: translateY(0);
+}
+.hex-node:focus-visible {
+  outline: 3px solid var(--primary);
+  border-radius: 18px;
+}
+.hex-node img {
+  position: absolute;
+  pointer-events: none;
+  display: block;
+  transition:
+    transform 0.18s cubic-bezier(0.2, 0.75, 0.25, 1),
+    filter 0.18s ease;
+}
+.hex-base {
+  top: 0;
+  left: 0;
+  width: 72px;
+  height: 68px;
+}
+.hex-shadow {
+  top: 8px;
+  left: 8px;
+  width: 56px;
+}
+.hex-top {
+  top: -2px;
+  left: 8px;
+  width: 56px;
+}
+.hex-symbol {
+  top: 10px;
+  left: 22px;
+  width: 28px;
+  max-height: 27px;
+  object-fit: contain;
+  z-index: 4;
+}
+.hex-node:hover:not(:disabled) .hex-shadow {
+  transform: translateY(2px);
+}
+.hex-node:hover:not(:disabled) .hex-top {
+  transform: translateY(4px);
+  filter: brightness(0.94);
+}
+.hex-node:hover:not(:disabled) .hex-symbol {
+  transform: translateY(4px);
+}
+.hex-node:active:not(:disabled) .hex-shadow {
+  transform: translateY(4px);
+}
+.hex-node:active:not(:disabled) .hex-top {
+  transform: translateY(8px);
+  filter: brightness(0.88);
+}
+.hex-node:active:not(:disabled) .hex-symbol {
+  transform: translateY(8px);
+}
+.hex-node:active:not(:disabled) img {
+  transition-duration: 0.07s;
+}
+.hex-active {
+  animation: active-bob 3s ease-in-out infinite;
+}
+.hex-active:hover:not(:disabled) {
+  animation-play-state: paused;
+}
+@keyframes active-bob {
+  50% {
+    translate: 0 -3px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hex-node,
+.hex-node img {
+    transition: none;
+  }
+  .hex-active {
+    animation: none;
+  }
+}
+.node-popover {
+  position: absolute;
+  z-index: 10;
+  width: 280px;
+  min-height: 126px;
+  border: 2px solid #d1d1d1;
+  border-radius: 7px;
+  background: #fff;
+  box-shadow: 0 2px 5px #00000020;
+  padding: 16px;
+}
+.popover-arrow {
+  position: absolute;
+  top: -9px;
+  left: calc(50% - 9px);
+  height: 16px;
+  width: 16px;
+  background: #fff;
+  border-left: 2px solid #d1d1d1;
+  border-top: 2px solid #d1d1d1;
+  transform: rotate(45deg);
+}
+.node-popover strong {
+  font-size: 17px;
+  font-weight: 500;
+  display: block;
+  margin-bottom: 20px;
+}
+.node-popover p {
+  color: #999;
+  font-size: 13px;
+  line-height: 1.4;
+  margin: -8px 0 18px;
+}
+.popover-button {
+  display: block;
+  width: 100%;
+  height: 47px;
+  border: 0;
+  border-bottom: 3px solid var(--primary-strong);
+  border-radius: 10px;
+  color: white;
+  background: var(--primary);
+  font-weight: 700;
+  font-size: 15px;
+}
+.popover-button:hover:not(:disabled) {
+  background: var(--primary-hover);
+}
+.popover-button.disabled {
+  background: #d0d0d0;
+  border-bottom-color: #b5b5b5;
+}
+@media (max-width: 700px) {
+  .first-chapter-title {
+    margin-bottom: 50px;
+  }
+  .chapter-divider {
+    margin: 65px 0 55px;
+  }
+}
+@media (max-width: 420px) {
+  .path-canvas {
+    left: 50%;
+    margin-left: -190px;
+  }
+  .chapter-divider {
+    font-size: 15px;
+  }
+  .node-popover {
+    width: 250px;
+  }
+}
+@media (min-width: 981px) {
+  .node-popover {
+    margin-left: -10px;
+  }
+}
