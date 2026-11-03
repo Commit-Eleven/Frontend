@@ -57,6 +57,7 @@ export function Stats({ compact = false }) {
           onClick={() => setLanguageOpen((open) => !open)}
         >
           <img className="html-badge" src={language.icon} alt="" />
+          <span>{language.label}</span>
         </button>
         {languageOpen && (
           <div className="language-menu" role="menu" aria-label="코딩 언어 선택">
@@ -86,9 +87,10 @@ export function Stats({ compact = false }) {
           </div>
         )}
       </div>
-      <span className="stat stat-fire"><b>{streak}</b><img src={icon('fire')} alt="연속 학습" /></span>
-      <span className="stat stat-gem"><b>19</b><span className="gem-shape" /></span>
-      <span className="stat stat-energy"><b>6</b><span className="energy-shape">ϟ</span></span>
+      <span className="stat stat-fire" aria-label={`연속 학습 ${streak}일`}>
+        <img src={icon('fire')} alt="" />
+        <b>{streak}일</b>
+      </span>
     </div>
   )
 }
