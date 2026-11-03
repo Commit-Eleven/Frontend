@@ -23,6 +23,10 @@ npm run dev
 
 학습 화면에서는 선택형, 빈칸 채우기, 순서 맞추기, 단답형 문제를 코드 실습 전에 풀 수 있습니다. 문제 조회와 제출은 `/api/problems/{mcq|blank|parsons|short}`를 사용하며, 개발 서버는 `/api` 요청을 `https://codegram.me`로 전달합니다. 서버 응답이 없으면 예시 문제를 표시합니다.
 
+## 친구 삭제
+
+친구 화면의 목록에서 `친구 삭제` → `삭제 확인`을 누르면 기존 `DELETE /api/users/friends/{friendshipId}` API를 호출합니다. 삭제 성공 후 목록과 친구 수가 갱신되며, 실패하면 친구를 유지하고 재시도 안내를 표시합니다. `취소`를 누르면 요청을 보내지 않습니다.
+
 ## 소스 구조
 
 - `src/app/App.jsx`, `src/app/routes.js`: 인증·학습 경로 연결
