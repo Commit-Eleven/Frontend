@@ -1,25 +1,31 @@
 .stats {
+  width: 100%;
   max-width: 360px;
-  height: 35px;
+  height: 44px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin: 0 0 14px;
-  padding: 0 18px;
+  padding: 0 4px;
+  gap: 24px;
 }
 .language-picker {
   position: relative;
   z-index: 45;
 }
 .language-picker-trigger {
-  display: grid;
-  place-items: center;
-  min-width: 32px;
-  min-height: 34px;
-  padding: 2px 3px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 6px 8px;
   border: 0;
   border-radius: 6px;
   background: transparent;
+  color: #444;
+  font-size: 14px;
+  font-weight: 600;
   cursor: pointer;
 }
 .language-picker-trigger:hover,
@@ -128,25 +134,10 @@
   height: 24px;
   opacity: 0.75;
 }
-.stat-gem {
-  color: #e0b455;
-}
-.gem-shape {
-  display: inline-block;
-  width: 16px;
-  height: 22px;
-  background: #f7b632;
-  clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
-}
-.stat-energy {
-  color: var(--primary-strong);
-}
-.energy-shape {
-  font-style: normal;
-  font-size: 30px;
-  line-height: 20px;
-  color: var(--primary-strong);
-  font-weight: 900;
+.stat-fire {
+  flex: none;
+  min-height: 44px;
+  padding: 0 8px;
 }
 @media (max-width: 420px) {
   .language-menu {
