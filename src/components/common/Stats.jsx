@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { codingLanguages } from '../../data/navigation.js'
+import { fetchHome } from '../../api/learning.js'
 import { icon } from '../../lib/assets.js'
 import { selectCodingLanguage, useCodingLanguage } from '../../hooks/useCodingLanguage.js'
 import './Stats.css'
@@ -8,6 +9,18 @@ export function Stats({ compact = false }) {
   const language = useCodingLanguage()
   const [languageOpen, setLanguageOpen] = useState(false)
   const languageRef = useRef(null)
+  const [streak, setStreak] = useState(0)
+
+  useEffect(() => {
+    const controller = new AbortController()
+    fetchHome({ signal: controller.signal })
+      .then((home) => {
+        const value = Number(home?.streak ?? home?.streakDays ?? home?.streakCount)
+        if (Number.isFinite(value)) setStreak(value)
+      })
+      .catch(() => {})
+    return () => controller.abort()
+  }, [])
 
   useEffect(() => {
     if (!languageOpen) return undefined
@@ -74,7 +87,7 @@ export function Stats({ compact = false }) {
           </div>
         )}
       </div>
-      <span className="stat stat-fire"><b>0</b><img src={icon('fire')} alt="연속 학습" /></span>
+      <span className="stat stat-fire"><b>{streak}</b><img src={icon('fire')} alt="연속 학습" /></span>
       <span className="stat stat-gem"><b>19</b><span className="gem-shape" /></span>
       <span className="stat stat-energy"><b>6</b><span className="energy-shape">ϟ</span></span>
     </div>
