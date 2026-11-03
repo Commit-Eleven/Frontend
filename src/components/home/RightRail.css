@@ -115,3 +115,10 @@
     display: none;
   }
 }
+
+.rail-rank-list { margin: 12px 0 0; padding: 0; list-style: none; }
+.rail-rank-row { display: flex; align-items: center; gap: 10px; min-height: 38px; padding: 0 8px; border-radius: 8px; font-size: 13px; }
+.rail-rank-row.is-me { background: var(--primary-wash); }
+.rail-rank-number { width: 18px; color: #898989; font-weight: 700; }
+.rail-rank-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rail-rank-row b { color: #444; font-size: 12px; }
