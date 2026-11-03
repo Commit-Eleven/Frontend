@@ -71,9 +71,9 @@ export function updateLearningSettings({ language, level } = {}, { signal } = {}
   return request({ url: '/me/learning', method: 'PATCH', data, signal })
 }
 
-/** GET /me/wrong-notes — 서버 오답 노트 */
+/** GET /users/me/wrong-notes — 서버 오답 노트 */
 export async function fetchServerWrongNotes({ signal } = {}) {
-  return normalizeServerWrongNotes(await request({ url: '/me/wrong-notes', method: 'GET', signal }))
+  return normalizeServerWrongNotes(await request({ url: '/users/me/wrong-notes', method: 'GET', signal }))
 }
 
 /** PATCH /me/avatar — 프로필 사진 변경 */
@@ -130,7 +130,7 @@ export function normalizeServerWrongNotes(data) {
     .filter((item) => item && typeof item === 'object')
     .map((item, index) => {
       const problem = item.problem && typeof item.problem === 'object' ? item.problem : item
-      const id = item.id ?? item.problemId ?? problem.id ?? index
+      const id = item.problemId ?? item.id ?? problem.id ?? index
       const language = toLanguageCode(item.language ?? item.tag ?? problem.tag ?? '')
       return {
         id: 'server::' + id,
@@ -144,7 +144,7 @@ export function normalizeServerWrongNotes(data) {
         },
         wrongCount: Number(item.wrongCount ?? item.count ?? 1),
         status: item.resolved === true || item.status === 'resolved' ? 'resolved' : 'unresolved',
-        lastWrongAt: item.lastWrongAt ?? item.updatedAt ?? item.createdAt ?? null,
+        lastWrongAt: item.wrongAt ?? item.lastWrongAt ?? item.updatedAt ?? item.createdAt ?? null,
         readOnly: true,
       }
     })

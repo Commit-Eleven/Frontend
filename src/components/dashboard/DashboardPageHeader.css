@@ -1,0 +1,26 @@
+.dashboard-page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 4px 1px 23px;
+}
+.dashboard-page-header h1 {
+  margin: 0;
+  font-size: clamp(23px, 2.2vw, 29px);
+  line-height: 1.25;
+  letter-spacing: -0.5px;
+}
+.dashboard-page-eyebrow {
+  margin: 0 0 7px;
+  color: var(--primary-strong);
+  font-size: 12px;
+  font-weight: 750;
+}
+.dashboard-page-description {
+  margin: 8px 0 0;
+  color: #777;
+  font-size: 13px;
+  line-height: 1.6;
+}
+.dashboard-page-action { flex: none; }
