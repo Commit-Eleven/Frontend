@@ -23,3 +23,10 @@ test('서버 오답 노트는 다시 풀 수 없는 읽기 전용 기록이 된�
 test('js 태그는 javascript로 맞춘다', () => {
   assert.equal(toLanguageCode('JS'), 'javascript')
 })
+
+test('로그인 토큰에서 내 사용자 ID를 꺼낸다', async () => {
+  const { tokenUserId } = await import('../src/api/community.js')
+  const payload = btoa(JSON.stringify({ sub: 12 })).replace(/=+$/, '')
+  assert.equal(tokenUserId({ Authorization: 'Bearer head.' + payload + '.sign' }), 12)
+  assert.equal(tokenUserId({}), null)
+})

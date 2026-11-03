@@ -5,6 +5,10 @@ import { MobileNav } from './MobileNav.jsx';
 import { RightRail } from './RightRail.jsx';
 import { MapChapter } from './JourneyMap.jsx';
 import { WrongNotes } from './WrongNotes.jsx';
+import { FriendsPage } from '../dashboard/FriendsPage.jsx';
+import { ProfilePage } from '../dashboard/ProfilePage.jsx';
+import { SettingsPage } from '../dashboard/SettingsPage.jsx';
+import { HelpPage } from '../dashboard/HelpPage.jsx';
 import './Home.css';
 
 export function Home({
@@ -85,6 +89,14 @@ export function Home({
         <div className="center-content">
           {activeItem === '오답 노트' ? (
             <WrongNotes language={language} onOpen={onOpen} />
+          ) : activeItem === '친구' ? (
+            <FriendsPage />
+          ) : activeItem === '프로필' ? (
+            <ProfilePage onNavigate={navigate} />
+          ) : activeItem === '설정' ? (
+            <SettingsPage language={language} onNavigate={navigate} onLogout={onLogout} />
+          ) : activeItem === '도움말' ? (
+            <HelpPage onNavigate={navigate} />
           ) : (
             <>
               <div className="floating-course-card">
