@@ -16,6 +16,7 @@ npm run dev
 - `/`, `/auth`, `/login`: 시작 및 Google 로그인 화면
 - `/journeys/html/fundamentals`: HTML 여정과 웹 미리보기가 있는 실습
 - `/journeys/javascript/fundamentals`, `/journeys/python/fundamentals`, `/journeys/java/fundamentals`: 언어별 여정과 코드 실습
+- 각 여정의 사이드 메뉴 `그룹`: 팀 목록과 생성·설정 화면. 팀 프로필, 소개·팀원, 카테고리·사용 언어를 3단계 카드 폼에서 편집합니다. 팀 정보는 현재 브라우저에 저장되며 실제 초대는 전송하지 않습니다.
 - 각 여정의 사이드 메뉴 `오답 노트`: 틀린 개념 문제 복습과 코드 문제 재방문
 
 학습 화면에서는 선택형, 빈칸 채우기, 순서 맞추기, 단답형 문제를 코드 실습 전에 풀 수 있습니다. 문제 조회와 제출은 `/api/problems/{mcq|blank|parsons|short}`를 사용하며, 개발 서버는 `/api` 요청을 `https://codegram.me`로 전달합니다. 서버 응답이 없으면 예시 문제를 표시합니다.
