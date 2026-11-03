@@ -66,3 +66,11 @@ test('returns to the selected programming language after Google login', (context
 
   assert.equal(returnUrl, '/journeys/javascript/fundamentals/javascript-output')
 })
+
+test('chooses the Google login start URL for each environment', async () => {
+  const { googleLoginUrl } = await import('../src/api/auth.js')
+  assert.equal(googleLoginUrl({}), '/api/social/login/google')
+  assert.equal(googleLoginUrl({ DEV: true }), 'https://codegram.me/api/social/login/google')
+  assert.equal(googleLoginUrl({ DEV: true, VITE_API_TARGET: 'http://localhost:3000' }), '/api/social/login/google')
+  assert.equal(googleLoginUrl({ DEV: true, VITE_GOOGLE_LOGIN_URL: 'https://example.test/login' }), 'https://example.test/login')
+})
