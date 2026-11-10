@@ -113,6 +113,16 @@ export async function fetchGroup(groupId, { signal } = {}) {
   return normalizeGroupDetail(await request({ url: groupPath(groupId), method: 'GET', signal }))
 }
 
+/** GET /groups/{id}/preview — 참여 전 그룹 미리보기 */
+export async function fetchGroupPreview(groupId, { signal } = {}) {
+  return normalizeGroupDetail(await request({ url: groupPath(groupId) + '/preview', method: 'GET', signal }))
+}
+
+/** PATCH /groups/{id} — 방장의 그룹 정보 수정 */
+export async function updateGroup(groupId, changes, { signal } = {}) {
+  return normalizeGroupDetail(await request({ url: groupPath(groupId), method: 'PATCH', data: changes, signal }))
+}
+
 /** POST /groups/join — 그룹 참여 */
 export function joinGroup(groupId, { signal } = {}) {
   return request({ url: '/groups/join', method: 'POST', data: { group_id: Number(groupId) }, signal })
