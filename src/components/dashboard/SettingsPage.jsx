@@ -58,9 +58,12 @@ export function SettingsPage({ language, onNavigate, onLogout }) {
       clearAccessToken()
       location.replace('/')
     } catch (requestError) {
+      // TODO(API): 회원 탈퇴 API(DELETE /users/me)가 아직 서버에 없습니다.
       setNotice(requestError.status === 401
         ? '로그인한 뒤에 탈퇴할 수 있어요.'
-        : requestError.message || '탈퇴하지 못했어요.')
+        : requestError.status === 404 || requestError.status === 405
+          ? '회원 탈퇴는 아직 준비 중이에요.'
+          : requestError.message || '탈퇴하지 못했어요.')
       setDeleting(false)
       setConfirmDelete(false)
     }

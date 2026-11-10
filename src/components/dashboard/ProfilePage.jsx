@@ -1,7 +1,7 @@
 import { LoadingSkeleton } from '../common/LoadingSkeleton.jsx'
 import { useEffect, useState } from 'react'
 import { beginGoogleLogin } from '../../api/auth.js'
-import { fetchMyProfile, fetchMyStats, resetMyAvatar, updateMyAvatar, updateMyNickname } from '../../api/community.js'
+import { fetchMyProfile, fetchMyStats, updateMyNickname } from '../../api/community.js'
 import { expSummary, fetchMyExp, fetchMySubmissions } from '../../api/learning.js'
 import { DashboardPageHeader } from './DashboardPageHeader.jsx'
 import './ProfilePage.css'
@@ -130,10 +130,6 @@ export function ProfilePage({ onNavigate }) {
   const [error, setError] = useState(null)
   const [editing, setEditing] = useState(false)
   const [nickname, setNickname] = useState('')
-  const [avatarUrl, setAvatarUrl] = useState('')
-  const [avatarEditing, setAvatarEditing] = useState(false)
-  const [avatarSaving, setAvatarSaving] = useState(false)
-  const [avatarFailed, setAvatarFailed] = useState(false)
   const [saving, setSaving] = useState(false)
   const [notice, setNotice] = useState('')
   const [reloadKey, setReloadKey] = useState(0)
@@ -154,7 +150,6 @@ export function ProfilePage({ onNavigate }) {
         setProfile(user)
         setStats(summary)
         setNickname(user.nickname || '')
-        setAvatarUrl(user.avatarUrl ?? user.imageUrl ?? '')
       })
       .catch((requestError) => {
         if (requestError.name !== 'CanceledError' && requestError.name !== 'AbortError') {
@@ -186,56 +181,6 @@ export function ProfilePage({ onNavigate }) {
       setNotice(requestError.message || '닉네임을 저장하지 못했어요.')
     } finally {
       setSaving(false)
-    }
-  }
-
-  const refreshAvatar = async (fallbackUrl) => {
-    try {
-      const user = await fetchMyProfile()
-      const refreshedUrl = user.avatarUrl ?? user.imageUrl ?? fallbackUrl
-      setProfile({ ...user, avatarUrl: refreshedUrl })
-      setAvatarUrl(refreshedUrl || '')
-      setAvatarFailed(false)
-      return true
-    } catch {
-      setProfile((current) => ({ ...current, avatarUrl: fallbackUrl }))
-      setAvatarUrl(fallbackUrl || '')
-      setAvatarFailed(false)
-      return false
-    }
-  }
-
-  const saveAvatar = async (event) => {
-    event.preventDefault()
-    const value = avatarUrl.trim()
-    if (!value || avatarSaving) return
-    setAvatarSaving(true)
-    setNotice('')
-    try {
-      await updateMyAvatar(value)
-      const confirmed = await refreshAvatar(value)
-      setAvatarEditing(false)
-      setNotice(confirmed ? '프로필 사진을 변경했어요.' : '사진은 저장했지만 최신 프로필을 다시 불러오지 못했어요.')
-    } catch (requestError) {
-      setNotice(requestError.message || '프로필 사진을 변경하지 못했어요.')
-    } finally {
-      setAvatarSaving(false)
-    }
-  }
-
-  const resetAvatar = async () => {
-    if (avatarSaving) return
-    setAvatarSaving(true)
-    setNotice('')
-    try {
-      await resetMyAvatar()
-      const confirmed = await refreshAvatar(null)
-      setAvatarEditing(false)
-      setNotice(confirmed ? '프로필 사진을 기본 이미지로 되돌렸어요.' : '기본 이미지로 저장했지만 최신 프로필을 다시 불러오지 못했어요.')
-    } catch (requestError) {
-      setNotice(requestError.message || '프로필 사진을 되돌리지 못했어요.')
-    } finally {
-      setAvatarSaving(false)
     }
   }
 
@@ -279,12 +224,6 @@ export function ProfilePage({ onNavigate }) {
   const solved = stats?.solvedProblemCount ?? 0
   const progress = total ? Math.min(100, Math.round((solved / total) * 100)) : 0
   const typeStats = Array.isArray(stats?.byType) ? stats.byType : []
-  const currentAvatarUrl = profile?.avatarUrl ?? profile?.imageUrl ?? ''
-  const toggleAvatarEditor = () => {
-    setAvatarEditing((value) => !value)
-    setAvatarUrl(currentAvatarUrl || '')
-    setNotice('')
-  }
 
   return (
     <section className="profile-page">
@@ -297,22 +236,7 @@ export function ProfilePage({ onNavigate }) {
 
       <article className="profile-hero">
         <div className="profile-identity">
-          <div className="profile-avatar-column">
-            <button type="button" className="profile-avatar-trigger" aria-label="프로필 사진 변경" onClick={toggleAvatarEditor} disabled={avatarSaving}>
-              {currentAvatarUrl && !avatarFailed ? (
-                <img className="profile-avatar profile-avatar-image" src={currentAvatarUrl} alt="" onError={() => setAvatarFailed(true)} />
-              ) : (
-                <span className="profile-avatar">{[...(profile?.nickname || '나')][0]}</span>
-              )}
-            </button>
-            {currentAvatarUrl && (
-              <div className="profile-avatar-actions">
-                <button type="button" className="profile-avatar-action" onClick={resetAvatar} disabled={avatarSaving}>
-                  {avatarSaving ? '처리 중…' : '기본으로'}
-                </button>
-              </div>
-            )}
-          </div>
+          <span className="profile-avatar">{[...(profile?.nickname || '나')][0]}</span>
           <div className="profile-identity-copy">
             <div className="profile-name-row">
               <h2>{profile?.nickname || '코드 학습자'}</h2>
@@ -333,18 +257,6 @@ export function ProfilePage({ onNavigate }) {
               <button type="submit" disabled={saving}>{saving ? '저장 중…' : '저장'}</button>
             </div>
             <small>친구에게 표시되는 이름이에요. 2~20자로 입력해 주세요.</small>
-          </form>
-        )}
-
-        {avatarEditing && (
-          <form className="profile-avatar-form" onSubmit={saveAvatar}>
-            <label htmlFor="profile-avatar-url">프로필 사진 URL</label>
-            <div>
-              <input id="profile-avatar-url" type="url" value={avatarUrl} maxLength={2048} onChange={(event) => setAvatarUrl(event.target.value)} placeholder="https://example.com/avatar.png" required />
-              <button type="submit" disabled={avatarSaving}>{avatarSaving ? '저장 중…' : '저장'}</button>
-              <button type="button" className="profile-avatar-cancel" onClick={() => setAvatarEditing(false)} disabled={avatarSaving}>취소</button>
-            </div>
-            <small>웹에서 열 수 있는 이미지 주소를 입력해 주세요.</small>
           </form>
         )}
 
