@@ -76,6 +76,35 @@ export function normalizeGroupDetail(data = {}) {
   }
 }
 
+/** 그룹 미리보기 응답({ group, owner, members, isMember, myRole })을 화면용으로 바꿉니다. */
+export function normalizeGroupPreview(data = {}) {
+  const members = Array.isArray(data.members) ? data.members : []
+  return {
+    group: normalizeGroup({ ...data.group, memberCount: data.group?.memberCount ?? members.length }),
+    owner: data.owner ? { id: data.owner.id, nickname: String(data.owner.nickname ?? ''), tag: data.owner.tag ?? '' } : null,
+    members: members.map((member) => ({
+      id: member.id,
+      nickname: String(member.nickname ?? ''),
+      tag: member.tag ?? '',
+      role: member.role === 'owner' ? 'owner' : 'member',
+    })),
+    isMember: Boolean(data.isMember),
+    myRole: data.myRole ?? null,
+  }
+}
+
+/** 그룹 수정 요청 본문을 만듭니다. 바뀐 값만 보냅니다(소개를 비우면 빈 문자열로 지웁니다). */
+export function groupUpdateBody(next, current = {}) {
+  const body = {}
+  const name = String(next.name ?? '').trim()
+  if (name !== String(current.name ?? '')) body.name = name
+  const description = String(next.description ?? '').trim()
+  if (description !== String(current.description ?? '')) body.description = description
+  const capacity = Number(next.capacity)
+  if (next.capacity !== '' && Number.isInteger(capacity) && capacity !== Number(current.capacity)) body.capacity = capacity
+  return body
+}
+
 /** 그룹 랭킹 응답({ group, myRank, items })을 화면용으로 바꿉니다. */
 export function normalizeGroupRanking(data = {}) {
   return {
@@ -113,14 +142,14 @@ export async function fetchGroup(groupId, { signal } = {}) {
   return normalizeGroupDetail(await request({ url: groupPath(groupId), method: 'GET', signal }))
 }
 
-/** GET /groups/{id}/preview — 참여 전 그룹 미리보기 */
+/** GET /groups/{id}/preview — 그룹 미리보기(멤버가 아니어도 조회 가능) */
 export async function fetchGroupPreview(groupId, { signal } = {}) {
-  return normalizeGroupDetail(await request({ url: groupPath(groupId) + '/preview', method: 'GET', signal }))
+  return normalizeGroupPreview(await request({ url: groupPath(groupId) + '/preview', method: 'GET', signal }))
 }
 
-/** PATCH /groups/{id} — 방장의 그룹 정보 수정 */
-export async function updateGroup(groupId, changes, { signal } = {}) {
-  return normalizeGroupDetail(await request({ url: groupPath(groupId), method: 'PATCH', data: changes, signal }))
+/** PATCH /groups/{id} — 그룹 정보 수정(방장만 가능) */
+export function updateGroup(groupId, body, { signal } = {}) {
+  return request({ url: groupPath(groupId), method: 'PATCH', data: body, signal })
 }
 
 /** POST /groups/join — 그룹 참여 */
