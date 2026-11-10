@@ -4,10 +4,11 @@ import { fetchHome, fetchTags, toLanguageCode } from '../../api/learning.js'
 import { updateStudyLanguage } from '../../api/community.js'
 import { codingLanguages } from '../../data/navigation.js'
 import { icon } from '../../lib/assets.js'
+import { hasSolvedToday as readHasSolvedToday, solvedProblemEvent } from '../../lib/studyActivity.js'
 import { selectCodingLanguage, useCodingLanguage } from '../../hooks/useCodingLanguage.js'
 import './Stats.css'
 
-export function Stats({ compact = false }) {
+export function Stats({ compact = false, hasSolvedToday = false }) {
   const language = useCodingLanguage()
   const [languageOpen, setLanguageOpen] = useState(false)
   const [languageError, setLanguageError] = useState('')
@@ -15,7 +16,15 @@ export function Stats({ compact = false }) {
   const [availableLanguages, setAvailableLanguages] = useState(codingLanguages)
   const languageRef = useRef(null)
   const [streak, setStreak] = useState(0)
+  const [solvedToday, setSolvedToday] = useState(readHasSolvedToday)
   const loggedIn = Boolean(authorizationHeaders().Authorization)
+  const flameActive = solvedToday || hasSolvedToday
+
+  useEffect(() => {
+    const handleSolved = () => setSolvedToday(true)
+    window.addEventListener(solvedProblemEvent, handleSolved)
+    return () => window.removeEventListener(solvedProblemEvent, handleSolved)
+  }, [])
 
   // GET /users/me/home 의 연속 학습 일수
   useEffect(() => {
@@ -117,8 +126,8 @@ export function Stats({ compact = false }) {
           </div>
         )}
       </div>
-      <span className="stat stat-fire" aria-label={`연속 학습 ${streak}일`}>
-        <img src={icon('fire')} alt="" />
+      <span className={'stat stat-fire' + (flameActive ? ' is-active' : '')} aria-label={`연속 학습 ${streak}일${flameActive ? ', 오늘 문제 풀이 완료' : ''}`}>
+        <img src={icon(flameActive ? 'fire-active' : 'fire')} alt="" />
         <b>{streak}일</b>
       </span>
     </div>
