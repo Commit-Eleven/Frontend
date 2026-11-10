@@ -1,3 +1,4 @@
+import { LoadingSkeleton } from '../common/LoadingSkeleton.jsx'
 import { useEffect, useRef, useState } from 'react'
 import { Sidebar } from '../home/Sidebar.jsx'
 import { MobileNav } from '../home/MobileNav.jsx'
@@ -243,7 +244,7 @@ function GroupDetail({ groupId, preview, onClose, onChanged }) {
       <div className="group-detail-heading">
         <h1>{group?.name || lockedGroup?.name || '그룹 상세'}</h1>
       </div>
-      {loading ? <p className="group-detail-state">그룹 정보를 불러오는 중…</p>
+      {loading ? <LoadingSkeleton variant="profile" label="그룹 정보를 불러오는 중" />
         : error ? <p className="group-error" role="alert">{error}</p>
         : locked ? <>
           <p className="group-description">{lockedGroup.description || '아직 그룹 소개가 없어요.'}</p>
@@ -461,7 +462,7 @@ function FindGroups({ myGroupIds, onJoined, onOpen }) {
         <button type="submit" className="group-secondary">검색</button>
       </form>
       {message && <p className="group-error" role="alert">{message}</p>}
-      {result.loading ? <p className="group-detail-state">그룹을 찾는 중…</p>
+      {result.loading ? <LoadingSkeleton variant="groups" label="그룹을 찾는 중" />
         : result.error ? <p className="group-error" role="alert">{result.error}</p>
         : result.items.length ? <>
           <div className="group-grid">
@@ -613,7 +614,7 @@ export function Groups({ onNavigate, onLogout }) {
             <FindGroups myGroupIds={groups.map((group) => group.id)} onJoined={(text) => { changed(text); setTab('mine') }} onOpen={(group) => openDetail(group.id, group)} />
           ) : <>
             <ReceivedInvites reloadKey={reloadKey} onAccepted={changed} />
-            {loading ? <p className="group-detail-state">그룹 목록을 불러오는 중…</p>
+            {loading ? <LoadingSkeleton variant="groups" label="그룹 목록을 불러오는 중" />
               : loadError ? <div className="group-error" role="alert">{loadError} <button type="button" className="group-text-button" onClick={reload}>다시 시도</button></div>
               : groups.length ? (
                 <div className="group-grid">

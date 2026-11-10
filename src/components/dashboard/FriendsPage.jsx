@@ -1,3 +1,4 @@
+import { LoadingSkeleton } from '../common/LoadingSkeleton.jsx'
 import { useEffect, useMemo, useState } from 'react'
 import { beginGoogleLogin } from '../../api/auth.js'
 import {
@@ -261,7 +262,7 @@ export function FriendsPage() {
             <button type="button" onClick={reloadFriends}>다시 시도</button>
           </div>
         ) : loading ? (
-          <p className="friends-result-message">친구 목록을 불러오는 중…</p>
+          <LoadingSkeleton variant="friends" label="친구 목록을 불러오는 중" />
         ) : visible.length ? (
           <div className="friends-list">
             {visible.map((item) => (
