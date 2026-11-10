@@ -1,29 +1,20 @@
-import { useEffect, useRef, useState } from 'react'
+import { memo, useEffect, useRef, useState } from 'react'
 import { authorizationHeaders } from '../../api/auth.js'
-import { fetchHome, fetchTags, toLanguageCode } from '../../api/learning.js'
+import { fetchTags, toLanguageCode } from '../../api/learning.js'
 import { updateStudyLanguage } from '../../api/community.js'
 import { codingLanguages } from '../../data/navigation.js'
 import { icon } from '../../lib/assets.js'
 import { selectCodingLanguage, useCodingLanguage } from '../../hooks/useCodingLanguage.js'
 import './Stats.css'
 
-export function Stats({ compact = false }) {
+export const Stats = memo(function Stats({ compact = false, streakDays = 0 }) {
   const language = useCodingLanguage()
   const [languageOpen, setLanguageOpen] = useState(false)
   const [languageError, setLanguageError] = useState('')
   const [savingLanguage, setSavingLanguage] = useState(false)
   const [availableLanguages, setAvailableLanguages] = useState(codingLanguages)
   const languageRef = useRef(null)
-  const [streak, setStreak] = useState(0)
   const loggedIn = Boolean(authorizationHeaders().Authorization)
-
-  // GET /users/me/home 의 연속 학습 일수
-  useEffect(() => {
-    if (!loggedIn) return undefined
-    const controller = new AbortController()
-    fetchHome({ signal: controller.signal }).then((home) => setStreak(home.stats.streakDays)).catch(() => {})
-    return () => controller.abort()
-  }, [loggedIn])
 
   useEffect(() => {
     if (!languageOpen || !loggedIn) return undefined
@@ -117,10 +108,10 @@ export function Stats({ compact = false }) {
           </div>
         )}
       </div>
-      <span className="stat stat-fire" aria-label={`연속 학습 ${streak}일`}>
+      <span className="stat stat-fire" aria-label={`연속 학습 ${streakDays}일`}>
         <img src={icon('fire')} alt="" />
-        <b>{streak}일</b>
+        <b>{streakDays}일</b>
       </span>
     </div>
   )
-}
+})

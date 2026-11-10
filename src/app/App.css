@@ -10,6 +10,16 @@
   --line: #dedede;
   --muted: #777;
   --light-blue: var(--primary-soft);
+  --dashboard-text-xxs: 11px;
+  --dashboard-text-xs: 12px;
+  --dashboard-text-sm: 13px;
+  --dashboard-text-body: 15px;
+  --dashboard-text-lg: 16px;
+  --dashboard-text-xl: 18px;
+  --dashboard-text-2xl: 20px;
+  --dashboard-text-3xl: 22px;
+  --dashboard-text-4xl: 25px;
+  --dashboard-text-5xl: 30px;
 }
 #root {
   height: 100vh;

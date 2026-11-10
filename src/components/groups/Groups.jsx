@@ -1,11 +1,6 @@
 import { LoadingSkeleton } from '../common/LoadingSkeleton.jsx'
 import { useEffect, useRef, useState } from 'react'
-import { Sidebar } from '../home/Sidebar.jsx'
-import { MobileNav } from '../home/MobileNav.jsx'
-import { RightRail } from '../home/RightRail.jsx'
-import { Stats } from '../common/Stats.jsx'
 import { DashboardPageHeader } from '../dashboard/DashboardPageHeader.jsx'
-import '../home/Home.css'
 import { beginGoogleLogin } from '../../api/auth.js'
 import { searchPeople, tokenUserId } from '../../api/community.js'
 import {
@@ -493,7 +488,7 @@ function FindGroups({ myGroupIds, onJoined, onOpen }) {
   )
 }
 
-export function Groups({ onNavigate, onLogout }) {
+export function Groups({ scrollRef }) {
   const loggedIn = canUseGroupApi()
   const [tab, setTab] = useState('mine')
   const [groups, setGroups] = useState([])
@@ -508,7 +503,6 @@ export function Groups({ onNavigate, onLogout }) {
   const [detailId, setDetailId] = useState(null)
   const [detailPreview, setDetailPreview] = useState(null)
   const titleRef = useRef(null)
-  const mainRef = useRef(null)
 
   useEffect(() => {
     try { window.localStorage.removeItem(legacyGroupsKey) } catch { /* 저장소를 쓸 수 없으면 무시합니다. */ }
@@ -533,8 +527,8 @@ export function Groups({ onNavigate, onLogout }) {
     requestAnimationFrame(() => titleRef.current?.focus())
   }
   function closeForm() { setCreating(false); setError('') }
-  function openDetail(groupId, preview = null) { setDetailId(groupId); setDetailPreview(preview); setNotice(''); mainRef.current?.scrollTo(0, 0) }
-  function closeDetail() { setDetailId(null); mainRef.current?.scrollTo(0, 0) }
+  function openDetail(groupId, preview = null) { setDetailId(groupId); setDetailPreview(preview); setNotice(''); scrollRef.current?.scrollTo(0, 0) }
+  function closeDetail() { setDetailId(null); scrollRef.current?.scrollTo(0, 0) }
 
   async function save(event) {
     event.preventDefault()
@@ -555,95 +549,87 @@ export function Groups({ onNavigate, onLogout }) {
     }
   }
 
-  return <div className="home-layout groups-page">
-    <Sidebar activeItem="그룹" onNavigate={onNavigate} onLogout={onLogout} />
-    <main className="center-pane" ref={mainRef}>
-      <div className="center-content">
-        {detailId && !creating ? (
-          <>
-            <button type="button" className="group-back" onClick={closeDetail}><span aria-hidden="true">←</span> 그룹 목록</button>
-            {notice && <p className="group-notice" role="status">✓ {notice}</p>}
-            <GroupDetail key={detailId} groupId={detailId} preview={detailPreview} onClose={closeDetail} onChanged={changed} />
-          </>
-        ) : <>
-        <DashboardPageHeader
-          eyebrow={creating ? '새 그룹' : '함께 배우기'}
-          title={creating ? '그룹 생성하기' : '그룹'}
-          description={creating ? '함께 성장할 그룹의 이야기를 알려 주세요.' : '함께 배우고, 만들고, 한 걸음 더 성장해요.'}
-          action={!creating && loggedIn ? <button type="button" className="group-primary" onClick={openForm}>＋ 그룹 생성하기</button> : null}
-        />
-        {notice && <p className="group-notice" role="status">✓ {notice}</p>}
+  return (
+    <>
+      {detailId && !creating ? (
+        <>
+          <button type="button" className="group-back" onClick={closeDetail}><span aria-hidden="true">←</span> 그룹 목록</button>
+          {notice && <p className="group-notice" role="status">✓ {notice}</p>}
+          <GroupDetail key={detailId} groupId={detailId} preview={detailPreview} onClose={closeDetail} onChanged={changed} />
+        </>
+      ) : <>
+      <DashboardPageHeader
+        eyebrow={creating ? '새 그룹' : '함께 배우기'}
+        title={creating ? '그룹 생성하기' : '그룹'}
+        description={creating ? '함께 성장할 그룹의 이야기를 알려 주세요.' : '함께 배우고, 만들고, 한 걸음 더 성장해요.'}
+        action={!creating && loggedIn ? <button type="button" className="group-primary" onClick={openForm}>＋ 그룹 생성하기</button> : null}
+      />
+      {notice && <p className="group-notice" role="status">✓ {notice}</p>}
 
-        {!loggedIn ? (
-          <div className="group-empty">
-            <div aria-hidden="true">〈/〉</div>
-            <h2>로그인하고 그룹을 만들어 보세요</h2>
-            <p>Google 계정으로 로그인하면<br />그룹을 만들고 함께 학습할 수 있어요.</p>
-            <button className="group-primary" onClick={() => beginGoogleLogin()}>Google로 로그인</button>
+      {!loggedIn ? (
+        <div className="group-empty">
+          <div aria-hidden="true">〈/〉</div>
+          <h2>로그인하고 그룹을 만들어 보세요</h2>
+          <p>Google 계정으로 로그인하면<br />그룹을 만들고 함께 학습할 수 있어요.</p>
+          <button className="group-primary" onClick={() => beginGoogleLogin()}>Google로 로그인</button>
+        </div>
+      ) : creating ? (
+        <form className="group-form" onSubmit={save}>
+          <section className="group-section">
+            <div className="group-section-heading"><span>01</span><div><h2>그룹 프로필</h2><p>그룹 이름은 꼭 필요하고, 소개와 정원은 비워 둬도 돼요.</p></div></div>
+            <label className="group-field">그룹명 <span className="group-required">필수</span>
+              <input ref={titleRef} autoComplete="off" value={draft.name} onChange={(e) => setDraft({ ...draft, name: e.target.value })} maxLength={GROUP_NAME_MAX} placeholder="예: 알고리즘 스터디" required />
+              <small>{draft.name.length}/{GROUP_NAME_MAX}</small>
+            </label>
+            <label className="group-field">그룹 소개 <span className="group-required">선택</span>
+              <textarea value={draft.description} onChange={(e) => setDraft({ ...draft, description: e.target.value })} maxLength={GROUP_DESCRIPTION_MAX} rows={4} placeholder="예: 매주 3문제씩 함께 풀어요." />
+              <small>{draft.description.length}/{GROUP_DESCRIPTION_MAX}</small>
+            </label>
+            <label className="group-field">정원 <span className="group-required">선택</span>
+              <input type="number" min={GROUP_CAPACITY_MIN} max={GROUP_CAPACITY_MAX} inputMode="numeric" value={draft.capacity} onChange={(e) => setDraft({ ...draft, capacity: e.target.value })} placeholder={`비워 두면 ${GROUP_CAPACITY_DEFAULT}명`} />
+              <small>{GROUP_CAPACITY_MIN}~{GROUP_CAPACITY_MAX}명</small>
+            </label>
+          </section>
+          {error && <p className="group-error" role="alert">{error}</p>}
+          <div className="group-form-actions">
+            <button type="button" className="group-secondary" onClick={closeForm}>취소</button>
+            <button className="group-primary" disabled={saving} type="submit">{saving ? '만드는 중…' : '그룹 생성하기'}</button>
           </div>
-        ) : creating ? (
-          <form className="group-form" onSubmit={save}>
-            <section className="group-section">
-              <div className="group-section-heading"><span>01</span><div><h2>그룹 프로필</h2><p>그룹 이름은 꼭 필요하고, 소개와 정원은 비워 둬도 돼요.</p></div></div>
-              <label className="group-field">그룹명 <span className="group-required">필수</span>
-                <input ref={titleRef} autoComplete="off" value={draft.name} onChange={(e) => setDraft({ ...draft, name: e.target.value })} maxLength={GROUP_NAME_MAX} placeholder="예: 알고리즘 스터디" required />
-                <small>{draft.name.length}/{GROUP_NAME_MAX}</small>
-              </label>
-              <label className="group-field">그룹 소개 <span className="group-required">선택</span>
-                <textarea value={draft.description} onChange={(e) => setDraft({ ...draft, description: e.target.value })} maxLength={GROUP_DESCRIPTION_MAX} rows={4} placeholder="예: 매주 3문제씩 함께 풀어요." />
-                <small>{draft.description.length}/{GROUP_DESCRIPTION_MAX}</small>
-              </label>
-              <label className="group-field">정원 <span className="group-required">선택</span>
-                <input type="number" min={GROUP_CAPACITY_MIN} max={GROUP_CAPACITY_MAX} inputMode="numeric" value={draft.capacity} onChange={(e) => setDraft({ ...draft, capacity: e.target.value })} placeholder={`비워 두면 ${GROUP_CAPACITY_DEFAULT}명`} />
-                <small>{GROUP_CAPACITY_MIN}~{GROUP_CAPACITY_MAX}명</small>
-              </label>
-            </section>
-            {error && <p className="group-error" role="alert">{error}</p>}
-            <div className="group-form-actions">
-              <button type="button" className="group-secondary" onClick={closeForm}>취소</button>
-              <button className="group-primary" disabled={saving} type="submit">{saving ? '만드는 중…' : '그룹 생성하기'}</button>
-            </div>
-          </form>
-        ) : <>
-          <div className="group-tabs" role="tablist" aria-label="그룹 보기">
-            <button type="button" role="tab" aria-selected={tab === 'mine'} className={tab === 'mine' ? 'is-active' : ''} onClick={() => setTab('mine')}>나의 그룹 <span>{groups.length}</span></button>
-            <button type="button" role="tab" aria-selected={tab === 'find'} className={tab === 'find' ? 'is-active' : ''} onClick={() => { setTab('find'); setDetailId(null) }}>그룹 찾기</button>
-          </div>
+        </form>
+      ) : <>
+        <div className="group-tabs" role="tablist" aria-label="그룹 보기">
+          <button type="button" role="tab" aria-selected={tab === 'mine'} className={tab === 'mine' ? 'is-active' : ''} onClick={() => setTab('mine')}>나의 그룹 <span>{groups.length}</span></button>
+          <button type="button" role="tab" aria-selected={tab === 'find'} className={tab === 'find' ? 'is-active' : ''} onClick={() => { setTab('find'); setDetailId(null) }}>그룹 찾기</button>
+        </div>
 
-          {tab === 'find' ? (
-            <FindGroups myGroupIds={groups.map((group) => group.id)} onJoined={(text) => { changed(text); setTab('mine') }} onOpen={(group) => openDetail(group.id, group)} />
-          ) : <>
-            <ReceivedInvites reloadKey={reloadKey} onAccepted={changed} />
-            {loading ? <LoadingSkeleton variant="groups" label="그룹 목록을 불러오는 중" />
-              : loadError ? <div className="group-error" role="alert">{loadError} <button type="button" className="group-text-button" onClick={reload}>다시 시도</button></div>
-              : groups.length ? (
-                <div className="group-grid">
-                  {groups.map((group) => (
-                    <GroupCard group={group} key={group.id}>
-                      <button className="group-text-button" onClick={() => openDetail(group.id)} aria-label={`${group.name} 상세 보기`}>상세 보기 <span aria-hidden="true">→</span></button>
-                    </GroupCard>
-                  ))}
+        {tab === 'find' ? (
+          <FindGroups myGroupIds={groups.map((group) => group.id)} onJoined={(text) => { changed(text); setTab('mine') }} onOpen={(group) => openDetail(group.id, group)} />
+        ) : <>
+          <ReceivedInvites reloadKey={reloadKey} onAccepted={changed} />
+          {loading ? <LoadingSkeleton variant="groups" label="그룹 목록을 불러오는 중" />
+            : loadError ? <div className="group-error" role="alert">{loadError} <button type="button" className="group-text-button" onClick={reload}>다시 시도</button></div>
+            : groups.length ? (
+              <div className="group-grid">
+                {groups.map((group) => (
+                  <GroupCard group={group} key={group.id}>
+                    <button className="group-text-button" onClick={() => openDetail(group.id)} aria-label={`${group.name} 상세 보기`}>상세 보기 <span aria-hidden="true">→</span></button>
+                  </GroupCard>
+                ))}
+              </div>
+            ) : (
+              <div className="group-empty">
+                <div aria-hidden="true">〈/〉</div>
+                <h2>아직 참여한 그룹이 없어요</h2>
+                <p>그룹을 직접 만들거나<br />그룹 찾기에서 마음에 드는 그룹에 참여해 보세요.</p>
+                <div className="group-empty-actions">
+                  <button className="group-secondary" onClick={() => setTab('find')}>그룹 찾기</button>
+                  <button className="group-primary" onClick={openForm}>첫 그룹 만들기</button>
                 </div>
-              ) : (
-                <div className="group-empty">
-                  <div aria-hidden="true">〈/〉</div>
-                  <h2>아직 참여한 그룹이 없어요</h2>
-                  <p>그룹을 직접 만들거나<br />그룹 찾기에서 마음에 드는 그룹에 참여해 보세요.</p>
-                  <div className="group-empty-actions">
-                    <button className="group-secondary" onClick={() => setTab('find')}>그룹 찾기</button>
-                    <button className="group-primary" onClick={openForm}>첫 그룹 만들기</button>
-                  </div>
-                </div>
-              )}
-          </>}
+              </div>
+            )}
         </>}
-        </>}
-      </div>
-    </main>
-    <RightRail onNavigate={onNavigate} />
-    <div className="mobile-stats">
-      <Stats compact />
-    </div>
-    <MobileNav activeItem="그룹" onNavigate={onNavigate} onLogout={onLogout} />
-  </div>
+      </>}
+      </>}
+    </>
+  )
 }

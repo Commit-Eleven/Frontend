@@ -18,7 +18,7 @@ export async function apiRequest(config) {
   } catch (error) {
     const status = error.response?.status;
     if (status === 401) clearAccessToken();
-    const serverMessage = error.response?.data?.error?.message;
+    const serverMessage = error.response?.data?.error?.message ?? error.response?.data?.message;
     const message = status === 401
       ? '문제를 불러오려면 로그인해 주세요.'
       : serverMessage
@@ -28,6 +28,7 @@ export async function apiRequest(config) {
         : error.message;
     const requestError = new Error(message);
     requestError.status = status;
+    requestError.code = error.response?.data?.error?.code;
     throw requestError;
   }
 }
