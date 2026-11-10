@@ -1,3 +1,4 @@
+import { LoadingSkeleton } from '../common/LoadingSkeleton.jsx'
 import { useEffect, useState } from 'react'
 import { beginGoogleLogin } from '../../api/auth.js'
 import { fetchMyProfile, fetchMyStats, updateMyNickname } from '../../api/community.js'
@@ -59,7 +60,7 @@ function ExpHistory() {
           ))}
         </ul>
       ) : (
-        <p className="profile-no-history">{failed ? '경험치 기록을 불러오지 못했어요.' : exp ? '아직 얻은 경험치가 없어요.' : '불러오는 중…'}</p>
+        !failed && !exp ? <LoadingSkeleton variant="friends" label="경험치 기록을 불러오는 중" /> : <p className="profile-no-history">{failed ? '경험치 기록을 불러오지 못했어요.' : '아직 얻은 경험치가 없어요.'}</p>
       )}
     </article>
   )
@@ -114,7 +115,7 @@ function SubmissionHistory() {
       ) : !loading ? (
         <p className="profile-no-history">{failed ? '제출 기록을 불러오지 못했어요.' : '아직 제출한 답안이 없어요.'}</p>
       ) : null}
-      {loading && <p className="profile-no-history">불러오는 중…</p>}
+      {loading && <LoadingSkeleton variant="friends" label="제출 기록을 불러오는 중" />}
       {!loading && nextCursor && (
         <button type="button" className="profile-more-button" onClick={() => { setLoading(true); load(nextCursor) }}>더 보기</button>
       )}
@@ -201,7 +202,7 @@ export function ProfilePage({ onNavigate }) {
     return (
       <section className="profile-page">
         <DashboardPageHeader eyebrow="내 학습 기록" title="프로필" description="학습 진행 상황과 계정 정보를 확인해요." />
-        <div className="profile-loading">프로필을 불러오는 중…</div>
+        <LoadingSkeleton variant="profile" label="프로필을 불러오는 중" />
       </section>
     )
   }
