@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { authorizationHeaders } from '../../api/auth.js'
-import { fetchHome } from '../../api/learning.js'
+import { fetchHome, fetchTags, toLanguageCode } from '../../api/learning.js'
+import { updateStudyLanguage } from '../../api/community.js'
 import { codingLanguages } from '../../data/navigation.js'
 import { icon } from '../../lib/assets.js'
 import { selectCodingLanguage, useCodingLanguage } from '../../hooks/useCodingLanguage.js'
@@ -9,6 +10,9 @@ import './Stats.css'
 export function Stats({ compact = false }) {
   const language = useCodingLanguage()
   const [languageOpen, setLanguageOpen] = useState(false)
+  const [languageError, setLanguageError] = useState('')
+  const [savingLanguage, setSavingLanguage] = useState(false)
+  const [availableLanguages, setAvailableLanguages] = useState(codingLanguages)
   const languageRef = useRef(null)
   const [streak, setStreak] = useState(0)
   const loggedIn = Boolean(authorizationHeaders().Authorization)
@@ -20,6 +24,20 @@ export function Stats({ compact = false }) {
     fetchHome({ signal: controller.signal }).then((home) => setStreak(home.stats.streakDays)).catch(() => {})
     return () => controller.abort()
   }, [loggedIn])
+
+  useEffect(() => {
+    if (!languageOpen || !loggedIn) return undefined
+    const controller = new AbortController()
+    fetchTags({ signal: controller.signal })
+      .then((tags) => {
+        const codes = tags.map(toLanguageCode)
+        setAvailableLanguages(codingLanguages.filter((option) => codes.includes(option.code)))
+      })
+      .catch(() => {
+        if (!controller.signal.aborted) setLanguageError('사용 가능한 언어를 불러오지 못했어요.')
+      })
+    return () => controller.abort()
+  }, [languageOpen, loggedIn])
 
   useEffect(() => {
     if (!languageOpen) return undefined
@@ -39,9 +57,19 @@ export function Stats({ compact = false }) {
     }
   }, [languageOpen])
 
-  const selectLanguage = (nextLanguage) => {
-    selectCodingLanguage(nextLanguage)
-    setLanguageOpen(false)
+  const selectLanguage = async (nextLanguage) => {
+    if (savingLanguage) return
+    setLanguageError('')
+    setSavingLanguage(true)
+    try {
+      if (loggedIn) await updateStudyLanguage(nextLanguage.code)
+      selectCodingLanguage(nextLanguage)
+      setLanguageOpen(false)
+    } catch (error) {
+      setLanguageError(error.message || '언어를 변경하지 못했어요.')
+    } finally {
+      setSavingLanguage(false)
+    }
   }
 
   return (
@@ -57,14 +85,16 @@ export function Stats({ compact = false }) {
           onClick={() => setLanguageOpen((open) => !open)}
         >
           <img className="html-badge" src={language.icon} alt="" />
+          <span>{language.label}</span>
         </button>
         {languageOpen && (
           <div className="language-menu" role="menu" aria-label="코딩 언어 선택">
             <div className="language-menu-title">언어 선택</div>
-            {[...new Set(codingLanguages.map((option) => option.category))].map((category) => (
+            {languageError && <p role="alert">{languageError}</p>}
+            {[...new Set(availableLanguages.map((option) => option.category))].map((category) => (
               <section className="language-menu-group" key={category} aria-label={category}>
                 <h3>{category}</h3>
-                {codingLanguages.filter((option) => option.category === category).map((option) => {
+                {availableLanguages.filter((option) => option.category === category).map((option) => {
                   const isSelected = language.code === option.code
                   return (
                     <button
@@ -72,6 +102,7 @@ export function Stats({ compact = false }) {
                       type="button"
                       className={'language-menu-item' + (isSelected ? ' is-selected' : '')}
                       role="menuitemradio"
+                      disabled={savingLanguage}
                       aria-checked={isSelected}
                       onClick={() => selectLanguage(option)}
                     >
@@ -86,9 +117,10 @@ export function Stats({ compact = false }) {
           </div>
         )}
       </div>
-      <span className="stat stat-fire"><b>{streak}</b><img src={icon('fire')} alt="연속 학습" /></span>
-      <span className="stat stat-gem"><b>19</b><span className="gem-shape" /></span>
-      <span className="stat stat-energy"><b>6</b><span className="energy-shape">ϟ</span></span>
+      <span className="stat stat-fire" aria-label={`연속 학습 ${streak}일`}>
+        <img src={icon('fire')} alt="" />
+        <b>{streak}일</b>
+      </span>
     </div>
   )
 }
