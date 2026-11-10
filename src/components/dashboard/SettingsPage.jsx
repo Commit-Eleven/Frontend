@@ -56,6 +56,7 @@ export function SettingsPage({ language, onNavigate, onLogout }) {
     try {
       await deleteMyAccount()
       clearAccessToken()
+      localStorage.clear()
       location.replace('/')
     } catch (requestError) {
       setNotice(requestError.status === 401
