@@ -56,6 +56,7 @@ export function SettingsPage({ language, onNavigate, onLogout }) {
     try {
       await deleteMyAccount()
       clearAccessToken()
+      localStorage.clear()
       location.replace('/')
     } catch (requestError) {
       // TODO(API): 회원 탈퇴 API(DELETE /users/me)가 아직 서버에 없습니다.
