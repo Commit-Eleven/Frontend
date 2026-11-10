@@ -3,8 +3,8 @@ import { GROUP_CAPACITY_MAX, GROUP_CAPACITY_MIN, GROUP_DESCRIPTION_MAX, GROUP_NA
 /** 그룹 생성 폼 입력을 서버 규칙대로 검증합니다. 문제가 없으면 빈 문자열을 반환합니다. */
 export function validateGroup(group) {
   const name = String(group.name ?? '').trim()
-  if (!name || name.length > GROUP_NAME_MAX) return `팀명은 1~${GROUP_NAME_MAX}자로 입력해 주세요.`
-  if (String(group.description ?? '').trim().length > GROUP_DESCRIPTION_MAX) return `팀 소개는 ${GROUP_DESCRIPTION_MAX}자 이내로 입력해 주세요.`
+  if (!name || name.length > GROUP_NAME_MAX) return `그룹명은 1~${GROUP_NAME_MAX}자로 입력해 주세요.`
+  if (String(group.description ?? '').trim().length > GROUP_DESCRIPTION_MAX) return `그룹 소개는 ${GROUP_DESCRIPTION_MAX}자 이내로 입력해 주세요.`
   const capacity = String(group.capacity ?? '').trim()
   if (capacity && !(Number.isInteger(Number(capacity)) && Number(capacity) >= GROUP_CAPACITY_MIN && Number(capacity) <= GROUP_CAPACITY_MAX)) {
     return `정원은 ${GROUP_CAPACITY_MIN}~${GROUP_CAPACITY_MAX}명 사이로 입력해 주세요.`
