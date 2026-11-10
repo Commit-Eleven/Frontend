@@ -1,16 +1,16 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { groupCreateBody, normalizeGroupDetail, normalizeGroupInvites, normalizeGroupRanking, normalizeGroups } from '../src/api/groups.js'
+import { groupCreateBody, groupUpdateBody, normalizeGroupPreview, normalizeGroupDetail, normalizeGroupInvites, normalizeGroupRanking, normalizeGroups } from '../src/api/groups.js'
 import { validateGroup } from '../src/lib/groups.js'
 
 test('validates group fields with the server limits', () => {
   assert.equal(validateGroup({ name: '알고리즘 스터디', description: '', capacity: '' }), '')
-  assert.match(validateGroup({ name: '   ' }), /팀명/)
-  assert.match(validateGroup({ name: 'a'.repeat(51) }), /팀명/)
-  assert.match(validateGroup({ name: '팀', description: 'a'.repeat(256) }), /소개/)
-  assert.match(validateGroup({ name: '팀', capacity: '51' }), /정원/)
-  assert.match(validateGroup({ name: '팀', capacity: '1' }), /정원/)
-  assert.equal(validateGroup({ name: '팀', capacity: '50' }), '')
+  assert.match(validateGroup({ name: '   ' }), /그룹명/)
+  assert.match(validateGroup({ name: 'a'.repeat(51) }), /그룹명/)
+  assert.match(validateGroup({ name: '그룹', description: 'a'.repeat(256) }), /소개/)
+  assert.match(validateGroup({ name: '그룹', capacity: '51' }), /정원/)
+  assert.match(validateGroup({ name: '그룹', capacity: '1' }), /정원/)
+  assert.equal(validateGroup({ name: '그룹', capacity: '50' }), '')
 })
 
 test('builds the create body with only filled fields', () => {
@@ -45,4 +45,24 @@ test('normalizes group detail and ranking responses', () => {
 test('normalizes received group invites', () => {
   const [invite] = normalizeGroupInvites({ items: [{ id: 7, group: { id: 12, name: '스터디' }, inviter: { id: 3, nickname: '민트', tag: '0001' }, createdAt: '2026-11-03' }] })
   assert.deepEqual(invite, { id: '7', groupId: '12', groupName: '스터디', inviter: { nickname: '민트', tag: '0001' }, createdAt: '2026-11-03' })
+})
+
+test('normalizes the group preview response', () => {
+  const preview = normalizeGroupPreview({
+    group: { id: 7, name: '스터디', capacity: 3, memberCount: 3, isFull: true },
+    owner: { id: 1, nickname: '민트', tag: '0001' },
+    members: [{ id: 1, nickname: '민트', tag: '0001', role: 'owner' }],
+    isMember: false,
+    myRole: null,
+  })
+  assert.equal(preview.group.isFull, true)
+  assert.equal(preview.owner.nickname, '민트')
+  assert.equal(preview.members[0].role, 'owner')
+  assert.equal(preview.isMember, false)
+})
+
+test('builds the update body with only changed fields', () => {
+  const current = { name: '스터디', description: '소개', capacity: 10 }
+  assert.deepEqual(groupUpdateBody({ name: '스터디', description: '소개', capacity: '10' }, current), {})
+  assert.deepEqual(groupUpdateBody({ name: ' 새 이름 ', description: '', capacity: '20' }, current), { name: '새 이름', description: '', capacity: 20 })
 })

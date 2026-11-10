@@ -9,6 +9,7 @@ import { FriendsPage } from '../dashboard/FriendsPage.jsx';
 import { ProfilePage } from '../dashboard/ProfilePage.jsx';
 import { SettingsPage } from '../dashboard/SettingsPage.jsx';
 import { HelpPage } from '../dashboard/HelpPage.jsx';
+import { NotificationsPage } from '../dashboard/NotificationsPage.jsx';
 import { RankingPage } from '../dashboard/RankingPage.jsx';
 import './Home.css';
 
@@ -100,6 +101,8 @@ export function Home({
             <HelpPage onNavigate={navigate} />
           ) : activeItem === '랭킹' ? (
             <RankingPage />
+          ) : activeItem === '알림' ? (
+            <NotificationsPage />
           ) : (
             <>
               <div className="floating-course-card">
