@@ -280,6 +280,11 @@ export function ProfilePage({ onNavigate }) {
   const progress = total ? Math.min(100, Math.round((solved / total) * 100)) : 0
   const typeStats = Array.isArray(stats?.byType) ? stats.byType : []
   const currentAvatarUrl = profile?.avatarUrl ?? profile?.imageUrl ?? ''
+  const toggleAvatarEditor = () => {
+    setAvatarEditing((value) => !value)
+    setAvatarUrl(currentAvatarUrl || '')
+    setNotice('')
+  }
 
   return (
     <section className="profile-page">
@@ -293,17 +298,20 @@ export function ProfilePage({ onNavigate }) {
       <article className="profile-hero">
         <div className="profile-identity">
           <div className="profile-avatar-column">
-            {currentAvatarUrl && !avatarFailed ? (
-              <img className="profile-avatar profile-avatar-image" src={currentAvatarUrl} alt={`${profile?.nickname || '내'} 프로필 사진`} onError={() => setAvatarFailed(true)} />
-            ) : (
-              <span className="profile-avatar">{[...(profile?.nickname || '나')][0]}</span>
+            <button type="button" className="profile-avatar-trigger" aria-label="프로필 사진 변경" onClick={toggleAvatarEditor} disabled={avatarSaving}>
+              {currentAvatarUrl && !avatarFailed ? (
+                <img className="profile-avatar profile-avatar-image" src={currentAvatarUrl} alt="" onError={() => setAvatarFailed(true)} />
+              ) : (
+                <span className="profile-avatar">{[...(profile?.nickname || '나')][0]}</span>
+              )}
+            </button>
+            {currentAvatarUrl && (
+              <div className="profile-avatar-actions">
+                <button type="button" className="profile-avatar-action" onClick={resetAvatar} disabled={avatarSaving}>
+                  {avatarSaving ? '처리 중…' : '기본으로'}
+                </button>
+              </div>
             )}
-            <div className="profile-avatar-actions">
-              <button type="button" className="profile-avatar-action" onClick={() => { setAvatarEditing((value) => !value); setAvatarUrl(currentAvatarUrl || ''); setNotice('') }}>
-                {avatarEditing ? '닫기' : '사진 변경'}
-              </button>
-              {currentAvatarUrl && <button type="button" className="profile-avatar-action" onClick={resetAvatar} disabled={avatarSaving}>{avatarSaving ? '처리 중…' : '기본으로'}</button>}
-            </div>
           </div>
           <div className="profile-identity-copy">
             <div className="profile-name-row">
