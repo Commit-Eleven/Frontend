@@ -244,7 +244,7 @@ function GroupDetail({ groupId, preview, onClose, onChanged }) {
       <div className="group-detail-heading">
         <h1>{group?.name || lockedGroup?.name || '그룹 상세'}</h1>
       </div>
-      {loading ? <LoadingSkeleton variant="profile" label="그룹 정보를 불러오는 중" />
+      {loading ? <LoadingSkeleton variant="groups" label="그룹 정보를 불러오는 중" />
         : error ? <p className="group-error" role="alert">{error}</p>
         : locked ? <>
           <p className="group-description">{lockedGroup.description || '아직 그룹 소개가 없어요.'}</p>
