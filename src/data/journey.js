@@ -1,22 +1,15 @@
-export const initialCompleted = [
-  'html-intro',
-  'html-document',
-  'html-tags',
-  'html-head',
-  'html-body',
-  'html-first',
-];
+export const initialCompleted = [];
 
 export const chapterData = [
   {
     title: 'HTML 기초',
     rows: [
-      { main: { id: 'html-intro', title: 'HTML 소개', type: 'all', initial: 'done' } },
-      { main: { id: 'html-document', title: 'HTML 문서 구조', type: 'all', initial: 'done' } },
-      { main: { id: 'html-tags', title: '태그와 요소', type: 'all', initial: 'done' } },
-      { main: { id: 'html-head', title: 'head 요소', type: 'all', initial: 'done' } },
-      { main: { id: 'html-body', title: 'body 요소', type: 'all', initial: 'done' } },
-      { main: { id: 'html-first', title: '첫 웹 페이지', type: 'trophy', initial: 'done' } },
+      { main: { id: 'html-intro', title: 'HTML 소개', type: 'all' } },
+      { main: { id: 'html-document', title: 'HTML 문서 구조', type: 'all' } },
+      { main: { id: 'html-tags', title: '태그와 요소', type: 'all' } },
+      { main: { id: 'html-head', title: 'head 요소', type: 'all' } },
+      { main: { id: 'html-body', title: 'body 요소', type: 'all' } },
+      { main: { id: 'html-first', title: '첫 웹 페이지', type: 'trophy' } },
     ],
   },
   {
@@ -24,7 +17,7 @@ export const chapterData = [
     rows: [
       {
         main: { id: 'text-mastery', title: '텍스트 마스터리', type: 'mastery', initial: 'special' },
-        side: { id: 'text-intro', title: '텍스트 강조', type: 'all', initial: 'done' },
+        side: { id: 'text-intro', title: '텍스트 강조', type: 'all' },
       },
       {
         main: { id: 'paragraphs', title: '단락', type: 'all' },

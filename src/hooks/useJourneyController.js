@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { journeyFor } from '../data/curricula.js';
 import { statusFor } from '../data/journey.js';
 import { readSaved, saveProgress } from '../lib/progress.js';
+import { completeLesson as saveLessonCompletion } from '../api/learning.js';
 
 function journeyPath(language) {
   return `/journeys/${language}/fundamentals`;
@@ -29,6 +30,19 @@ export function useJourneyController(language) {
   const [searchOpen, setSearchOpen] = useState(false);
   const [syllabusOpen, setSyllabusOpen] = useState(false);
   const [jumpTo, setJumpTo] = useState(null);
+
+  // 언어별 학습 상태만 초기화하고 공통 레이아웃은 그대로 유지합니다.
+  if (progress.language !== language) {
+    const nextProgress = initialSession(language);
+    const nextLesson = lessonFromPath(language, journey);
+    setProgress(nextProgress);
+    setSelectedId(nextProgress.active);
+    setLessonId(nextLesson || nextProgress.active);
+    setView(nextLesson ? 'lesson' : 'home');
+    setSearchOpen(false);
+    setSyllabusOpen(false);
+    setJumpTo(null);
+  }
 
   useEffect(() => {
     saveProgress(language, { completed: progress.completed, active: progress.active });
@@ -70,10 +84,6 @@ export function useJourneyController(language) {
     return () => window.removeEventListener('keydown', onKeys);
   }, []);
 
-  const updateProgress = (updater) => {
-    setProgress((current) => ({ ...current, ...updater(current) }));
-  };
-
   const openLesson = (id) => {
     const node = journey.allNodes.find((item) => item.id === id);
     if (!node || statusFor(node, completed, active) === 'locked') return;
@@ -89,15 +99,17 @@ export function useJourneyController(language) {
     window.history.pushState({}, '', journeyPath(language));
   };
 
-  const completeLesson = (id) => {
-    if (completed.includes(id)) return;
-    const nextCompleted = [...completed, id];
-    const index = journey.allMainLessons.findIndex((lesson) => lesson.id === id);
-    const next = journey.allMainLessons
-      .slice(index + 1)
-      .find((lesson) => !nextCompleted.includes(lesson.id) && lesson.initial !== 'special');
-    updateProgress(() => ({ completed: nextCompleted, active: next?.id ?? active }));
-    if (next) setSelectedId(next.id);
+  const completeLesson = async (id, options) => {
+    await saveLessonCompletion(id, language, options);
+    setProgress((current) => {
+      if (current.language !== language || current.completed.includes(id)) return current;
+      const nextCompleted = [...current.completed, id];
+      const index = journey.allMainLessons.findIndex((lesson) => lesson.id === id);
+      const next = journey.allMainLessons
+        .slice(index + 1)
+        .find((lesson) => !nextCompleted.includes(lesson.id) && lesson.initial !== 'special');
+      return { ...current, completed: nextCompleted, active: next?.id ?? current.active };
+    });
   };
 
   const pickSearch = (item) => {

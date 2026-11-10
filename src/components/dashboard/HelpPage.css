@@ -1,24 +1,24 @@
 .help-page { padding-bottom: 26px; }
 .help-search-hint { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border: 1px solid #e4e4e4; border-radius: 10px; background: #fafafa; color: #999; }
 .help-search-hint > span { font-size: 21px; }
-.help-search-hint p { margin: 0; font-size: 11px; }
+.help-search-hint p { margin: 0; font-size: var(--dashboard-text-sm); }
 .help-topic-list { display: grid; gap: 10px; margin-top: 12px; }
 .help-topic { padding: 15px 16px 4px; border: 1px solid #e4e4e4; border-radius: 12px; background: #fff; }
-.help-topic > h2 { margin: 0 0 5px; font-size: 13px; }
+.help-topic > h2 { margin: 0 0 5px; font-size: var(--dashboard-text-xl); }
 .help-question { border-bottom: 1px solid #efefef; }
 .help-question:last-child { border-bottom: 0; }
-.help-question summary { display: flex; min-height: 42px; align-items: center; justify-content: space-between; gap: 12px; cursor: pointer; list-style: none; font-size: 11px; font-weight: 600; }
+.help-question summary { display: flex; min-height: 42px; align-items: center; justify-content: space-between; gap: 12px; cursor: pointer; list-style: none; font-size: var(--dashboard-text-sm); font-weight: 600; }
 .help-question summary::-webkit-details-marker { display: none; }
-.help-question summary > b { color: #999; font-size: 14px; transition: transform 120ms ease; }
+.help-question summary > b { color: #999; font-size: var(--dashboard-text-lg); transition: transform 120ms ease; }
 .help-question[open] summary > b { transform: rotate(45deg); color: var(--primary-strong); }
 .help-question[open] summary { color: var(--primary-strong); }
-.help-question p { margin: -1px 18px 13px 0; color: #777; font-size: 10px; line-height: 1.65; }
+.help-question p { margin: -1px 18px 13px 0; color: #777; font-size: var(--dashboard-text-xs); line-height: 1.65; }
 .help-cta { display: flex; align-items: center; gap: 10px; margin-top: 12px; padding: 13px; border: 1px solid #e3e3e3; border-radius: 11px; background: #fff; }
 .help-cta > span { display: grid; width: 32px; height: 32px; flex: none; place-items: center; border-radius: 50%; background: var(--primary-soft); color: var(--primary-strong); }
 .help-cta > div { min-width: 0; flex: 1; }
-.help-cta strong { font-size: 10px; }
-.help-cta p { margin: 4px 0 0; color: #888; font-size: 9px; }
-.help-cta button { min-height: 31px; flex: none; padding: 0 9px; border: 0; border-radius: 7px; background: var(--primary); color: #fff; font-size: 10px; font-weight: 700; }
+.help-cta strong { font-size: var(--dashboard-text-xs); }
+.help-cta p { margin: 4px 0 0; color: #888; font-size: var(--dashboard-text-xxs); }
+.help-cta button { min-height: 31px; flex: none; padding: 0 9px; border: 0; border-radius: 7px; background: var(--primary); color: #fff; font-size: var(--dashboard-text-xs); font-weight: 700; }
 .help-cta button b { margin-left: 4px; }
 @media (max-width: 450px) {
   .help-cta { align-items: flex-start; flex-wrap: wrap; }

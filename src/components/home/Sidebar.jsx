@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import { sidebarItems } from '../../data/navigation.js';
+import { authorizationHeaders } from '../../api/auth.js';
 import { MoreIcon } from '../common/MoreIcon.jsx';
 import './Sidebar.css';
 
-export function Sidebar({ activeItem = '학습', onNavigate = () => {}, onLogout = () => {} }) {
+export function Sidebar({ activeItem = '학습', onNavigate = () => {}, onLogout = () => {}, homePath = '/journeys/html/fundamentals' }) {
   const [moreOpen, setMoreOpen] = useState(false);
+  const loggedIn = Boolean(authorizationHeaders().Authorization);
   const moreRef = useRef(null);
 
   useEffect(() => {
@@ -31,7 +33,11 @@ export function Sidebar({ activeItem = '학습', onNavigate = () => {}, onLogout
 
   return (
     <aside className="sidebar">
-      <a className="sidebar-brand" href="/coddy/" aria-label="Codegram 홈">
+      <a className="sidebar-brand" href={homePath} aria-label="Codegram 홈" onClick={(event) => {
+        if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+        event.preventDefault();
+        onNavigate('학습');
+      }}>
         <img src="/coddy/sidebar/logo.svg" alt="Codegram" />
       </a>
       <nav className="sidebar-menu" aria-label="메인 메뉴">
@@ -81,10 +87,11 @@ export function Sidebar({ activeItem = '학습', onNavigate = () => {}, onLogout
                 role="menuitem"
                 onClick={() => {
                   setMoreOpen(false);
-                  onLogout();
+                  if (loggedIn) onLogout();
+                else window.location.assign('/auth');
                 }}
               >
-                로그아웃
+                {loggedIn ? '로그아웃' : '로그인'}
               </button>
             </div>
           )}

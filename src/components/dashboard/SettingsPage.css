@@ -2,45 +2,45 @@
 .settings-section-card { padding: 17px; border: 1px solid #e4e4e4; border-radius: 13px; background: #fff; }
 .settings-section-card + .settings-section-card { margin-top: 12px; }
 .settings-section-heading { display: flex; align-items: center; gap: 10px; padding-bottom: 13px; border-bottom: 1px solid #eee; }
-.settings-section-symbol { display: grid; width: 34px; height: 34px; flex: none; place-items: center; border-radius: 9px; background: var(--primary-soft); color: var(--primary-strong); font-size: 18px; font-weight: 700; }
+.settings-section-symbol { display: grid; width: 34px; height: 34px; flex: none; place-items: center; border-radius: 9px; background: var(--primary-soft); color: var(--primary-strong); font-size: var(--dashboard-text-2xl); font-weight: 700; }
 .settings-section-symbol.account { background: #f2f2f2; color: #717171; }
-.settings-section-heading h2 { margin: 0; font-size: 14px; }
-.settings-section-heading p { margin: 4px 0 0; color: #888; font-size: 10px; line-height: 1.5; }
+.settings-section-heading h2 { margin: 0; font-size: var(--dashboard-text-xl); }
+.settings-section-heading p { margin: 4px 0 0; color: #888; font-size: var(--dashboard-text-xs); line-height: 1.5; }
 .settings-language-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; padding-top: 13px; }
 .settings-language-option { display: flex; min-width: 0; min-height: 63px; align-items: center; gap: 9px; padding: 8px 10px; border: 1px solid #e4e4e4; border-radius: 10px; background: #fff; text-align: left; }
 .settings-language-option:hover { background: #fafafa; border-color: #ccc; }
 .settings-language-option.is-selected { border-color: var(--primary); background: var(--primary-soft); }
 .settings-language-option img { width: 28px; height: 28px; flex: none; object-fit: contain; }
 .settings-language-option > span { display: grid; min-width: 0; flex: 1; gap: 3px; }
-.settings-language-option strong { overflow: hidden; font-size: 11px; text-overflow: ellipsis; white-space: nowrap; }
-.settings-language-option small { overflow: hidden; color: #8a8a8a; font-size: 9px; text-overflow: ellipsis; white-space: nowrap; }
+.settings-language-option strong { overflow: hidden; font-size: var(--dashboard-text-sm); text-overflow: ellipsis; white-space: nowrap; }
+.settings-language-option small { overflow: hidden; color: #8a8a8a; font-size: var(--dashboard-text-xxs); text-overflow: ellipsis; white-space: nowrap; }
 .settings-language-option.is-selected strong { color: var(--primary-strong); }
-.settings-language-option > b { color: var(--primary-strong); font-size: 13px; }
+.settings-language-option > b { color: var(--primary-strong); font-size: var(--dashboard-text-body); }
 .settings-action-list { display: grid; padding-top: 2px; }
 .settings-action-list button { display: flex; min-height: 53px; align-items: center; justify-content: space-between; gap: 12px; padding: 0 2px; border: 0; border-bottom: 1px solid #f0f0f0; background: transparent; text-align: left; }
 .settings-action-list button:last-child { border-bottom: 0; }
 .settings-action-list button:hover strong { color: var(--primary-strong); }
 .settings-action-list button > span { display: grid; gap: 4px; }
-.settings-action-list strong { font-size: 11px; }
-.settings-action-list small { color: #888; font-size: 9px; }
-.settings-action-list b { color: #999; font-size: 16px; font-weight: 500; }
-.settings-logout-button { width: 100%; min-height: 40px; margin-top: 13px; border: 1px solid #e5e5e5; border-radius: 9px; background: #fff; color: #777; font-size: 11px; font-weight: 650; }
+.settings-action-list strong { font-size: var(--dashboard-text-sm); }
+.settings-action-list small { color: #888; font-size: var(--dashboard-text-xxs); }
+.settings-action-list b { color: #999; font-size: var(--dashboard-text-xl); font-weight: 500; }
+.settings-logout-button { width: 100%; min-height: 40px; margin-top: 13px; border: 1px solid #e5e5e5; border-radius: 9px; background: #fff; color: #777; font-size: var(--dashboard-text-sm); font-weight: 650; }
 .settings-logout-button:hover { border-color: #d9b6b6; background: #fff9f9; color: #b55454; }
 @media (max-width: 420px) {
   .settings-language-list { grid-template-columns: 1fr; }
 }
 
 .settings-danger-card { margin-top: 13px; }
-.settings-delete-button { width: 100%; min-height: 38px; border: 1px solid #e5e5e5; border-radius: 9px; background: #fff; color: #b55454; font-size: 11px; font-weight: 650; cursor: pointer; }
+.settings-delete-button { width: 100%; min-height: 38px; border: 1px solid #e5e5e5; border-radius: 9px; background: #fff; color: #b55454; font-size: var(--dashboard-text-sm); font-weight: 650; cursor: pointer; }
 .settings-delete-button:hover { border-color: #d9b6b6; background: #fff9f9; }
-.settings-delete-confirm p { margin: 0 0 10px; color: #555; font-size: 11px; }
+.settings-delete-confirm p { margin: 0 0 10px; color: #555; font-size: var(--dashboard-text-sm); }
 .settings-delete-confirm div { display: flex; gap: 8px; }
-.settings-delete-confirm button { flex: 1; min-height: 36px; border: 1px solid #e5e5e5; border-radius: 9px; background: #fff; color: #555; font-size: 11px; font-weight: 650; cursor: pointer; }
+.settings-delete-confirm button { flex: 1; min-height: 36px; border: 1px solid #e5e5e5; border-radius: 9px; background: #fff; color: #555; font-size: var(--dashboard-text-sm); font-weight: 650; cursor: pointer; }
 .settings-delete-confirm button.is-danger { border-color: #b55454; background: #b55454; color: #fff; }
-.settings-delete-notice { margin: 10px 0 0; color: #b55454; font-size: 11px; }
+.settings-delete-notice { margin: 10px 0 0; color: #b55454; font-size: var(--dashboard-text-sm); }
 
 .settings-learning-hint {
   margin: 14px 0 0;
-  font-size: 13px;
+  font-size: var(--dashboard-text-body);
   color: var(--muted);
 }

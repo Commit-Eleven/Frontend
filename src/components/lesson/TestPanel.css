@@ -13,17 +13,24 @@
   border-bottom: 1px solid #444;
   display: flex;
 }
-.test-tabs button {
+.test-tabs button,
+.test-tabs > span {
   border: 0;
   background: transparent;
   color: #999;
   padding: 0 12px;
   font-size: 13px;
 }
-.test-tabs button.current {
+.test-tabs .current {
   color: var(--primary);
   border-bottom: 2px solid var(--primary);
 }
+.test-tabs > span { display: flex; align-items: center; }
+.code-grade-message { color: #ddd; font-size: 13px; line-height: 1.6; margin: 14px 4px; }
+.code-grade-summary { display: flex; align-items: center; justify-content: space-between; gap: 12px; color: #eee; font-size: 14px; }
+.code-grade-summary span { font-size: 12px; color: #ccc; }
+.code-grade-failures { padding-left: 20px; color: #ffb3b8; font-size: 13px; line-height: 1.7; }
+.code-grade-login { border: 1px solid #666; border-radius: 5px; padding: 7px 12px; color: #eee; background: #333; }
 .test-tabs .collapse-button {
   margin-left: auto;
   font-size: 20px;

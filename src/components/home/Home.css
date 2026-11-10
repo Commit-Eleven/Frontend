@@ -3,6 +3,8 @@
   grid-template-columns: 250px minmax(560px, 1fr) 480px;
   height: 100vh;
   background: #fff;
+  font-size: var(--dashboard-text-body);
+  line-height: 1.5;
 }
 .center-pane {
   height: 100vh;
@@ -20,7 +22,7 @@
   padding-bottom: 120px;
 }
 .floating-course-card {
-  height: 82px;
+  min-height: 92px;
   position: sticky;
   top: 36px;
   z-index: 15;
@@ -30,16 +32,18 @@
   padding: 13px 16px;
   display: flex;
   justify-content: space-between;
+  gap: 12px;
   box-shadow:
     0 0 0 72px #fff,
     0 1px 2px #00000005;
   margin-bottom: 72px;
 }
+.floating-course-card > div { min-width: 0; }
 .course-link {
   border: 0;
   background: transparent;
   color: var(--primary-strong);
-  font-size: 13px;
+  font-size: var(--dashboard-text-sm);
   font-weight: 700;
   padding: 0;
 }
@@ -48,35 +52,48 @@
   text-decoration: underline;
 }
 .course-breadcrumb {
-  font-size: 12px;
+  font-size: var(--dashboard-text-body);
   color: #888;
   margin-left: 7px;
 }
 .floating-course-card h1 {
-  font-size: 19px;
+  font-size: var(--dashboard-text-2xl);
   margin: 5px 0 0;
   line-height: 1.15;
   letter-spacing: -0.2px;
 }
 .course-search {
-  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  align-self: center;
+  gap: 6px;
   border: 1px solid var(--primary-border);
   background: #fff;
   color: var(--primary-strong);
   border-radius: 8px;
-  height: 29px;
-  padding: 2px 8px;
-  font-size: 18px;
-  line-height: 20px;
+  min-height: 36px;
+  flex: none;
+  padding: 8px 10px;
+  font-size: var(--dashboard-text-2xl);
+  line-height: 1;
   white-space: nowrap;
+}
+.course-search svg {
+  display: block;
+  width: 18px;
+  height: 18px;
+  flex: none;
 }
 .course-search:hover {
   background: var(--primary-wash);
   border-color: var(--primary);
 }
 .course-search kbd {
-  font-size: 12px;
+  display: block;
+  font-size: var(--dashboard-text-xs);
   font-family: inherit;
+  line-height: 1;
 }
 .next-section {
   border: 2px solid #e1e1e1;
@@ -88,16 +105,16 @@
   font-weight: 700;
 }
 .next-section h2 {
-  font-size: 22px;
+  font-size: var(--dashboard-text-4xl);
   margin: 8px 0;
 }
 .next-section p {
-  font-size: 15px;
+  font-size: var(--dashboard-text-lg);
   margin: 0 0 16px;
 }
 .next-section span {
   color: #888;
-  font-size: 14px;
+  font-size: var(--dashboard-text-lg);
 }
 .mobile-stats {
   display: none;
@@ -157,14 +174,14 @@
     width: calc(100% - 24px);
   }
   .floating-course-card h1 {
-    font-size: 17px;
+    font-size: var(--dashboard-text-xl);
   }
   .course-breadcrumb {
-    font-size: 11px;
+    font-size: var(--dashboard-text-sm);
   }
 }
 @media (min-width: 981px) {
   .center-content {
-    left: 19px;
+    left: clamp(0px, calc((100% - 600px) / 2), 19px);
   }
 }
