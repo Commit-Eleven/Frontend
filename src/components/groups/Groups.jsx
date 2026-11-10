@@ -1,5 +1,5 @@
 import { LoadingSkeleton } from '../common/LoadingSkeleton.jsx'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { DashboardPageHeader } from '../dashboard/DashboardPageHeader.jsx'
 import { beginGoogleLogin } from '../../api/auth.js'
 import { searchPeople, tokenUserId } from '../../api/community.js'
@@ -34,6 +34,12 @@ const emptyGroup = () => ({ name: '', description: '', capacity: '' })
 const legacyGroupsKey = 'codegram.groups.v1'
 const isAbort = (error) => error?.name === 'CanceledError' || error?.name === 'AbortError'
 const displayName = (person) => `${person.nickname || '학습자'}${person.tag ? ' #' + person.tag : ''}`
+
+function resizeDescription(textarea) {
+  if (!textarea) return
+  textarea.style.height = 'auto'
+  textarea.style.height = `${textarea.scrollHeight}px`
+}
 
 function GroupImage({ group }) {
   return <div className="group-avatar"><span aria-hidden="true">{group.name.trim().slice(0, 1) || '〈/〉'}</span></div>
@@ -128,7 +134,12 @@ function GroupDetail({ groupId, preview, onClose, onChanged }) {
   const [message, setMessage] = useState('')
   const [joining, setJoining] = useState(false)
   const [editing, setEditing] = useState(null)
+  const descriptionRef = useRef(null)
   const myId = tokenUserId()
+
+  useLayoutEffect(() => {
+    resizeDescription(descriptionRef.current)
+  }, [editing?.description])
 
   useEffect(() => {
     const controller = new AbortController()
@@ -239,7 +250,7 @@ function GroupDetail({ groupId, preview, onClose, onChanged }) {
       <div className="group-detail-heading">
         <h1>{group?.name || lockedGroup?.name || '그룹 상세'}</h1>
       </div>
-      {loading ? <LoadingSkeleton variant="profile" label="그룹 정보를 불러오는 중" />
+      {loading ? <LoadingSkeleton variant="groups" label="그룹 정보를 불러오는 중" />
         : error ? <p className="group-error" role="alert">{error}</p>
         : locked ? <>
           <p className="group-description">{lockedGroup.description || '아직 그룹 소개가 없어요.'}</p>
@@ -320,7 +331,7 @@ function GroupDetail({ groupId, preview, onClose, onChanged }) {
                     <input value={editing.name} maxLength={GROUP_NAME_MAX} onChange={(event) => setEditing({ ...editing, name: event.target.value })} />
                   </label>
                   <label className="group-field">그룹 소개
-                    <textarea value={editing.description} maxLength={GROUP_DESCRIPTION_MAX} onChange={(event) => setEditing({ ...editing, description: event.target.value })} />
+                    <textarea ref={descriptionRef} value={editing.description} maxLength={GROUP_DESCRIPTION_MAX} onChange={(event) => setEditing({ ...editing, description: event.target.value })} />
                   </label>
                   <label className="group-field">정원 ({GROUP_CAPACITY_MIN}~{GROUP_CAPACITY_MAX}명, 현재 멤버 수보다 작게는 못 줄여요)
                     <input type="number" min={GROUP_CAPACITY_MIN} max={GROUP_CAPACITY_MAX} value={editing.capacity} onChange={(event) => setEditing({ ...editing, capacity: event.target.value })} />
@@ -503,6 +514,11 @@ export function Groups({ scrollRef }) {
   const [detailId, setDetailId] = useState(null)
   const [detailPreview, setDetailPreview] = useState(null)
   const titleRef = useRef(null)
+  const descriptionRef = useRef(null)
+
+  useLayoutEffect(() => {
+    resizeDescription(descriptionRef.current)
+  }, [creating, draft.description])
 
   useEffect(() => {
     try { window.localStorage.removeItem(legacyGroupsKey) } catch { /* 저장소를 쓸 수 없으면 무시합니다. */ }
@@ -582,7 +598,7 @@ export function Groups({ scrollRef }) {
               <small>{draft.name.length}/{GROUP_NAME_MAX}</small>
             </label>
             <label className="group-field">그룹 소개 <span className="group-required">선택</span>
-              <textarea value={draft.description} onChange={(e) => setDraft({ ...draft, description: e.target.value })} maxLength={GROUP_DESCRIPTION_MAX} rows={4} placeholder="예: 매주 3문제씩 함께 풀어요." />
+              <textarea ref={descriptionRef} value={draft.description} onChange={(e) => setDraft({ ...draft, description: e.target.value })} maxLength={GROUP_DESCRIPTION_MAX} rows={4} placeholder="예: 매주 3문제씩 함께 풀어요." />
               <small>{draft.description.length}/{GROUP_DESCRIPTION_MAX}</small>
             </label>
             <label className="group-field">정원 <span className="group-required">선택</span>

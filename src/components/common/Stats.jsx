@@ -4,17 +4,26 @@ import { fetchTags, toLanguageCode } from '../../api/learning.js'
 import { updateStudyLanguage } from '../../api/community.js'
 import { codingLanguages } from '../../data/navigation.js'
 import { icon } from '../../lib/assets.js'
+import { hasSolvedToday as readHasSolvedToday, solvedProblemEvent } from '../../lib/studyActivity.js'
 import { selectCodingLanguage, useCodingLanguage } from '../../hooks/useCodingLanguage.js'
 import './Stats.css'
 
-export const Stats = memo(function Stats({ compact = false, streakDays = 0 }) {
+export const Stats = memo(function Stats({ compact = false, streakDays = 0, hasSolvedToday = false }) {
   const language = useCodingLanguage()
   const [languageOpen, setLanguageOpen] = useState(false)
   const [languageError, setLanguageError] = useState('')
   const [savingLanguage, setSavingLanguage] = useState(false)
   const [availableLanguages, setAvailableLanguages] = useState(codingLanguages)
   const languageRef = useRef(null)
+  const [solvedToday, setSolvedToday] = useState(readHasSolvedToday)
   const loggedIn = Boolean(authorizationHeaders().Authorization)
+  const flameActive = solvedToday || hasSolvedToday
+
+  useEffect(() => {
+    const handleSolved = () => setSolvedToday(true)
+    window.addEventListener(solvedProblemEvent, handleSolved)
+    return () => window.removeEventListener(solvedProblemEvent, handleSolved)
+  }, [])
 
   useEffect(() => {
     if (!languageOpen || !loggedIn) return undefined
@@ -108,8 +117,8 @@ export const Stats = memo(function Stats({ compact = false, streakDays = 0 }) {
           </div>
         )}
       </div>
-      <span className="stat stat-fire" aria-label={`연속 학습 ${streakDays}일`}>
-        <img src={icon('fire')} alt="" />
+      <span className={'stat stat-fire' + (flameActive ? ' is-active' : '')} aria-label={`연속 학습 ${streakDays}일${flameActive ? ', 오늘 문제 풀이 완료' : ''}`}>
+        <img src={icon(flameActive ? 'fire-active' : 'fire')} alt="" />
         <b>{streakDays}일</b>
       </span>
     </div>

@@ -57,6 +57,16 @@ export function updateMyNickname(nickname, { signal } = {}) {
   return request({ url: '/users/me/nickname', method: 'PATCH', data: { nickname }, signal })
 }
 
+/** PATCH /me/avatar — 프로필 사진 URL 변경 */
+export function updateMyAvatar(avatarUrl, { signal } = {}) {
+  return request({ url: '/me/avatar', method: 'PATCH', data: { avatar_url: avatarUrl }, signal })
+}
+
+/** PATCH /users/me/avatar — 기본 프로필 사진으로 복원 */
+export function resetMyAvatar({ signal } = {}) {
+  return request({ url: '/users/me/avatar', method: 'PATCH', data: { imageUrl: null }, signal })
+}
+
 /** GET /users/me/stats — 학습 통계 */
 export function fetchMyStats({ signal } = {}) {
   return request({ url: '/users/me/stats', method: 'GET', signal })

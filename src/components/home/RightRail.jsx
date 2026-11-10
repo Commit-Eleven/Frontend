@@ -1,5 +1,6 @@
 import { memo, useState } from 'react';
 import { icon } from '../../lib/assets.js';
+import { wasSolvedOnDate } from '../../lib/studyActivity.js';
 import { Stats } from '../common/Stats.jsx';
 import { UnitDetailModal } from './UnitDetailModal.jsx';
 import './RightRail.css';
@@ -18,7 +19,7 @@ export const RightRail = memo(function RightRail({ onNavigate, summary }) {
 
   return (
     <aside className="right-rail">
-      <Stats streakDays={home?.stats.streakDays ?? 0} />
+      <Stats streakDays={home?.stats.streakDays ?? 0} hasSolvedToday={wasSolvedOnDate(latest?.createdAt)} />
       <div className="rail-card level-card">
         <div className="level-avatar">XP</div>
         <div className="level-info">

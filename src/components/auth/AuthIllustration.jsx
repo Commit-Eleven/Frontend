@@ -5,12 +5,14 @@ export function AuthIllustration() {
       <span className="auth-spark spark-one">✦</span>
       <span className="auth-spark spark-two">✧</span>
       <div className="auth-float float-html">
-        HTML<span>&lt;/&gt;</span>
+        <span>HTML</span><img src="/coddy/auth-languages/html.svg" alt="" />
       </div>
-      <div className="auth-float float-css">
-        CSS<span>{'{ }'}</span>
+      <div className="auth-float float-java">
+        <span>JAVA</span><img src="/coddy/auth-languages/java.svg" alt="" />
       </div>
-      <div className="auth-float float-js">JS</div>
+      <div className="auth-float float-python">
+        <span>Python</span><img src="/coddy/auth-languages/python.svg" alt="" />
+      </div>
       <div className="auth-mascot">
         <div className="auth-mascot-face">
           <div className="auth-eye">

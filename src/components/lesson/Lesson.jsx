@@ -3,6 +3,7 @@ import { chapterTitleFor } from '../../data/curricula.js';
 import { challengeFor } from '../../data/challenges.js';
 import { beginGoogleLogin, returnModeKey } from '../../api/auth.js';
 import { useCodeChallenge } from '../../hooks/useCodeChallenge.js';
+import { markProblemSolved } from '../../lib/studyActivity.js';
 import { LessonSidebar } from './LessonSidebar.jsx';
 import { CodeWorkspace } from './CodeWorkspace.jsx';
 import { QuizWorkspace } from './QuizWorkspace.jsx';
@@ -17,7 +18,12 @@ export function Lesson({ lessonId, language, journey, onBack, onSuccess }) {
   // Every entry from the journey map starts with the server-backed concept check.
   // Completing it only advances this lesson visit to the coding challenge.
   const [mode, setMode] = useState('concept');
-  const coding = useCodeChallenge({ enabled: mode === 'challenge', language, lesson, onSuccess });
+  const saveSolved = async (...args) => {
+    const result = await onSuccess(...args);
+    markProblemSolved();
+    return result;
+  };
+  const coding = useCodeChallenge({ enabled: mode === 'challenge', language, lesson, onSuccess: saveSolved });
   const loadingCode = coding.status === 'idle' || coding.status === 'loading';
   const lessonBodyRef = useRef(null);
   const [lessonBodyWidth, setLessonBodyWidth] = useState(() => window.innerWidth - 49);
