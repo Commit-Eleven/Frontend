@@ -119,7 +119,7 @@ export function journeyFor(language = 'html') {
         chapter.rows.flatMap((row) => [row.main, row.side].filter(Boolean)),
       ),
       initialCompleted: htmlInitialCompleted,
-      defaultActive: 'paragraphs',
+      defaultActive: 'html-intro',
     };
   }
 

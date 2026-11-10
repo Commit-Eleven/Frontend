@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import { sidebarItems } from '../../data/navigation.js';
+import { authorizationHeaders } from '../../api/auth.js';
 import { MoreIcon } from '../common/MoreIcon.jsx';
 import './MobileNav.css';
 
 export function MobileNav({ activeItem = '학습', onNavigate = () => {}, onLogout = () => {} }) {
   const [moreOpen, setMoreOpen] = useState(false);
+  const loggedIn = Boolean(authorizationHeaders().Authorization);
   const moreRef = useRef(null);
 
   useEffect(() => {
@@ -74,10 +76,11 @@ export function MobileNav({ activeItem = '학습', onNavigate = () => {}, onLogo
               role="menuitem"
               onClick={() => {
                 setMoreOpen(false);
-                onLogout();
+                if (loggedIn) onLogout();
+              else window.location.assign('/auth');
               }}
             >
-              로그아웃
+              {loggedIn ? '로그아웃' : '로그인'}
             </button>
           </div>
         )}
