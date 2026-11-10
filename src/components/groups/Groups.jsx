@@ -15,6 +15,7 @@ import {
   deleteGroup,
   fetchGroup,
   fetchGroupRanking,
+  fetchGroupPreview,
   fetchMyGroupInvites,
   fetchMyGroups,
   inviteToGroup,
@@ -22,6 +23,7 @@ import {
   rejectGroupInvite,
   searchGroups,
   transferGroupOwner,
+  updateGroup,
 } from '../../api/groups.js'
 import { groupErrorMessage, validateGroup } from '../../lib/groups.js'
 import './Groups.css'
@@ -123,6 +125,8 @@ function GroupDetail({ groupId, onClose, onChanged }) {
   const [confirm, setConfirm] = useState(null)
   const [busy, setBusy] = useState(false)
   const [message, setMessage] = useState('')
+  const [editing, setEditing] = useState(false)
+  const [draft, setDraft] = useState(null)
   const myId = tokenUserId()
 
   useEffect(() => {
@@ -170,6 +174,29 @@ function GroupDetail({ groupId, onClose, onChanged }) {
         ? '그룹 삭제는 서버 업데이트 후 사용할 수 있어요.'
         : groupErrorMessage(error, '요청을 처리하지 못했어요.'))
       setConfirm(null)
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  async function saveSettings(event) {
+    event.preventDefault()
+    const validation = validateGroup(draft)
+    if (validation) { setMessage(validation); return }
+    setBusy(true)
+    setMessage('')
+    try {
+      await updateGroup(groupId, {
+        name: draft.name.trim(),
+        description: draft.description.trim() || null,
+        capacity: Number(draft.capacity),
+      })
+      setEditing(false)
+      setReloadKey((key) => key + 1)
+      onChanged()
+      setMessage('팀 설정을 저장했어요.')
+    } catch (error) {
+      setMessage(groupErrorMessage(error, '팀 설정을 저장하지 못했어요.'))
     } finally {
       setBusy(false)
     }
@@ -231,6 +258,15 @@ function GroupDetail({ groupId, onClose, onChanged }) {
           {isOwner && (
             <section className="group-detail-section">
               <h3>그룹 관리</h3>
+              {!editing ? <button type="button" className="group-secondary" onClick={() => { setDraft({ name: group.name, description: group.description, capacity: String(group.capacity ?? GROUP_CAPACITY_DEFAULT) }); setEditing(true); setMessage('') }}>팀 설정 수정</button> : (
+                <form onSubmit={saveSettings}>
+                  <label className="group-field">팀명<input value={draft.name} maxLength={GROUP_NAME_MAX} required onChange={(event) => setDraft({ ...draft, name: event.target.value })} /></label>
+                  <label className="group-field">팀 소개<textarea value={draft.description} maxLength={GROUP_DESCRIPTION_MAX} onChange={(event) => setDraft({ ...draft, description: event.target.value })} /></label>
+                  <label className="group-field">정원<input type="number" min={GROUP_CAPACITY_MIN} max={GROUP_CAPACITY_MAX} required value={draft.capacity} onChange={(event) => setDraft({ ...draft, capacity: event.target.value })} /></label>
+                  <button type="submit" className="group-primary" disabled={busy}>저장</button>
+                  <button type="button" className="group-secondary" disabled={busy} onClick={() => setEditing(false)}>취소</button>
+                </form>
+              )}
               <button type="button" className="group-danger" onClick={() => setConfirm({ type: 'delete' })}>그룹 삭제</button>
             </section>
           )}
@@ -308,6 +344,8 @@ function FindGroups({ myGroupIds, onJoined }) {
   const [search, setSearch] = useState({ query: '', page: 1 })
   const [result, setResult] = useState({ loading: true, items: [], total: 0, error: '' })
   const [joining, setJoining] = useState('')
+  const [preview, setPreview] = useState(null)
+  const [previewLoading, setPreviewLoading] = useState(false)
   const [message, setMessage] = useState('')
   const limit = 12
 
@@ -332,6 +370,19 @@ function FindGroups({ myGroupIds, onJoined }) {
     setSearch((current) => ({ ...current, page }))
   }
 
+  async function openPreview(group) {
+    setPreview(null)
+    setPreviewLoading(true)
+    setMessage('')
+    try {
+      setPreview(await fetchGroupPreview(group.id))
+    } catch (error) {
+      setMessage(groupErrorMessage(error, '팀 미리보기를 불러오지 못했어요.'))
+    } finally {
+      setPreviewLoading(false)
+    }
+  }
+
   async function join(group) {
     setJoining(group.id); setMessage('')
     try {
@@ -353,6 +404,15 @@ function FindGroups({ myGroupIds, onJoined }) {
         <button type="submit" className="group-secondary">검색</button>
       </form>
       {message && <p className="group-error" role="alert">{message}</p>}
+      {previewLoading && <p role="status">미리보기를 불러오는 중…</p>}
+      {preview && <section className="group-detail-section" aria-label="팀 미리보기">
+        <h2>{preview.group.name}</h2>
+        <p>{preview.group.description || '아직 팀 소개가 없어요.'}</p>
+        <p>팀원 {preview.group.memberCount}명{preview.group.capacity ? ` / ${preview.group.capacity}명` : ''}</p>
+        <ul>{preview.members.map((member) => <li key={member.id}>{displayName(member)}</li>)}</ul>
+        <button type="button" className="group-secondary" onClick={() => setPreview(null)}>닫기</button>
+        <button type="button" className="group-primary" disabled={preview.group.isFull || myGroupIds.includes(preview.group.id) || Boolean(joining)} onClick={() => join(preview.group)}>참여하기</button>
+      </section>}
       {result.loading ? <p className="group-detail-state">팀을 찾는 중…</p>
         : result.error ? <p className="group-error" role="alert">{result.error}</p>
         : result.items.length ? <>
@@ -361,6 +421,7 @@ function FindGroups({ myGroupIds, onJoined }) {
               const member = myGroupIds.includes(group.id)
               return (
                 <GroupCard group={group} key={group.id}>
+                  <button type="button" className="group-text-button" onClick={() => openPreview(group)}>미리보기</button>
                   <button type="button" className="group-text-button" disabled={member || group.isFull || joining === group.id} onClick={() => join(group)}>
                     {member ? '참여 중' : group.isFull ? '정원 마감' : joining === group.id ? '참여 중…' : '참여하기'}
                   </button>
