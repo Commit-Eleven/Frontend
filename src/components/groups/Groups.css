@@ -44,7 +44,7 @@
 .group-field{display:block;min-width:0;margin-bottom:12px;font-size:12px;font-weight:700}
 .group-required{margin-left:6px;color:var(--primary-strong);font-size:10px;font-weight:400}
 .group-field input,.group-field textarea,.group-search input{display:block;width:100%;margin-top:8px;padding:11px 12px;border:1px solid #dedede;border-radius:9px;background:#fff;color:#222;font-size:13px;font-weight:400}
-.group-field textarea{min-height:96px;resize:vertical}
+.group-field textarea{min-height:96px;resize:none;overflow-y:hidden}
 .group-field input:focus,.group-field textarea:focus,.group-search input:focus{outline:0;border-color:var(--primary)}
 .group-field small{display:block;margin-top:6px;color:#999;font-size:10px;font-weight:400;text-align:right}
 .group-form-actions{display:flex;justify-content:flex-end;gap:8px}

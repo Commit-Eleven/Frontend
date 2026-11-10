@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { authorizationHeaders } from '../../api/auth.js';
 import { expSummary, fetchHome, fetchMyExp, fetchRanking } from '../../api/learning.js';
 import { icon } from '../../lib/assets.js';
+import { wasSolvedOnDate } from '../../lib/studyActivity.js';
 import { Stats } from '../common/Stats.jsx';
 import { UnitDetailModal } from './UnitDetailModal.jsx';
 import './RightRail.css';
@@ -33,7 +34,7 @@ export function RightRail({ onNavigate }) {
 
   return (
     <aside className="right-rail">
-      <Stats />
+      <Stats hasSolvedToday={wasSolvedOnDate(latest?.createdAt)} />
       <div className="rail-card level-card">
         <div className="level-avatar">XP</div>
         <div className="level-info">

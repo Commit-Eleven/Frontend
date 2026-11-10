@@ -17,6 +17,7 @@ import { ProblemFeedback } from './questions/ProblemFeedback.jsx';
 import { QuestionHeader } from './questions/QuestionHeader.jsx';
 import { QuestionActions } from './questions/QuestionActions.jsx';
 import { recordWrongAnswer, resolveWrongNoteForProblem } from '../../lib/wrongNotes.js';
+import { markProblemSolved } from '../../lib/studyActivity.js';
 import './QuizWorkspace.css';
 
 const names = { mcq: '선택형', blank: '빈칸 채우기', parsons: '순서 맞추기', short: '단답형' };
@@ -154,6 +155,7 @@ export function QuizWorkspace({ lesson, languageCode, onExit, onComplete, onLogi
       };
       if (result.correct) {
         resolveWrongNoteForProblem({ ...noteContext, problemId: problem.id });
+        markProblemSolved();
       } else {
         recordWrongAnswer({
           ...noteContext,

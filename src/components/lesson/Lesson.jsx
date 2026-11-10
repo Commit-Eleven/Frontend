@@ -3,6 +3,7 @@ import { chapterTitleFor } from '../../data/curricula.js';
 import { challengeFor, starterCodeFor } from '../../data/challenges.js';
 import { beginGoogleLogin, returnModeKey } from '../../api/auth.js';
 import { recordWrongAnswer, resolveWrongNoteForProblem } from '../../lib/wrongNotes.js';
+import { markProblemSolved } from '../../lib/studyActivity.js';
 import { LessonSidebar } from './LessonSidebar.jsx';
 import { CodeWorkspace } from './CodeWorkspace.jsx';
 import { QuizWorkspace } from './QuizWorkspace.jsx';
@@ -105,6 +106,7 @@ export function Lesson({ lessonId, language, journey, onBack, onSuccess }) {
       setTests(result);
       if (saveCodeAttempt(result)) {
         setShowSuccess(true);
+        markProblemSolved();
         onSuccess(lesson.id);
       }
       return;
@@ -122,6 +124,7 @@ export function Lesson({ lessonId, language, journey, onBack, onSuccess }) {
     setTests(result);
     if (saveCodeAttempt(result)) {
       setShowSuccess(true);
+      markProblemSolved();
       onSuccess(lesson.id);
     }
   };
