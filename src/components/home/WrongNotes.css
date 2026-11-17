@@ -140,7 +140,7 @@
   -webkit-line-clamp: 2;
 }
 .wrong-note-card-bottom { flex-wrap: wrap; justify-content: space-between; padding-top: 9px; border-top: 1px solid #f0f0f0; }
-.wrong-note-card-bottom > span { color: #888; font-size: var(--dashboard-text-sm); }
+.wrong-note-card-bottom > span:not(.wrong-note-open) { color: #888; font-size: var(--dashboard-text-sm); }
 .wrong-note-card-bottom button {
   padding: 4px 0 4px 8px;
   border: 0;
@@ -180,3 +180,9 @@
 @media (max-width: 480px) {
   .wrong-notes-feature-art { display: none; }
 }
+.wrong-note-card.is-clickable { cursor: pointer; transition: border-color 0.15s ease, background-color 0.15s ease; }
+.wrong-note-card.is-clickable:hover { border-color: var(--primary-strong); background: #fafffd; }
+.wrong-note-card.is-clickable:focus-visible { outline: 2px solid var(--primary-strong); outline-offset: 2px; }
+.wrong-note-open { display: inline-flex; align-items: center; color: var(--primary-strong); font-size: var(--dashboard-text-sm); font-weight: 700; }
+.wrong-note-card.is-clickable:hover .wrong-note-open { color: #00795f; }
+.wrong-note-error { margin: 6px 0 0; color: #d33a3a; font-size: var(--dashboard-text-sm); }
