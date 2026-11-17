@@ -38,3 +38,34 @@ test('a rejected refresh clears the expired token', async (context) => {
   await assert.rejects(apiRequest({ url: '/one' }), { status: 401 })
   assert.equal(values.has('codegram-access-token'), false)
 })
+
+test('restores a missing access token from the refresh cookie', async (context) => {
+  const values = setup(context, async (config) => {
+    if (config.url === '/social/login/refresh') return { data: { data: { token: 'restored' } } }
+    if (!config.headers.Authorization) throw { response: { status: 401 } }
+    assert.equal(config.headers.Authorization, 'Bearer restored')
+    return { data: { ok: true } }
+  })
+  values.delete('codegram-access-token')
+  assert.deepEqual(await apiRequest({ url: '/one' }), { ok: true })
+})
+
+test('does not restore a token after logout while refresh is in flight', async (context) => {
+  const { clearAccessToken } = await import('../src/api/auth.js')
+  let finishRefresh
+  let startedRefresh
+  const started = new Promise((resolve) => { startedRefresh = resolve })
+  const values = setup(context, async (config) => {
+    if (config.url === '/social/login/refresh') {
+      startedRefresh()
+      return new Promise((resolve) => { finishRefresh = resolve })
+    }
+    throw { response: { status: 401 } }
+  })
+  const result = apiRequest({ url: '/one' })
+  await started
+  clearAccessToken()
+  finishRefresh({ data: { data: { token: 'restored' } } })
+  await assert.rejects(result)
+  assert.equal(values.has('codegram-access-token'), false)
+})

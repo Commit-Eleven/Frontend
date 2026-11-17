@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { authorizationHeaders, clearAccessToken, setAccessToken } from './auth.js';
+import { authorizationHeaders, clearAccessToken, setAccessToken, getAuthVersion } from './auth.js';
 
 /** 문제 API의 공통 주소와 JSON 응답 형식을 관리합니다. */
 export const apiClient = axios.create({
@@ -9,7 +9,7 @@ export const apiClient = axios.create({
 
 let refreshPromise = null;
 
-async function refreshAccessToken(previousAuthorization) {
+async function refreshAccessToken(previousAuthorization, authVersion) {
   if (!refreshPromise) {
     refreshPromise = apiClient.request({
       url: '/social/login/refresh',
@@ -18,7 +18,7 @@ async function refreshAccessToken(previousAuthorization) {
     }).then((response) => {
       const token = response.data?.data?.token ?? response.data?.token;
       if (typeof token !== 'string' || !token.trim()) throw new Error('토큰 갱신 응답이 올바르지 않습니다.');
-      if (authorizationHeaders().Authorization !== previousAuthorization) throw new Error('로그인 상태가 변경되었습니다.');
+      if (getAuthVersion() !== authVersion || authorizationHeaders().Authorization !== previousAuthorization) throw new Error('로그인 상태가 변경되었습니다.');
       setAccessToken(token);
       return token;
     }).finally(() => { refreshPromise = null; });
@@ -29,20 +29,22 @@ async function refreshAccessToken(previousAuthorization) {
 /** 인증 토큰이 만료되면 쿠키로 한 번 갱신한 뒤 원래 요청을 재시도합니다. */
 export async function apiRequest(config) {
   const authorization = authorizationHeaders().Authorization;
+  const authVersion = getAuthVersion();
   const headers = { ...authorizationHeaders(), ...config.headers };
   try {
     try {
       return (await apiClient.request({ ...config, headers })).data;
     } catch (error) {
-      const canRefresh = error.response?.status === 401 && authorization &&
+      const canRefresh = error.response?.status === 401 &&
         (!config.headers?.Authorization || config.headers.Authorization === authorization) &&
         !config.signal?.aborted && !config.url?.includes('/social/login/');
       if (!canRefresh) throw error;
       try {
         const current = authorizationHeaders().Authorization;
+        if (getAuthVersion() !== authVersion && !current) throw error;
         const token = current && current !== authorization
           ? current.replace(/^Bearer /, '')
-          : await refreshAccessToken(authorization);
+          : await refreshAccessToken(authorization, authVersion);
         if (config.signal?.aborted) throw new axios.CanceledError();
         return (await apiClient.request({ ...config, headers: { ...headers, Authorization: `Bearer ${token}` } })).data;
       } catch (refreshError) {

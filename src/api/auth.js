@@ -1,4 +1,7 @@
 const tokenKey = 'codegram-access-token'
+let authVersion = 0
+
+export function getAuthVersion() { return authVersion }
 const returnPathKey = 'codegram-login-return-path'
 export const returnModeKey = 'codegram-login-return-mode'
 const defaultJourneyPath = '/journeys/html/fundamentals'
@@ -10,10 +13,12 @@ export function authorizationHeaders() {
 }
 
 export function setAccessToken(token) {
+  authVersion += 1
   if (typeof sessionStorage !== 'undefined') sessionStorage.setItem(tokenKey, token)
 }
 
 export function clearAccessToken() {
+  authVersion += 1
   if (typeof sessionStorage !== 'undefined') sessionStorage.removeItem(tokenKey)
 }
 
