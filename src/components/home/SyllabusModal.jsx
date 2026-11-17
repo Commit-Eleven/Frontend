@@ -3,6 +3,7 @@ import './SyllabusModal.css';
 
 export function SyllabusModal({ journey, onClose, onJump, completedCount }) {
   const { chapterData } = journey;
+
   return (
     <ModalBackdrop onClose={onClose}>
       <div
@@ -14,7 +15,7 @@ export function SyllabusModal({ journey, onClose, onJump, completedCount }) {
       >
         <div className="syllabus-heading">
           <div>
-            <small>섹션 1</small>
+            <small>{chapterData[0]?.sectionTitle ? `섹션 1 · ${chapterData[0].sectionTitle}` : '섹션 1'}</small>
             <h2>{journey.title}</h2>
             <p>각 단계를 따라가며 핵심 개념을 배우고 직접 코드를 작성해 보세요.</p>
           </div>
@@ -36,11 +37,14 @@ export function SyllabusModal({ journey, onClose, onJump, completedCount }) {
         </div>
         <div className="syllabus-list">
           {chapterData.map((chapter, index) => (
-            <button key={chapter.title} onClick={() => onJump(index)}>
+            <button key={chapter.title + index} onClick={() => onJump(index)}>
               <span className="syllabus-number">{index + 1}</span>
               <span>
                 <b>{chapter.title}</b>
-                <small>{chapter.rows.length}개 레슨</small>
+                <small>
+                  {chapter.section ? `섹션 ${chapter.section} · ${chapter.sectionTitle} · ` : ''}
+                  {chapter.rows.length}개 레슨
+                </small>
               </span>
               <span>›</span>
             </button>

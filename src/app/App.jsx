@@ -1,6 +1,5 @@
 import { lazy, Suspense, useEffect, useState } from 'react';
 import { useJourneyController } from '../hooks/useJourneyController.js';
-import { Groups } from '../components/groups/Groups.jsx';
 import { Home } from '../components/home/Home.jsx';
 import { SearchModal } from '../components/home/SearchModal.jsx';
 import { SyllabusModal } from '../components/home/SyllabusModal.jsx';
@@ -8,15 +7,35 @@ import { useCodingLanguage } from '../hooks/useCodingLanguage.js';
 import { getViewFromPath } from './routes.js';
 import { AuthPage } from '../pages/AuthPage.jsx';
 import { logoutFromApp } from '../api/authSession.js';
+import { LoadingSkeleton } from '../components/common/LoadingSkeleton.jsx';
+import { OnboardingModal } from '../components/onboarding/OnboardingModal.jsx';
 import './App.css';
 
 const Lesson = lazy(() =>
   import('../components/lesson/Lesson.jsx').then(({ Lesson: Screen }) => ({ default: Screen })),
 );
 
+const homeItemKey = 'codegram-home-item';
+
 export default function App() {
   const language = useCodingLanguage();
-  const [activeHomeItem, setActiveHomeItem] = useState('학습');
+  // 프로필·랭킹 같은 화면은 주소가 바뀌지 않으므로, 새로고침해도 같은 화면에 머물도록 기억합니다.
+  const [activeHomeItem, setActiveHomeItemState] = useState(() => {
+    try {
+      return sessionStorage.getItem(homeItemKey) || '학습';
+    } catch {
+      return '학습';
+    }
+  });
+  const setActiveHomeItem = (item) => {
+    setActiveHomeItemState(item);
+    try {
+      if (item && item !== '학습') sessionStorage.setItem(homeItemKey, item);
+      else sessionStorage.removeItem(homeItemKey);
+    } catch {
+      /* 저장소를 쓸 수 없으면 기억하지 않습니다. */
+    }
+  };
   const [isAuthPage, setIsAuthPage] = useState(
     () => getViewFromPath(window.location.pathname) === 'auth',
   );
@@ -31,7 +50,6 @@ export default function App() {
 
   return (
     <JourneyApp
-      key={language.code}
       language={language}
       activeHomeItem={activeHomeItem}
       onHomeItemChange={setActiveHomeItem}
@@ -41,12 +59,13 @@ export default function App() {
 
 function JourneyApp({ language, activeHomeItem, onHomeItemChange }) {
   const journey = useJourneyController(language.code);
+  useEffect(() => {
+    document.title = 'Codegram';
+  }, [journey.journey.title]);
 
   return (
     <>
-      {journey.view === 'home' && activeHomeItem === '그룹' ? (
-        <Groups onNavigate={onHomeItemChange} onLogout={logoutFromApp} />
-      ) : journey.view === 'home' ? (
+      {journey.view === 'home' ? (
         <Home
           language={language}
           activeItem={activeHomeItem}
@@ -63,7 +82,7 @@ function JourneyApp({ language, activeHomeItem, onHomeItemChange }) {
           jumpTo={journey.jumpTo}
         />
       ) : (
-        <Suspense fallback={<div className="lesson-loading">문제 화면을 불러오는 중...</div>}>
+        <Suspense fallback={<LoadingSkeleton variant="lesson" label="문제 화면을 불러오는 중" />}>
           <Lesson
             key={language.code + '-' + journey.lessonId}
             lessonId={journey.lessonId}
@@ -74,6 +93,7 @@ function JourneyApp({ language, activeHomeItem, onHomeItemChange }) {
           />
         </Suspense>
       )}
+      <OnboardingModal />
       {journey.searchOpen && (
         <SearchModal
           journey={journey.journey}

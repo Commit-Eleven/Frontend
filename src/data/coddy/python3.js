@@ -1,0 +1,95 @@
+import { L } from './lesson.js';
+
+// 섹션 3: 객체 지향 프로그래밍
+export default [
+  { title: '객체 지향 프로그래밍의 기초', lessons: [
+    L('객체 지향 프로그래밍 소개', 'M', '속성 name을 가진 빈 클래스 Dog를 만들고 객체를 하나 생성하세요.', '클래스는 객체의 설계도, 객체(인스턴스)는 설계도로 만든 실체입니다.', 'class Dog:\n    pass\n\nd = Dog()', 'class Dog', 'Dog()'),
+    L('외부 파일', 'M', 'import로 math 모듈의 sqrt를 사용해 16의 제곱근을 출력하세요.', '다른 파일이나 모듈의 코드는 import로 가져옵니다.', 'import math\nprint(math.sqrt(16))', 'import ', 'sqrt('),
+    L('클래스와 객체 비교', 'M', 'Car 클래스로 객체 두 개를 만드세요.', '하나의 클래스로 서로 독립된 객체를 여러 개 만들 수 있습니다.', 'class Car:\n    pass\n\na = Car()\nb = Car()', 'class Car', 'Car()'),
+    L('self 매개변수', 'M', '메서드 안에서 self.name을 사용해 이름을 출력하는 메서드를 만드세요.', 'self는 메서드를 호출한 객체 자신을 가리킵니다. 메서드의 첫 매개변수로 항상 받습니다.', 'class Dog:\n    def show(self):\n        print(self.name)', 'def show(self', 'self.name'),
+    L('메서드', 'M', 'bark 메서드가 "Woof"를 출력하는 Dog 클래스를 만들고 호출하세요.', '클래스 안의 함수를 메서드라고 하며 객체.메서드()로 호출합니다.', 'class Dog:\n    def bark(self):\n        print("Woof")\n\nDog().bark()', 'def bark(self', '.bark()'),
+    L('속성', 'A', 'Dog 객체에 name 속성을 대입하고 출력하세요.', '속성은 객체가 가진 값으로 객체.속성 형태로 읽고 씁니다.', 'd = Dog()\nd.name = "Rex"\nprint(d.name)', 'd.name =', 'print('),
+    L('생성자 메서드 (__init__)', 'M', '__init__에서 name을 받아 self.name에 저장하는 Dog 클래스를 만드세요.', '__init__은 객체가 만들어질 때 자동으로 실행되어 속성을 초기화합니다.', 'class Dog:\n    def __init__(self, name):\n        self.name = name\n\nd = Dog("Rex")', 'def __init__(self', 'self.name = name'),
+    L('복습 - 간단한 계산기', 'C', 'add와 subtract 메서드가 있는 Calculator 클래스를 만드세요.', '클래스에 관련 동작을 메서드로 묶습니다.', 'class Calculator:\n    def add(self, a, b):\n        return a + b\n\n    def subtract(self, a, b):\n        return a - b', 'class Calculator', 'def add(self', 'def subtract(self'),
+  ] },
+  { title: '데코레이터', lessons: [
+    L('데코레이터 소개', 'A', '함수를 받아 실행 전후에 메시지를 출력하는 데코레이터 logger를 만드세요.', '데코레이터는 함수를 감싸 기능을 덧붙이는 함수입니다. @이름 으로 적용합니다.', 'def logger(func):\n    def wrapper():\n        print("start")\n        func()\n        print("end")\n    return wrapper\n\n@logger\ndef hello():\n    print("hi")', 'def logger(func', '@logger', 'return wrapper'),
+    L('프로퍼티 데코레이터', 'A', '@property로 area를 속성처럼 읽게 하세요.', '@property를 붙인 메서드는 괄호 없이 속성처럼 접근할 수 있습니다.', 'class Square:\n    def __init__(self, side):\n        self.side = side\n\n    @property\n    def area(self):\n        return self.side ** 2', '@property', 'def area(self'),
+    L('정적 메서드 데코레이터', 'A', '@staticmethod로 객체 없이 쓸 수 있는 add 메서드를 만드세요.', '정적 메서드는 self를 받지 않고 클래스 이름으로 호출할 수 있습니다.', 'class Math:\n    @staticmethod\n    def add(a, b):\n        return a + b', '@staticmethod', 'def add(a, b'),
+    L('클래스 메서드 데코레이터', 'A', '@classmethod로 클래스 자체를 받는 create 메서드를 만드세요.', '클래스 메서드는 첫 인자로 cls(클래스)를 받으며 대체 생성자를 만들 때 씁니다.', 'class User:\n    @classmethod\n    def create(cls):\n        return cls()', '@classmethod', 'def create(cls', 'cls('),
+  ] },
+  { title: '클래스 속성', lessons: [
+    L('인스턴스 변수 vs 클래스 변수', 'A', '클래스 변수 count와 인스턴스 변수 name을 모두 가진 클래스를 만드세요.', '클래스 변수는 모든 객체가 공유하고, 인스턴스 변수는 객체마다 따로 가집니다.', 'class Dog:\n    count = 0\n\n    def __init__(self, name):\n        self.name = name\n        Dog.count += 1', 'count = 0', 'self.name', 'Dog.count'),
+    L('Property 데코레이터', 'A', 'getter와 setter가 있는 age 프로퍼티를 만드세요.', '@이름.setter 로 값을 바꿀 때 검사 로직을 넣을 수 있습니다.', 'class P:\n    @property\n    def age(self):\n        return self._age\n\n    @age.setter\n    def age(self, value):\n        self._age = value', '@property', '@age.setter'),
+    L('프라이빗 속성', 'A', '밑줄 두 개로 시작하는 __balance 속성을 가진 클래스를 만드세요.', '__이름 속성은 클래스 밖에서 직접 접근하기 어렵게(이름 맹글링) 보호합니다.', 'class Account:\n    def __init__(self):\n        self.__balance = 0', '__balance', 'def __init__'),
+    L('요약 - 은행 계좌 관리 프로그램', 'C', 'deposit과 withdraw가 있는 BankAccount 클래스를 만드세요.', '프라이빗 속성과 메서드로 잔액을 안전하게 관리합니다.', 'class BankAccount:\n    def __init__(self):\n        self.__balance = 0\n\n    def deposit(self, amount):\n        self.__balance += amount\n\n    def withdraw(self, amount):\n        if amount <= self.__balance:\n            self.__balance -= amount', 'class BankAccount', 'def deposit(self', 'def withdraw(self', '__balance'),
+  ] },
+  { title: '상속', lessons: [
+    L('상속의 기초', 'A', 'Animal을 상속하는 Dog 클래스를 만드세요.', '자식 클래스는 class 자식(부모): 로 부모의 속성과 메서드를 물려받습니다.', 'class Animal:\n    def speak(self):\n        print("...")\n\nclass Dog(Animal):\n    pass', 'class Dog(Animal)', 'class Animal'),
+    L('super() 함수', 'A', '자식 __init__에서 super().__init__()으로 부모를 초기화하세요.', 'super()는 부모 클래스의 메서드를 호출합니다.', 'class Dog(Animal):\n    def __init__(self, name):\n        super().__init__(name)', 'super()', '__init__'),
+    L('메서드 오버라이딩', 'A', '자식에서 speak를 다시 정의해 "Woof"를 출력하세요.', '부모의 메서드를 같은 이름으로 다시 정의하면 자식 동작이 우선합니다.', 'class Dog(Animal):\n    def speak(self):\n        print("Woof")', 'def speak(self', 'Woof'),
+    L('다중 상속', 'A', '두 부모를 상속하는 클래스를 만드세요.', 'class C(A, B): 처럼 쉼표로 여러 부모를 지정합니다.', 'class A: pass\nclass B: pass\nclass C(A, B): pass', 'class C(A, B)'),
+    L('메서드 결정 순서', 'A', 'C.__mro__를 출력해 메서드를 찾는 순서를 확인하세요.', 'MRO는 파이썬이 메서드를 찾는 클래스 순서입니다. 왼쪽 부모부터 찾습니다.', 'print(C.__mro__)', '__mro__', 'print('),
+    L('요약 - 직원 계층 구조', 'C', 'Employee를 상속한 Manager 클래스에서 부모 초기화를 호출하세요.', '상속과 super()를 조합해 계층 구조를 만듭니다.', 'class Employee:\n    def __init__(self, name):\n        self.name = name\n\nclass Manager(Employee):\n    def __init__(self, name, team):\n        super().__init__(name)\n        self.team = team', 'class Manager(Employee)', 'super().__init__', 'self.team'),
+  ] },
+  { title: '다형성', lessons: [
+    L('메서드 오버라이딩 다시 살펴보기', 'A', '두 자식 클래스가 같은 이름의 area 메서드를 각자 정의하세요.', '같은 이름의 메서드를 클래스마다 다르게 구현하는 것이 다형성의 바탕입니다.', 'class Circle:\n    def area(self):\n        return 3.14\n\nclass Square:\n    def area(self):\n        return 4', 'def area(self', 'class Circle', 'class Square'),
+    L('덕 타이핑', 'A', 'speak 메서드만 있으면 호출되는 함수 talk(obj)를 만드세요.', '덕 타이핑은 타입이 아니라 필요한 메서드가 있는지로 동작을 판단합니다.', 'def talk(obj):\n    obj.speak()', 'def talk(obj', 'obj.speak()'),
+    L('추상 클래스와 메서드', 'A', 'ABC와 @abstractmethod로 추상 클래스 Shape를 만드세요.', '추상 메서드는 자식이 반드시 구현해야 하는 약속입니다.', 'from abc import ABC, abstractmethod\n\nclass Shape(ABC):\n    @abstractmethod\n    def area(self):\n        pass', 'from abc import', '@abstractmethod', 'class Shape(ABC)'),
+    L('인터페이스 설계', 'A', '추상 메서드 두 개로 인터페이스 역할의 클래스를 만드세요.', '추상 클래스를 인터페이스처럼 사용해 구현할 메서드를 강제합니다.', 'class Payable(ABC):\n    @abstractmethod\n    def pay(self): pass\n\n    @abstractmethod\n    def refund(self): pass', '@abstractmethod', 'def pay(self', 'def refund(self'),
+    L('요약 - 도형 계산기', 'C', 'Shape를 상속한 Circle과 Rectangle의 area를 구현하세요.', '같은 인터페이스로 서로 다른 도형의 넓이를 계산합니다.', 'class Rectangle(Shape):\n    def __init__(self, w, h):\n        self.w = w\n        self.h = h\n\n    def area(self):\n        return self.w * self.h', '(Shape)', 'def area(self', 'return '),
+  ] },
+  { title: '캡슐화', lessons: [
+    L('Public, Protected, Private 멤버', 'A', 'public name, protected _age, private __id 속성을 가진 클래스를 만드세요.', '이름 앞 밑줄 없음=공개, _ 하나=내부용 약속, __ 둘=강하게 숨김입니다.', 'class User:\n    def __init__(self):\n        self.name = "a"\n        self._age = 1\n        self.__id = 2', 'self.name', 'self._age', 'self.__id'),
+    L('접근 제어자', 'A', '프라이빗 속성을 읽는 get_id 메서드를 만드세요.', '프라이빗 값은 메서드를 통해서만 읽고 바꾸게 합니다.', 'def get_id(self):\n    return self.__id', 'def get_id(self', 'self.__id'),
+    L('정보 은닉', 'A', '검증 후에만 값을 바꾸는 set_age 메서드를 만드세요.', '내부 상태를 숨기고 검증된 방법으로만 바꾸게 하면 잘못된 값을 막을 수 있습니다.', 'def set_age(self, age):\n    if age >= 0:\n        self._age = age', 'def set_age(self', 'if age'),
+    L('Property 데코레이터 심화', 'A', '@property와 setter로 음수를 막는 속성을 만드세요.', 'setter 안에서 검사해 잘못된 값이면 오류를 일으킬 수 있습니다.', '@age.setter\ndef age(self, v):\n    if v < 0:\n        raise ValueError("음수 불가")\n    self._age = v', '@age.setter', 'raise ValueError'),
+    L('요약 - 학생 기록 시스템', 'C', '점수를 프라이빗으로 숨기고 add_score와 average 메서드를 만드세요.', '캡슐화한 데이터를 메서드로만 다루는 종합 문제입니다.', 'class Student:\n    def __init__(self):\n        self.__scores = []\n\n    def add_score(self, s):\n        self.__scores.append(s)\n\n    def average(self):\n        return sum(self.__scores) / len(self.__scores)', '__scores', 'def add_score(self', 'def average(self'),
+  ] },
+  { title: '스페셜 메소드', lessons: [
+    L('매직 메소드 소개', 'A', '__str__을 정의해 객체를 print하면 이름이 나오게 하세요.', '__이름__ 형태의 특별한 메서드는 파이썬이 특정 상황에 자동으로 호출합니다.', 'class Dog:\n    def __init__(self, name):\n        self.name = name\n\n    def __str__(self):\n        return self.name', 'def __str__(self', 'return '),
+    L('연산자 오버로딩', 'A', '__add__로 두 Vector를 + 연산할 수 있게 하세요.', '__add__, __sub__ 등을 정의하면 객체에 연산자를 쓸 수 있습니다.', 'class Vector:\n    def __init__(self, x):\n        self.x = x\n\n    def __add__(self, other):\n        return Vector(self.x + other.x)', 'def __add__(self', 'other.x'),
+    L('컨테이너 매직 메소드', 'A', '__len__과 __getitem__을 가진 클래스를 만드세요.', '__len__은 len(), __getitem__은 객체[인덱스]를 가능하게 합니다.', 'class Bag:\n    def __init__(self):\n        self.items = []\n\n    def __len__(self):\n        return len(self.items)\n\n    def __getitem__(self, i):\n        return self.items[i]', 'def __len__(self', 'def __getitem__(self'),
+    L('요약 - 커스텀 리스트', 'C', '__len__, __getitem__, append를 가진 MyList 클래스를 만드세요.', '매직 메소드로 리스트처럼 동작하는 클래스를 만듭니다.', 'class MyList:\n    def __init__(self):\n        self.data = []\n\n    def append(self, v):\n        self.data.append(v)\n\n    def __len__(self):\n        return len(self.data)', 'class MyList', 'def append(self', 'def __len__(self'),
+  ] },
+  { title: '고급 OOP 개념', lessons: [
+    L('합성 vs 상속', 'A', 'Engine 객체를 속성으로 가지는 Car 클래스를 만드세요.', '합성은 "가지고 있다(has-a)", 상속은 "이다(is-a)" 관계입니다. 합성이 더 유연합니다.', 'class Engine:\n    pass\n\nclass Car:\n    def __init__(self):\n        self.engine = Engine()', 'self.engine = Engine()', 'class Car'),
+    L('Mixins', 'A', '로그 기능만 담은 LogMixin을 만들어 클래스에 섞으세요.', '믹스인은 상속으로 기능 하나를 덧붙이기 위한 작은 클래스입니다.', 'class LogMixin:\n    def log(self, msg):\n        print(msg)\n\nclass Service(LogMixin):\n    pass', 'class LogMixin', 'def log(self', '(LogMixin)'),
+    L('정적 메서드와 클래스 메서드', 'A', '정적 메서드와 클래스 메서드를 하나씩 가진 클래스를 만드세요.', '정적 메서드는 클래스 정보가 필요 없을 때, 클래스 메서드는 클래스 정보(cls)가 필요할 때 씁니다.', 'class T:\n    @staticmethod\n    def a(): pass\n\n    @classmethod\n    def b(cls): pass', '@staticmethod', '@classmethod'),
+    L('클래스 데코레이터', 'A', '클래스를 받아 속성을 추가하는 데코레이터를 만드세요.', '클래스도 함수처럼 데코레이터로 감싸 기능을 바꿀 수 있습니다.', 'def add_flag(cls):\n    cls.flag = True\n    return cls\n\n@add_flag\nclass A:\n    pass', 'def add_flag(cls', '@add_flag', 'return cls'),
+    L('컨텍스트 관리자', 'A', '__enter__와 __exit__를 가진 클래스를 만들어 with로 사용하세요.', 'with 블록의 시작과 끝에서 자동으로 준비/정리 작업을 수행합니다.', 'class Resource:\n    def __enter__(self):\n        print("open")\n        return self\n\n    def __exit__(self, *args):\n        print("close")\n\nwith Resource():\n    pass', 'def __enter__(self', 'def __exit__(self', 'with '),
+  ] },
+  { title: '고급 인자', lessons: [
+    L('*args', 'A', '*args로 임의 개수의 숫자를 더하는 함수를 만드세요.', '*args는 위치 인자를 튜플로 모읍니다.', 'def add(*args):\n    return sum(args)', 'def add(*args', 'sum(args)'),
+    L('**kwargs', 'A', '**kwargs로 이름 붙은 인자를 출력하는 함수를 만드세요.', '**kwargs는 이름 붙은 인자를 딕셔너리로 모읍니다.', 'def show(**kwargs):\n    for k, v in kwargs.items():\n        print(k, v)', 'def show(**kwargs', 'items()'),
+  ] },
+  { title: '디자인 패턴 파트 1', lessons: [
+    L('디자인 패턴 소개', 'A', '디자인 패턴이 무엇인지 주석으로 한 줄 설명하세요.', '디자인 패턴은 자주 만나는 설계 문제의 검증된 해결 방식입니다.', '# 반복되는 설계 문제의 검증된 해법\nprint("pattern")', '#', 'print('),
+    L('싱글톤 패턴', 'A', '객체가 하나만 만들어지는 Singleton 클래스를 만드세요.', '싱글톤은 인스턴스를 하나만 만들고 재사용하는 패턴입니다.', 'class Singleton:\n    _instance = None\n\n    def __new__(cls):\n        if cls._instance is None:\n            cls._instance = super().__new__(cls)\n        return cls._instance', '_instance', 'def __new__(cls'),
+    L('팩토리 패턴', 'A', '문자열에 따라 Dog 또는 Cat을 만드는 create_animal 함수를 만드세요.', '팩토리는 객체 생성을 한곳에 모아 조건에 맞는 객체를 돌려줍니다.', 'def create_animal(kind):\n    if kind == "dog":\n        return Dog()\n    return Cat()', 'def create_animal(', 'return Dog()', 'return Cat()'),
+    L('옵저버 패턴', 'A', 'subscribe와 notify가 있는 Publisher 클래스를 만드세요.', '옵저버 패턴은 상태가 바뀌면 등록된 관찰자들에게 알립니다.', 'class Publisher:\n    def __init__(self):\n        self.subs = []\n\n    def subscribe(self, fn):\n        self.subs.append(fn)\n\n    def notify(self, msg):\n        for fn in self.subs:\n            fn(msg)', 'def subscribe(self', 'def notify(self'),
+    L('전략 패턴', 'A', '전략 함수를 인자로 받아 실행하는 Context 클래스를 만드세요.', '전략 패턴은 알고리즘을 바꿔 끼울 수 있게 분리합니다.', 'class Context:\n    def __init__(self, strategy):\n        self.strategy = strategy\n\n    def run(self, x):\n        return self.strategy(x)', 'self.strategy', 'def run(self'),
+  ] },
+  { title: '디자인 패턴 Part 2', lessons: [
+    L('커맨드 패턴', 'A', 'execute 메서드를 가진 Command 클래스를 만드세요.', '요청을 객체로 만들어 실행/취소를 다룰 수 있게 합니다.', 'class Command:\n    def execute(self):\n        pass', 'class Command', 'def execute(self'),
+    L('어댑터 패턴', 'A', '다른 인터페이스를 맞춰 주는 Adapter 클래스를 만드세요.', '어댑터는 호환되지 않는 인터페이스를 감싸 연결합니다.', 'class Adapter:\n    def __init__(self, old):\n        self.old = old\n\n    def request(self):\n        return self.old.legacy()', 'class Adapter', 'def request(self'),
+    L('데코레이터 패턴', 'A', '객체를 감싸 기능을 추가하는 클래스를 만드세요.', '객체를 감싸 동작을 덧붙이는 구조 패턴입니다.', 'class Bold:\n    def __init__(self, text):\n        self.text = text\n\n    def render(self):\n        return "<b>" + self.text.render() + "</b>"', 'class Bold', 'def render(self'),
+    L('템플릿 메서드 패턴', 'A', '순서를 고정하고 일부 단계만 자식이 구현하는 클래스를 만드세요.', '부모가 전체 흐름을 정하고 자식이 세부 단계를 채웁니다.', 'class Game:\n    def play(self):\n        self.start()\n        self.end()', 'def play(self', 'self.start()'),
+    L('상태 패턴', 'A', '상태에 따라 동작이 바뀌는 Light 클래스를 만드세요.', '객체의 상태를 클래스로 나누어 상태별 동작을 위임합니다.', 'class Light:\n    def __init__(self):\n        self.state = "off"\n\n    def toggle(self):\n        self.state = "on" if self.state == "off" else "off"', 'def toggle(self', 'self.state'),
+    L('컴포지트 패턴', 'A', '자식 목록을 가진 Group 클래스를 만드세요.', '개별 객체와 묶음 객체를 같은 방식으로 다루는 트리 구조 패턴입니다.', 'class Group:\n    def __init__(self):\n        self.children = []\n\n    def add(self, c):\n        self.children.append(c)', 'class Group', 'self.children'),
+  ] },
+  { title: '프로젝트: 도서 관리 시스템', lessons: [
+    L('프로젝트 개요', 'C', '"Library"를 출력하세요.', '클래스로 도서와 사용자를 관리하는 시스템을 단계별로 만듭니다.', 'print("Library")', 'print(', 'Library'),
+    L('도서 및 사용자 클래스', 'C', 'title, author를 가진 Book과 name을 가진 User 클래스를 만드세요.', '시스템의 핵심 개체를 클래스로 표현합니다.', 'class Book:\n    def __init__(self, title, author):\n        self.title = title\n        self.author = author\n\nclass User:\n    def __init__(self, name):\n        self.name = name', 'class Book', 'class User', '__init__'),
+    L('대출 시스템', 'C', '대출 가능 여부를 바꾸는 borrow와 return_book 메서드를 만드세요.', '상태 값(available)을 바꾸는 메서드를 구현합니다.', 'def borrow(self):\n    if self.available:\n        self.available = False\n        return True\n    return False', 'def borrow(self', 'self.available'),
+    L('검색 기능', 'C', '제목에 키워드가 포함된 도서만 찾는 search 메서드를 만드세요.', '컴프리헨션과 in으로 조건에 맞는 도서를 고릅니다.', 'def search(self, keyword):\n    return [b for b in self.books if keyword in b.title]', 'def search(self', ' in b.title'),
+    L('관리자 인터페이스', 'C', '도서를 추가/삭제하는 Admin 클래스를 만드세요.', '권한이 필요한 동작은 별도의 클래스로 분리합니다.', 'class Admin:\n    def add_book(self, library, book):\n        library.books.append(book)', 'class Admin', 'def add_book(self'),
+    L('테스트 및 통합', 'C', '모든 기능을 호출해 보는 간단한 테스트 코드를 작성하세요.', '클래스를 실제로 만들어 호출하며 동작을 검증합니다.', 'book = Book("Python", "Kim")\nprint(book.title)', 'Book(', 'print('),
+  ] },
+  { title: '최종 챌린지', lessons: [
+    L('E-러닝 플랫폼', 'C', 'Course와 Student 클래스를 만들고 수강 신청 메서드를 구현하세요.', '두 클래스를 연결해 수강 관계를 만듭니다.', 'class Course:\n    def __init__(self, name):\n        self.name = name\n        self.students = []\n\n    def enroll(self, student):\n        self.students.append(student)', 'class Course', 'def enroll(self'),
+    L('은행 시스템', 'C', '잔액 부족을 검사하는 Account 클래스를 만드세요.', '캡슐화와 검증을 함께 사용합니다.', 'class Account:\n    def __init__(self):\n        self.__balance = 0\n\n    def withdraw(self, amount):\n        if amount > self.__balance:\n            raise ValueError("잔액 부족")\n        self.__balance -= amount', '__balance', 'raise ValueError'),
+    L('게임 캐릭터 개발', 'C', 'Character를 상속하는 Warrior와 Mage를 만들고 attack을 오버라이딩하세요.', '상속과 다형성으로 직업마다 다른 공격을 구현합니다.', 'class Character:\n    def attack(self):\n        return 1\n\nclass Warrior(Character):\n    def attack(self):\n        return 10', '(Character)', 'def attack(self'),
+    L('차량 대여 서비스', 'C', 'Vehicle 추상 클래스를 만들고 Car와 Bike를 구현해 대여 요금을 계산하세요.', '추상 클래스와 다형성을 조합한 종합 문제입니다.', 'from abc import ABC, abstractmethod\n\nclass Vehicle(ABC):\n    @abstractmethod\n    def rate(self): pass\n\nclass Car(Vehicle):\n    def rate(self):\n        return 100', 'ABC', '@abstractmethod', 'def rate(self'),
+  ] },
+];

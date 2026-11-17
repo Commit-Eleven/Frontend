@@ -2,6 +2,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { journeyFor } from '../data/curricula.js';
 import { statusFor } from '../data/journey.js';
 import { readSaved, saveProgress } from '../lib/progress.js';
+import { completeLesson as saveLessonCompletion } from '../api/learning.js';
+import { readStudyLevel } from '../lib/studyLevel.js';
 
 function journeyPath(language) {
   return `/journeys/${language}/fundamentals`;
@@ -19,9 +21,28 @@ function initialSession(language) {
 }
 
 export function useJourneyController(language) {
-  const journey = useMemo(() => journeyFor(language), [language]);
+  const [levelTick, setLevelTick] = useState(0);
+  useEffect(() => {
+    const onLevel = () => setLevelTick((tick) => tick + 1);
+    window.addEventListener('codegram-level-change', onLevel);
+    return () => window.removeEventListener('codegram-level-change', onLevel);
+  }, []);
+  const level = useMemo(() => readStudyLevel(language), [language, levelTick]);
   const [progress, setProgress] = useState(() => initialSession(language));
-  const { completed, active } = progress;
+  const journey = useMemo(
+    () => journeyFor(language, level, progress.completed),
+    [language, level, progress.completed],
+  );
+  // 낮은 섹션은 완료된 것으로 열어 두고, 현재 위치가 그 안에 있으면 등급의 시작 지점으로 옮깁니다.
+  const completed = useMemo(
+    () => [...new Set([...progress.completed, ...journey.preCompleted])],
+    [progress.completed, journey],
+  );
+  const active =
+    journey.allNodes.some((node) => node.id === progress.active) &&
+    !journey.preCompleted.includes(progress.active)
+      ? progress.active
+      : journey.defaultActive;
   const [selectedId, setSelectedId] = useState(active);
   const initialLesson = lessonFromPath(language, journey) || active;
   const [lessonId, setLessonId] = useState(initialLesson);
@@ -29,6 +50,19 @@ export function useJourneyController(language) {
   const [searchOpen, setSearchOpen] = useState(false);
   const [syllabusOpen, setSyllabusOpen] = useState(false);
   const [jumpTo, setJumpTo] = useState(null);
+
+  // 언어별 학습 상태만 초기화하고 공통 레이아웃은 그대로 유지합니다.
+  if (progress.language !== language) {
+    const nextProgress = initialSession(language);
+    const nextLesson = lessonFromPath(language, journey);
+    setProgress(nextProgress);
+    setSelectedId(nextProgress.active);
+    setLessonId(nextLesson || nextProgress.active);
+    setView(nextLesson ? 'lesson' : 'home');
+    setSearchOpen(false);
+    setSyllabusOpen(false);
+    setJumpTo(null);
+  }
 
   useEffect(() => {
     saveProgress(language, { completed: progress.completed, active: progress.active });
@@ -70,10 +104,6 @@ export function useJourneyController(language) {
     return () => window.removeEventListener('keydown', onKeys);
   }, []);
 
-  const updateProgress = (updater) => {
-    setProgress((current) => ({ ...current, ...updater(current) }));
-  };
-
   const openLesson = (id) => {
     const node = journey.allNodes.find((item) => item.id === id);
     if (!node || statusFor(node, completed, active) === 'locked') return;
@@ -89,15 +119,20 @@ export function useJourneyController(language) {
     window.history.pushState({}, '', journeyPath(language));
   };
 
-  const completeLesson = (id) => {
-    if (completed.includes(id)) return;
-    const nextCompleted = [...completed, id];
-    const index = journey.allMainLessons.findIndex((lesson) => lesson.id === id);
-    const next = journey.allMainLessons
-      .slice(index + 1)
-      .find((lesson) => !nextCompleted.includes(lesson.id) && lesson.initial !== 'special');
-    updateProgress(() => ({ completed: nextCompleted, active: next?.id ?? active }));
-    if (next) setSelectedId(next.id);
+  const completeLesson = async (id, options) => {
+    await saveLessonCompletion(id, language, options);
+    setProgress((current) => {
+      if (current.language !== language || current.completed.includes(id)) return current;
+      const nextCompleted = [...current.completed, id];
+      // 방금 섹션을 모두 풀었다면 새로 열린 섹션까지 포함해 다음 레슨을 찾습니다.
+      const nextJourney = journeyFor(language, level, nextCompleted);
+      const doneIds = new Set([...nextCompleted, ...nextJourney.preCompleted]);
+      const index = nextJourney.allMainLessons.findIndex((lesson) => lesson.id === id);
+      const next = nextJourney.allMainLessons
+        .slice(index + 1)
+        .find((lesson) => !doneIds.has(lesson.id) && lesson.initial !== 'special');
+      return { ...current, completed: nextCompleted, active: next?.id ?? current.active };
+    });
   };
 
   const pickSearch = (item) => {

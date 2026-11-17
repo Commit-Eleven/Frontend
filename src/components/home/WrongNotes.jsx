@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { fetchServerWrongNotes } from '../../api/learning.js';
 import { readWrongNotes, wrongNotesChangeEvent } from '../../lib/wrongNotes.js';
 import { WrongNotesPractice } from './WrongNotesPractice.jsx';
 import './WrongNotes.css';
@@ -31,13 +32,20 @@ function useWrongNotes() {
       window.removeEventListener('storage', refresh);
     };
   }, []);
-  return notes;
+  const [serverNotes, setServerNotes] = useState([]);
+  useEffect(() => {
+    const controller = new AbortController();
+    fetchServerWrongNotes({ signal: controller.signal }).then(setServerNotes).catch(() => {});
+    return () => controller.abort();
+  }, []);
+  const localIds = new Set(notes.map((note) => note.id));
+  return [...notes, ...serverNotes.filter((note) => !localIds.has(note.id))];
 }
 
 export function WrongNotes({ language, onOpen }) {
   const allNotes = useWrongNotes();
   const languageNotes = allNotes
-    .filter((note) => note.language === language.code)
+    .filter((note) => !note.language || note.language === language.code)
     .sort((first, second) => new Date(second.lastWrongAt) - new Date(first.lastWrongAt));
   const [filter, setFilter] = useState('unresolved');
   const [typeFilter, setTypeFilter] = useState('all');
@@ -149,12 +157,14 @@ export function WrongNotes({ language, onOpen }) {
                 <p>{note.problem.description || '이 문제를 다시 풀어보세요.'}</p>
                 <div className="wrong-note-card-bottom">
                   <span>{note.status === 'resolved' ? '복습 완료' : note.wrongCount + '회 오답'}</span>
-                  <button
-                    type="button"
-                    onClick={() => codeNote ? onOpen(note.lessonId) : setSessionNotes([note])}
-                  >
-                    {codeNote ? '코드 문제로 이동' : '다시 풀기'} <span aria-hidden="true">→</span>
-                  </button>
+                  {note.readOnly ? null : (
+                    <button
+                      type="button"
+                      onClick={() => codeNote ? onOpen(note.lessonId) : setSessionNotes([note])}
+                    >
+                      {codeNote ? '코드 문제로 이동' : '다시 풀기'} <span aria-hidden="true">→</span>
+                    </button>
+                  )}
                 </div>
               </article>
             );

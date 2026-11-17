@@ -9,10 +9,9 @@ import './CodeWorkspace.css';
 
 const languageLabels = { html: 'HTML', javascript: 'JavaScript', python: 'Python', java: 'Java' };
 
-export function CodeWorkspace({ code, onCodeChange, onRun, checks, tests, language = 'html', answer }) {
+export function CodeWorkspace({ code, onCodeChange, onRun, result, busy, error, authRequired, onLogin, language = 'html' }) {
   const [mobilePreviewOpen, setMobilePreviewOpen] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(language === 'html');
-  const [testTab, setTestTab] = useState('tests');
   const [testOpen, setTestOpen] = useState(true);
   const [previewWidth, setPreviewWidth] = useState(null);
   const [workspaceWidth, setWorkspaceWidth] = useState(() => window.innerWidth * 0.5);
@@ -50,7 +49,7 @@ export function CodeWorkspace({ code, onCodeChange, onRun, checks, tests, langua
   };
 
   const run = () => {
-    setTestTab('tests');
+    if (busy || !code.trim()) return;
     setTestOpen(true);
     onRun();
   };
@@ -59,14 +58,14 @@ export function CodeWorkspace({ code, onCodeChange, onRun, checks, tests, langua
     const onKey = (event) => {
       if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') {
         event.preventDefault();
-        setTestTab('tests');
+        if (busy || !code.trim()) return;
         setTestOpen(true);
         onRun();
       }
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [onRun]);
+  }, [onRun, busy, code]);
 
   return (
     <div
@@ -108,7 +107,7 @@ export function CodeWorkspace({ code, onCodeChange, onRun, checks, tests, langua
             )}
           </div>
         </div>
-        <div className="editor-region">
+        <div className="editor-region" inert={busy}>
           {isHtml ? (
             <HtmlEditor value={code} onChange={onCodeChange} />
           ) : (
@@ -116,18 +115,18 @@ export function CodeWorkspace({ code, onCodeChange, onRun, checks, tests, langua
           )}
         </div>
         <div className="editor-actions">
-          <button type="button" className="run-button" onClick={run}>
-            ▶ 코드 실행
+          <button type="button" className="run-button" onClick={run} disabled={busy || !code.trim()}>
+            {busy ? '처리 중…' : '코드 제출'}
           </button>
         </div>
         <TestPanel
-          checks={checks}
-          tests={tests}
-          tab={testTab}
-          onTabChange={setTestTab}
+          result={result}
+          submitting={busy && !result}
+          error={error}
+          authRequired={authRequired}
+          onLogin={onLogin}
           open={testOpen}
           onToggle={() => setTestOpen(!testOpen)}
-          answerText={answer}
         />
       </div>
       {isHtml && previewOpen && (

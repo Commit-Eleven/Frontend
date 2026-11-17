@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { codingLanguages } from '../../data/navigation.js';
 import {
+  clearLessonProblemCache,
+  fetchLessonProblems,
   fetchProblemTags,
   fetchPracticeProblem,
   normalizeProblemLanguage,
@@ -17,12 +19,60 @@ import { ProblemFeedback } from './questions/ProblemFeedback.jsx';
 import { QuestionHeader } from './questions/QuestionHeader.jsx';
 import { QuestionActions } from './questions/QuestionActions.jsx';
 import { recordWrongAnswer, resolveWrongNoteForProblem } from '../../lib/wrongNotes.js';
+import { markProblemSolved } from '../../lib/studyActivity.js';
+import { LoadingSkeleton } from '../common/LoadingSkeleton.jsx';
 import './QuizWorkspace.css';
+
+function cleanTitle(title) {
+  const cleaned = String(title || '')
+    .replace(/\s*(순서 맞추기|빈칸 채우기|단답형|객관식|선택형)\s*\d*\s*$/, '')
+    .trim();
+  return cleaned || title;
+}
+
+function cleanText(text) {
+  return String(text || '').replace(
+    /([A-Za-z0-9_)\]"'`]) +(으로|에서|을|를|은|는|이|가|와|과|로|의|에)(?=[\s.,?!]|$)/g,
+    '$1$2',
+  );
+}
 
 const names = { mcq: '선택형', blank: '빈칸 채우기', parsons: '순서 맞추기', short: '단답형' };
 
 function initialOrder(problem) {
   return problem.content.fragments.map(() => null);
+}
+
+const quizSaveTtl = 30 * 60 * 1000;
+const quizStorageKey = (languageCode, lessonId) => `codegram-quiz-${languageCode}-${lessonId}`;
+
+function readQuizSave(languageCode, lessonId) {
+  try {
+    const saved = JSON.parse(sessionStorage.getItem(quizStorageKey(languageCode, lessonId)) || 'null');
+    if (!saved || !Array.isArray(saved.ids) || Date.now() - (saved.savedAt || 0) > quizSaveTtl) return null;
+    return saved;
+  } catch {
+    return null;
+  }
+}
+
+function writeQuizSave(languageCode, lessonId, value) {
+  try {
+    sessionStorage.setItem(
+      quizStorageKey(languageCode, lessonId),
+      JSON.stringify({ ...value, savedAt: Date.now() }),
+    );
+  } catch {
+    /* 저장소를 쓸 수 없으면 기억하지 않습니다. */
+  }
+}
+
+function clearQuizSave(languageCode, lessonId) {
+  try {
+    sessionStorage.removeItem(quizStorageKey(languageCode, lessonId));
+  } catch {
+    /* noop */
+  }
 }
 
 function selectedLanguage(code) {
@@ -42,6 +92,8 @@ function supportsQuestionType(type, problem) {
 export function QuizWorkspace({ lesson, languageCode, onExit, onComplete, onLogin }) {
   const [step, setStep] = useState(0);
   const [request, setRequest] = useState(0);
+  // 레슨에 붙은 문제 목록. null 은 아직 확인 전, [] 는 레슨 문제가 없어 기존 방식으로 가져오는 경우입니다.
+  const [plan, setPlan] = useState(null);
   const language = selectedLanguage(languageCode);
   const [loaded, setLoaded] = useState({ status: 'loading', problem: null });
   const [selected, setSelected] = useState(null);
@@ -51,11 +103,66 @@ export function QuizWorkspace({ lesson, languageCode, onExit, onComplete, onLogi
   const [feedback, setFeedback] = useState(null);
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
-  const type = practiceTypes[step];
+  const lessonMode = Array.isArray(plan) && plan.length > 0;
+  const totalSteps = lessonMode ? plan.length : practiceTypes.length;
+  const type = lessonMode ? plan[step]?.type : practiceTypes[step];
   const problem = loaded.problem;
   const example = loaded.status === 'language-unavailable' || loaded.status === 'error';
 
   useEffect(() => {
+    if (!lessonMode) return;
+    writeQuizSave(languageCode, lesson.id, { ids: plan.map((item) => item.id), step });
+  }, [lessonMode, plan, step, languageCode, lesson.id]);
+
+  const exitQuiz = () => {
+    clearQuizSave(languageCode, lesson.id);
+    onExit?.();
+  };
+
+  useEffect(() => {
+    const controller = new AbortController();
+    setPlan(null);
+    setStep(0);
+    setLoaded({ status: 'loading', problem: null });
+    fetchLessonProblems(lesson.id, { signal: controller.signal })
+      .then(({ problems }) => {
+        if (controller.signal.aborted) return;
+        const usable = problems.filter(
+          (item) => item.type !== 'code' && supportsQuestionType(item.type, item),
+        );
+        const saved = readQuizSave(languageCode, lesson.id);
+        if (saved && saved.ids.length > 0) {
+          const restored = saved.ids.map((id) => usable.find((item) => item.id === id));
+          if (restored.every(Boolean)) {
+            setPlan(restored);
+            setStep(Math.min(Math.max(Number(saved.step) || 0, 0), restored.length - 1));
+            return;
+          }
+        }
+        const byType = new Map();
+        usable.forEach((item) => {
+          if (!byType.has(item.type)) byType.set(item.type, []);
+          byType.get(item.type).push(item);
+        });
+        const order = ['mcq', 'parsons', 'blank', 'short'];
+        setPlan(
+          order
+            .filter((name) => byType.has(name))
+            .map((name) => {
+              const list = byType.get(name);
+              return list[Math.floor(Math.random() * list.length)];
+            }),
+        );
+      })
+      .catch(() => {
+        // 레슨 문제가 없거나 불러오지 못하면 기존처럼 언어별 문제를 가져옵니다.
+        if (!controller.signal.aborted) setPlan([]);
+      });
+    return () => controller.abort();
+  }, [lesson.id, request]);
+
+  useEffect(() => {
+    if (plan === null) return undefined;
     const controller = new AbortController();
     const show = (nextProblem, status) => {
       if (controller.signal.aborted) return;
@@ -67,6 +174,10 @@ export function QuizWorkspace({ lesson, languageCode, onExit, onComplete, onLogi
       setFeedback(null);
       setError('');
     };
+    if (lessonMode) {
+      show(plan[step], 'ready');
+      return () => controller.abort();
+    }
     fetchProblemTags({ signal: controller.signal })
       .then((tags) => {
         const languageTag = problemTagForLanguage(language.code);
@@ -100,10 +211,11 @@ export function QuizWorkspace({ lesson, languageCode, onExit, onComplete, onLogi
           );
       });
     return () => controller.abort();
-  }, [type, lesson, request, language.code]);
+  }, [plan, step, type, lesson, request, language.code]);
 
   const continueAfterCorrectAnswer = () => {
-    if (step === practiceTypes.length - 1) {
+    if (step === totalSteps - 1) {
+      clearQuizSave(languageCode, lesson.id);
       onComplete();
       return;
     }
@@ -115,6 +227,7 @@ export function QuizWorkspace({ lesson, languageCode, onExit, onComplete, onLogi
   };
   const retry = () => {
     setLoaded({ status: 'loading', problem: null });
+    clearLessonProblemCache(lesson.id);
     setRequest((value) => value + 1);
   };
   const answer =
@@ -154,6 +267,7 @@ export function QuizWorkspace({ lesson, languageCode, onExit, onComplete, onLogi
       };
       if (result.correct) {
         resolveWrongNoteForProblem({ ...noteContext, problemId: problem.id });
+        markProblemSolved();
       } else {
         recordWrongAnswer({
           ...noteContext,
@@ -177,7 +291,7 @@ export function QuizWorkspace({ lesson, languageCode, onExit, onComplete, onLogi
         <button
           type="button"
           className="practice-back"
-          onClick={onExit}
+          onClick={exitQuiz}
           aria-label="여정으로 돌아가기"
         >
           ←
@@ -190,16 +304,16 @@ export function QuizWorkspace({ lesson, languageCode, onExit, onComplete, onLogi
           role="progressbar"
           aria-label="개념 확인 진행"
           aria-valuemin={1}
-          aria-valuemax={practiceTypes.length}
+          aria-valuemax={totalSteps}
           aria-valuenow={step + 1}
-          aria-valuetext={`${step + 1} / ${practiceTypes.length}`}
+          aria-valuetext={`${step + 1} / ${totalSteps}`}
         >
           <div
             className="practice-progress-fill"
-            style={{ width: `${((step + 1) / practiceTypes.length) * 100}%` }}
+            style={{ width: `${((step + 1) / totalSteps) * 100}%` }}
           >
             <span>
-              {step + 1}/{practiceTypes.length}
+              {step + 1}/{totalSteps}
             </span>
           </div>
         </div>
@@ -210,10 +324,8 @@ export function QuizWorkspace({ lesson, languageCode, onExit, onComplete, onLogi
             step={String(step + 1).padStart(2, '0')}
             label={`${language.label} · ${names[type]} · 개념 확인`}
           />
-          {loaded.status === 'loading' ? (
-            <p className="practice-loading" role="status">
-              문제를 불러오고 있어요...
-            </p>
+          {loaded.status === 'loading' || plan === null ? (
+            <LoadingSkeleton variant="practice" label="문제를 불러오는 중" />
           ) : loaded.status === 'auth-required' ? (
             <div className="practice-auth-gate" role="alert">
               <h1>로그인이 필요해요</h1>
@@ -241,9 +353,9 @@ export function QuizWorkspace({ lesson, languageCode, onExit, onComplete, onLogi
                   </button>
                 </div>
               )}
-              <h1 id="practice-title">{problem.title}</h1>
+              <h1 id="practice-title">{cleanTitle(problem.title)}</h1>
               <p className="practice-description">
-                {problem.description ||
+                {cleanText(problem.description) ||
                   (type === 'mcq'
                     ? '알맞은 답을 선택하세요.'
                     : '문제를 풀고 정답을 확인해 보세요.')}
@@ -286,6 +398,7 @@ export function QuizWorkspace({ lesson, languageCode, onExit, onComplete, onLogi
                   )}
                   {type === 'short' && (
                     <ShortAnswerQuestion
+                      code={problem?.content?.code}
                       value={shortAnswer}
                       onChange={(value) => {
                         setShortAnswer(value);
@@ -308,13 +421,13 @@ export function QuizWorkspace({ lesson, languageCode, onExit, onComplete, onLogi
                 </div>
               )}
               <QuestionActions>
-                {feedback?.correct ? (
+                {feedback ? (
                   <button
                     type="button"
                     className="precheck-submit"
                     onClick={continueAfterCorrectAnswer}
                   >
-                    {step === practiceTypes.length - 1 ? '코드 문제 풀기 →' : '다음 개념 →'}
+                    {step === totalSteps - 1 ? '코드 문제 풀기 →' : '다음 문제 →'}
                   </button>
                 ) : (
                   <button

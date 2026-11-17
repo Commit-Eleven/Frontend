@@ -1,7 +1,8 @@
 import { apiRequest } from './client.js'
 
 export const practiceTypes = ['mcq', 'blank', 'parsons', 'short']
-const languageTags = { html: 'html', javascript: 'js', python: 'python', java: 'java' }
+// 서버 /tags 는 html, javascript, java, python 을 그대로 돌려줍니다.
+const languageTags = { html: 'html', javascript: 'javascript', python: 'python', java: 'java' }
 let cachedTags = null
 
 function assertType(type) {
@@ -71,8 +72,7 @@ export function practiceAnswerBody(type, problem, answer) {
     if (!Array.isArray(blanks) || !blanks.length) throw new Error('빈칸 정보가 없습니다.')
     const values = blanks.map(({ no }) => String(answer?.[no] ?? '').trim())
     if (values.some((value) => !value)) throw new Error('모든 빈칸을 채워 주세요.')
-    if (values.length !== 1) throw new Error('빈칸 문제는 답안을 문자열 하나로 제출할 수 있어야 합니다.')
-    return { id, answer: values[0] }
+    return { id, answer: values.join(',') }
   }
   const shortAnswer = String(answer ?? '').trim()
   if (!shortAnswer) throw new Error('답을 입력해 주세요.')
@@ -100,4 +100,34 @@ export async function submitPracticeAnswer(type, problem, answer, { signal } = {
     explanation: result.explanation ?? problem.content?.explanation ?? '',
     results: Array.isArray(result.results) ? result.results : [],
   }
+}
+
+// 레슨에 붙은 문제 전체(객관식 → 파슨스 → 단답 → 코드 작성)를 한 번에 가져옵니다.
+const lessonProblemCache = new Map()
+
+export function fetchLessonProblems(lessonId, { signal } = {}) {
+  if (!lessonId) return Promise.reject(new Error('레슨 ID가 없습니다.'))
+  const cached = lessonProblemCache.get(lessonId)
+  if (cached) return cached
+  const request = apiRequest({
+    url: `/lessons/${encodeURIComponent(lessonId)}/problems`,
+    method: 'GET',
+    signal,
+  })
+    .then((payload) => {
+      const data = payload?.data && typeof payload.data === 'object' ? payload.data : payload
+      const problems = Array.isArray(data?.problems) ? data.problems : []
+      return { total: data?.total ?? problems.length, solved: data?.solved ?? 0, problems }
+    })
+    .catch((error) => {
+      lessonProblemCache.delete(lessonId)
+      throw error
+    })
+  lessonProblemCache.set(lessonId, request)
+  return request
+}
+
+export function clearLessonProblemCache(lessonId) {
+  if (lessonId) lessonProblemCache.delete(lessonId)
+  else lessonProblemCache.clear()
 }

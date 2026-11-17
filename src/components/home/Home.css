@@ -65,10 +65,19 @@
   color: var(--primary-strong);
   border-radius: 8px;
   height: 29px;
-  padding: 2px 8px;
+  padding: 0 10px;
   font-size: 18px;
   line-height: 20px;
   white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.course-search svg {
+  width: 16px;
+  height: 16px;
+  flex: none;
 }
 .course-search:hover {
   background: var(--primary-wash);
@@ -77,6 +86,7 @@
 .course-search kbd {
   font-size: 12px;
   font-family: inherit;
+  line-height: 1;
 }
 .next-section {
   border: 2px solid #e1e1e1;
@@ -167,4 +177,28 @@
   .center-content {
     left: 19px;
   }
+}
+
+.section-tabs {
+  position: relative;
+  z-index: 16;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: -48px 0 28px;
+}
+.section-tabs button {
+  border: 1px solid #e7e7e7;
+  background: #fff;
+  color: #777;
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.section-tabs button.is-active {
+  border-color: var(--primary);
+  color: var(--primary);
+  background: #fff;
 }

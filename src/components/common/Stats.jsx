@@ -1,13 +1,43 @@
-import { useEffect, useRef, useState } from 'react'
+import { memo, useEffect, useRef, useState } from 'react'
+import { authorizationHeaders } from '../../api/auth.js'
+import { fetchTags, toLanguageCode } from '../../api/learning.js'
+import { updateStudyLanguage } from '../../api/community.js'
 import { codingLanguages } from '../../data/navigation.js'
 import { icon } from '../../lib/assets.js'
+import { hasSolvedToday as readHasSolvedToday, solvedProblemEvent } from '../../lib/studyActivity.js'
 import { selectCodingLanguage, useCodingLanguage } from '../../hooks/useCodingLanguage.js'
 import './Stats.css'
 
-export function Stats({ compact = false }) {
+export const Stats = memo(function Stats({ compact = false, streakDays = 0, hasSolvedToday = false }) {
   const language = useCodingLanguage()
   const [languageOpen, setLanguageOpen] = useState(false)
+  const [languageError, setLanguageError] = useState('')
+  const [savingLanguage, setSavingLanguage] = useState(false)
+  const [availableLanguages, setAvailableLanguages] = useState(codingLanguages)
   const languageRef = useRef(null)
+  const [solvedToday, setSolvedToday] = useState(readHasSolvedToday)
+  const loggedIn = Boolean(authorizationHeaders().Authorization)
+  const flameActive = solvedToday || hasSolvedToday
+
+  useEffect(() => {
+    const handleSolved = () => setSolvedToday(true)
+    window.addEventListener(solvedProblemEvent, handleSolved)
+    return () => window.removeEventListener(solvedProblemEvent, handleSolved)
+  }, [])
+
+  useEffect(() => {
+    if (!languageOpen || !loggedIn) return undefined
+    const controller = new AbortController()
+    fetchTags({ signal: controller.signal })
+      .then((tags) => {
+        const codes = tags.map(toLanguageCode)
+        setAvailableLanguages(codingLanguages.filter((option) => codes.includes(option.code)))
+      })
+      .catch(() => {
+        if (!controller.signal.aborted) setLanguageError('사용 가능한 언어를 불러오지 못했어요.')
+      })
+    return () => controller.abort()
+  }, [languageOpen, loggedIn])
 
   useEffect(() => {
     if (!languageOpen) return undefined
@@ -27,9 +57,19 @@ export function Stats({ compact = false }) {
     }
   }, [languageOpen])
 
-  const selectLanguage = (nextLanguage) => {
-    selectCodingLanguage(nextLanguage)
-    setLanguageOpen(false)
+  const selectLanguage = async (nextLanguage) => {
+    if (savingLanguage) return
+    setLanguageError('')
+    setSavingLanguage(true)
+    try {
+      if (loggedIn) await updateStudyLanguage(nextLanguage.code)
+      selectCodingLanguage(nextLanguage)
+      setLanguageOpen(false)
+    } catch (error) {
+      setLanguageError(error.message || '언어를 변경하지 못했어요.')
+    } finally {
+      setSavingLanguage(false)
+    }
   }
 
   return (
@@ -45,14 +85,16 @@ export function Stats({ compact = false }) {
           onClick={() => setLanguageOpen((open) => !open)}
         >
           <img className="html-badge" src={language.icon} alt="" />
+          <span>{language.label}</span>
         </button>
         {languageOpen && (
           <div className="language-menu" role="menu" aria-label="코딩 언어 선택">
             <div className="language-menu-title">언어 선택</div>
-            {[...new Set(codingLanguages.map((option) => option.category))].map((category) => (
+            {languageError && <p role="alert">{languageError}</p>}
+            {[...new Set(availableLanguages.map((option) => option.category))].map((category) => (
               <section className="language-menu-group" key={category} aria-label={category}>
                 <h3>{category}</h3>
-                {codingLanguages.filter((option) => option.category === category).map((option) => {
+                {availableLanguages.filter((option) => option.category === category).map((option) => {
                   const isSelected = language.code === option.code
                   return (
                     <button
@@ -60,6 +102,7 @@ export function Stats({ compact = false }) {
                       type="button"
                       className={'language-menu-item' + (isSelected ? ' is-selected' : '')}
                       role="menuitemradio"
+                      disabled={savingLanguage}
                       aria-checked={isSelected}
                       onClick={() => selectLanguage(option)}
                     >
@@ -74,9 +117,10 @@ export function Stats({ compact = false }) {
           </div>
         )}
       </div>
-      <span className="stat stat-fire"><b>0</b><img src={icon('fire')} alt="연속 학습" /></span>
-      <span className="stat stat-gem"><b>19</b><span className="gem-shape" /></span>
-      <span className="stat stat-energy"><b>6</b><span className="energy-shape">ϟ</span></span>
+      <span className={'stat stat-fire' + (flameActive ? ' is-active' : '')} aria-label={`연속 학습 ${streakDays}일${flameActive ? ', 오늘 문제 풀이 완료' : ''}`}>
+        <img src={icon(flameActive ? 'fire-active' : 'fire')} alt="" />
+        <b>{streakDays}일</b>
+      </span>
     </div>
   )
-}
+})

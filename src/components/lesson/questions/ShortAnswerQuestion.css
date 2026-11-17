@@ -30,3 +30,21 @@
   outline: 0;
   background: var(--primary-soft);
 }
+
+.practice-short-code {
+  overflow: auto;
+  margin: 0 0 24px;
+  padding: 20px 24px;
+  border: 1px solid #454545;
+  border-radius: 10px;
+  background: #1e1e1e;
+  color: #e7e7e7;
+}
+.practice-short-code code {
+  display: block;
+  min-width: max-content;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 15px;
+  line-height: 1.7;
+  white-space: pre;
+}
