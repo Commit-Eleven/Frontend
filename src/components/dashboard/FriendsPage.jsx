@@ -182,10 +182,10 @@ export function FriendsPage() {
             <h2>친구 찾기</h2>
             <p>닉네임을 두 글자 이상 입력해 검색하세요.</p>
           </div>
-          <span className="friends-section-icon" aria-hidden="true">⌕</span>
+          <span className="friends-section-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="10.5" cy="10.5" r="6" /><path d="m15 15 4 4" /></svg></span>
         </div>
         <label className="friends-search-field">
-          <span aria-hidden="true">⌕</span>
+          <span aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="10.5" cy="10.5" r="6" /><path d="m15 15 4 4" /></svg></span>
           <input
             type="search"
             value={query}
