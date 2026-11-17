@@ -1,6 +1,4 @@
-import { useEffect, useState } from 'react';
-import { authorizationHeaders } from '../../api/auth.js';
-import { expSummary, fetchHome, fetchMyExp, fetchRanking } from '../../api/learning.js';
+import { memo, useState } from 'react';
 import { icon } from '../../lib/assets.js';
 import { wasSolvedOnDate } from '../../lib/studyActivity.js';
 import { Stats } from '../common/Stats.jsx';
@@ -9,22 +7,9 @@ import './RightRail.css';
 
 const tierNames = { normal: '학습자', creator: '크리에이터', admin: '관리자' };
 
-export function RightRail({ onNavigate }) {
-  const loggedIn = Boolean(authorizationHeaders().Authorization);
-  const [exp, setExp] = useState(null);
-  const [home, setHome] = useState(null);
-  const [ranking, setRanking] = useState(null);
+export const RightRail = memo(function RightRail({ onNavigate, summary }) {
+  const { exp, home, ranking, loggedIn } = summary;
   const [unitOpen, setUnitOpen] = useState(false);
-
-  useEffect(() => {
-    if (!loggedIn) return undefined;
-    const controller = new AbortController();
-    const { signal } = controller;
-    fetchMyExp({ signal }).then((data) => setExp(expSummary(data))).catch(() => {});
-    fetchHome({ signal }).then(setHome).catch(() => {});
-    fetchRanking({ page: 1, size: 3 }, { signal }).then(setRanking).catch(() => {});
-    return () => controller.abort();
-  }, [loggedIn]);
 
   const latest = exp?.recent[0];
   const unit = home?.currentUnit;
@@ -34,7 +19,7 @@ export function RightRail({ onNavigate }) {
 
   return (
     <aside className="right-rail">
-      <Stats hasSolvedToday={wasSolvedOnDate(latest?.createdAt)} />
+      <Stats streakDays={home?.stats.streakDays ?? 0} hasSolvedToday={wasSolvedOnDate(latest?.createdAt)} />
       <div className="rail-card level-card">
         <div className="level-avatar">XP</div>
         <div className="level-info">
@@ -117,4 +102,4 @@ export function RightRail({ onNavigate }) {
       {unitOpen && unit && <UnitDetailModal unitId={unit.unitId} onClose={() => setUnitOpen(false)} />}
     </aside>
   );
-}
+});

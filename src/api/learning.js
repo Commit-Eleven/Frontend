@@ -134,6 +134,13 @@ export function fetchMyExp({ signal } = {}) {
   return request({ url: '/users/me/exp', method: 'GET', signal })
 }
 
+/** POST /lessons/{lessonId}/complete — 정답 확인 후 레슨 완료 기록 */
+export async function completeLesson(lessonId, language, { signal } = {}) {
+  const result = await request({ url: '/lessons/' + encodeURIComponent(lessonId) + '/complete', method: 'POST', data: { language }, signal })
+  if (result?.lessonId !== lessonId || result.language !== language) throw new Error('레슨 완료 저장 응답을 확인하지 못했어요.')
+  return result
+}
+
 /** GET /curriculum — 커리큘럼 */
 export function fetchCurriculum({ signal } = {}) {
   return request({ url: '/curriculum', method: 'GET', signal })

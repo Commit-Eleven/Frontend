@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { chapterTitleFor } from '../../data/curricula.js';
-import { challengeFor, starterCodeFor } from '../../data/challenges.js';
+import { challengeFor } from '../../data/challenges.js';
 import { beginGoogleLogin, returnModeKey } from '../../api/auth.js';
-import { recordWrongAnswer, resolveWrongNoteForProblem } from '../../lib/wrongNotes.js';
+import { useCodeChallenge } from '../../hooks/useCodeChallenge.js';
 import { markProblemSolved } from '../../lib/studyActivity.js';
 import { LessonSidebar } from './LessonSidebar.jsx';
 import { CodeWorkspace } from './CodeWorkspace.jsx';
@@ -15,23 +15,16 @@ export function Lesson({ lessonId, language, journey, onBack, onSuccess }) {
     journey.allNodes.find((node) => node.id === lessonId) ||
     journey.allNodes.find((node) => node.id === journey.defaultActive);
   const challenge = challengeFor(lesson, language);
-  const codeProblem = {
-    id: `challenge-${lesson.id}`,
-    type: 'code',
-    language,
-    title: `${lesson.title} 코드 작성`,
-    description: challenge.instruction,
-    content: { example: challenge.example, checks: challenge.checks },
-  };
-  const codeKey = `coddy-demo-code-${language}-${lesson.id}`;
-  const [code, setCode] = useState(
-    () => localStorage.getItem(codeKey) || starterCodeFor(language),
-  );
   // Every entry from the journey map starts with the server-backed concept check.
   // Completing it only advances this lesson visit to the coding challenge.
   const [mode, setMode] = useState('concept');
-  const [tests, setTests] = useState(null);
-  const [showSuccess, setShowSuccess] = useState(false);
+  const saveSolved = async (...args) => {
+    const result = await onSuccess(...args);
+    markProblemSolved();
+    return result;
+  };
+  const coding = useCodeChallenge({ enabled: mode === 'challenge', language, lesson, onSuccess: saveSolved });
+  const loadingCode = coding.status === 'idle' || coding.status === 'loading';
   const lessonBodyRef = useRef(null);
   const [lessonBodyWidth, setLessonBodyWidth] = useState(() => window.innerWidth - 49);
   const [theoryWidth, setTheoryWidth] = useState(() => window.innerWidth <= 980 ? 300 : 400);
@@ -65,78 +58,8 @@ export function Lesson({ lessonId, language, journey, onBack, onSuccess }) {
     sessionStorage.removeItem(returnModeKey);
   }, []);
 
-  useEffect(() => {
-    localStorage.setItem(codeKey, code);
-  }, [code, codeKey]);
-
-  const saveCodeAttempt = (result) => {
-    const correct = result.every((test) => test.passed);
-    if (correct) {
-      resolveWrongNoteForProblem({
-        language,
-        lessonId: lesson.id,
-        type: 'code',
-        problemId: codeProblem.id,
-      });
-    } else {
-      recordWrongAnswer({
-        language,
-        lessonId: lesson.id,
-        lessonTitle: lesson.title,
-        type: 'code',
-        problem: codeProblem,
-        submittedAnswer: code,
-        feedback: { correct: false, answer: challenge.example, results: result },
-        source: 'code-challenge',
-      });
-    }
-    return correct;
-  };
-
-  const runCode = () => {
-    if (language !== 'html') {
-      const result = challenge.checks.map((check) => {
-        const passed = code.includes(check.contains);
-        return {
-          ...check,
-          actual: passed ? '필요한 코드 확인' : '코드에서 찾지 못함',
-          passed,
-        };
-      });
-      setTests(result);
-      if (saveCodeAttempt(result)) {
-        setShowSuccess(true);
-        markProblemSolved();
-        onSuccess(lesson.id);
-      }
-      return;
-    }
-    const parsed = new DOMParser().parseFromString(code, 'text/html');
-    const result = challenge.checks.map((check) => {
-      const element = parsed.querySelectorAll(check.selector)[check.index || 0];
-      const text = element?.textContent.trim() || '';
-      return {
-        ...check,
-        actual: check.exists ? (element ? '태그 있음' : '태그 없음') : text,
-        passed: check.exists ? !!element : text === check.expected,
-      };
-    });
-    setTests(result);
-    if (saveCodeAttempt(result)) {
-      setShowSuccess(true);
-      markProblemSolved();
-      onSuccess(lesson.id);
-    }
-  };
-
-  const focusCodeEditor = () =>
-    requestAnimationFrame(() => {
-      document.querySelector('[aria-label$="코드 편집기"]')?.focus();
-    });
-
   const finishConceptCheck = () => {
     setMode('challenge');
-    focusCodeEditor();
   };
 
   return (
@@ -161,7 +84,7 @@ export function Lesson({ lessonId, language, journey, onBack, onSuccess }) {
           '--theory-max-width': `${theoryMaxWidth}px`,
         }}
       >
-        <LessonSidebar lesson={lesson} challenge={challenge} />
+        <LessonSidebar lesson={lesson} challenge={challenge} codeMode={mode === 'challenge'} codeProblem={coding.problem} />
         <PanelResizeHandle
           className="lesson-theory-resizer"
           label="이론 패널 너비 조절"
@@ -172,7 +95,7 @@ export function Lesson({ lessonId, language, journey, onBack, onSuccess }) {
           getPointerValue={theoryWidthFromPointer}
           onDragChange={setIsResizingTheory}
         />
-        <main className={'lesson-workspace ' + (mode === 'concept' ? 'quiz-mode' : '')}>
+        <main className={'lesson-workspace ' + (mode === 'concept' ? 'quiz-mode' : '')} inert={coding.showSuccess}>
           {mode === 'concept' ? (
             <QuizWorkspace
               lesson={lesson}
@@ -181,33 +104,58 @@ export function Lesson({ lessonId, language, journey, onBack, onSuccess }) {
               onComplete={finishConceptCheck}
               onLogin={() => beginGoogleLogin('quiz')}
             />
-          ) : (
+          ) : coding.status === 'ready' ? (
             <CodeWorkspace
-              code={code}
-              onCodeChange={setCode}
-              onRun={runCode}
-              checks={challenge.checks}
-              tests={tests}
+              code={coding.code}
+              onCodeChange={coding.changeCode}
+              onRun={coding.submit}
+              result={coding.result}
+              busy={coding.busy}
+              error={coding.error}
+              authRequired={coding.authRequired}
+              onLogin={() => beginGoogleLogin('quiz')}
               language={language}
-              answer={challenge.example}
             />
+          ) : (
+            <div className="code-problem-state" role={loadingCode ? 'status' : 'alert'}>
+              <h2>{loadingCode ? '코드 문제를 불러오는 중…'
+                : coding.status === 'auth-required' ? '로그인이 필요해요'
+                : coding.status === 'unavailable' ? '코드 문제를 준비하고 있어요'
+                : '코드 문제를 불러오지 못했어요'}</h2>
+              {!loadingCode && <>
+                <p>{coding.status === 'unavailable' ? '아직 이 언어의 코드 문제가 없어요. 나중에 다시 확인해 주세요.' : coding.error}</p>
+                {coding.status === 'auth-required'
+                  ? <button type="button" onClick={() => beginGoogleLogin('quiz')}>Google로 로그인</button>
+                  : <button type="button" onClick={coding.reload}>다시 시도</button>}
+                <button type="button" className="code-state-secondary" onClick={onBack}>여정으로 돌아가기</button>
+              </>}
+            </div>
           )}
         </main>
       </div>
-      {showSuccess && (
+      {coding.showSuccess && (
         <div className="success-backdrop">
-          <div className="success-card">
+          <div className="success-card" role="dialog" aria-modal="true" aria-labelledby="code-success-title">
             <span className="success-icon">✓</span>
-            <h2>레슨 완료!</h2>
-            <p>모든 테스트 케이스를 통과했습니다.</p>
-            <strong>+20 XP</strong>
-            <button type="button" onClick={onBack}>
-              여정으로 돌아가기
-            </button>
+            <h2 id="code-success-title">{coding.completion === 'saved' ? '레슨 완료!' : '정답입니다!'}</h2>
+            <p role="status">{coding.completion === 'saving' ? '완료 기록을 저장하고 있어요…'
+              : coding.completion === 'error' ? '정답은 확인했지만 레슨 완료 기록을 저장하지 못했어요.'
+              : '채점 기준을 모두 통과했습니다.'}</p>
+            {coding.problem.reward > 0 && <>
+              <strong>정답 보상 {coding.problem.reward.toLocaleString()} XP</strong>
+              <small>보상은 문제를 처음 맞혔을 때 지급돼요.</small>
+            </>}
+            {coding.completion === 'error' && <p className="code-completion-error" role="alert">{coding.completionError}</p>}
+            {coding.completion === 'error'
+              ? <button type="button" disabled={coding.busy} onClick={coding.authRequired ? () => beginGoogleLogin('quiz') : coding.retryCompletion}>
+                {coding.authRequired ? 'Google로 로그인' : '완료 저장 다시 시도'}
+              </button>
+              : <button type="button" disabled={coding.busy} onClick={onBack}>여정으로 돌아가기</button>}
             <button
               type="button"
               className="success-secondary"
-              onClick={() => setShowSuccess(false)}
+              disabled={coding.busy}
+              onClick={coding.closeSuccess}
             >
               코드 계속 보기
             </button>

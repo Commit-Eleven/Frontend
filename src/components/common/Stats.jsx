@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState } from 'react'
+import { memo, useEffect, useRef, useState } from 'react'
 import { authorizationHeaders } from '../../api/auth.js'
-import { fetchHome, fetchTags, toLanguageCode } from '../../api/learning.js'
+import { fetchTags, toLanguageCode } from '../../api/learning.js'
 import { updateStudyLanguage } from '../../api/community.js'
 import { codingLanguages } from '../../data/navigation.js'
 import { icon } from '../../lib/assets.js'
@@ -8,14 +8,13 @@ import { hasSolvedToday as readHasSolvedToday, solvedProblemEvent } from '../../
 import { selectCodingLanguage, useCodingLanguage } from '../../hooks/useCodingLanguage.js'
 import './Stats.css'
 
-export function Stats({ compact = false, hasSolvedToday = false }) {
+export const Stats = memo(function Stats({ compact = false, streakDays = 0, hasSolvedToday = false }) {
   const language = useCodingLanguage()
   const [languageOpen, setLanguageOpen] = useState(false)
   const [languageError, setLanguageError] = useState('')
   const [savingLanguage, setSavingLanguage] = useState(false)
   const [availableLanguages, setAvailableLanguages] = useState(codingLanguages)
   const languageRef = useRef(null)
-  const [streak, setStreak] = useState(0)
   const [solvedToday, setSolvedToday] = useState(readHasSolvedToday)
   const loggedIn = Boolean(authorizationHeaders().Authorization)
   const flameActive = solvedToday || hasSolvedToday
@@ -25,14 +24,6 @@ export function Stats({ compact = false, hasSolvedToday = false }) {
     window.addEventListener(solvedProblemEvent, handleSolved)
     return () => window.removeEventListener(solvedProblemEvent, handleSolved)
   }, [])
-
-  // GET /users/me/home 의 연속 학습 일수
-  useEffect(() => {
-    if (!loggedIn) return undefined
-    const controller = new AbortController()
-    fetchHome({ signal: controller.signal }).then((home) => setStreak(home.stats.streakDays)).catch(() => {})
-    return () => controller.abort()
-  }, [loggedIn])
 
   useEffect(() => {
     if (!languageOpen || !loggedIn) return undefined
@@ -126,10 +117,10 @@ export function Stats({ compact = false, hasSolvedToday = false }) {
           </div>
         )}
       </div>
-      <span className={'stat stat-fire' + (flameActive ? ' is-active' : '')} aria-label={`연속 학습 ${streak}일${flameActive ? ', 오늘 문제 풀이 완료' : ''}`}>
+      <span className={'stat stat-fire' + (flameActive ? ' is-active' : '')} aria-label={`연속 학습 ${streakDays}일${flameActive ? ', 오늘 문제 풀이 완료' : ''}`}>
         <img src={icon(flameActive ? 'fire-active' : 'fire')} alt="" />
-        <b>{streak}일</b>
+        <b>{streakDays}일</b>
       </span>
     </div>
   )
-}
+})

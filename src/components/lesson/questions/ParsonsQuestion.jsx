@@ -1,9 +1,25 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import './ParsonsQuestion.css';
+
+/** 정답 순서가 그대로 보이지 않도록 블록 표시 순서를 문제마다 고정된 방식으로 섞습니다. */
+function shuffledIndexes(fragments) {
+  const seedText = fragments.join('\n');
+  let seed = 0;
+  for (let i = 0; i < seedText.length; i += 1) seed = (seed * 31 + seedText.charCodeAt(i)) >>> 0;
+  const indexes = fragments.map((_, index) => index);
+  for (let i = indexes.length - 1; i > 0; i -= 1) {
+    seed = (seed * 1664525 + 1013904223) >>> 0;
+    const j = seed % (i + 1);
+    [indexes[i], indexes[j]] = [indexes[j], indexes[i]];
+  }
+  if (indexes.length > 1 && indexes.every((value, index) => value === index)) indexes.push(indexes.shift());
+  return indexes;
+}
 
 export function ParsonsQuestion({ problem, order, onChange, disabled }) {
   const [draggedFragment, setDraggedFragment] = useState(null);
   const fragments = problem.content.fragments;
+  const bankOrder = useMemo(() => shuffledIndexes(fragments), [fragments]);
 
   const placeFragment = (fragmentIndex, targetSlot) => {
     if (disabled || !Number.isInteger(fragmentIndex)) return;
@@ -97,7 +113,7 @@ export function ParsonsQuestion({ problem, order, onChange, disabled }) {
       >
         <strong>코드 블록</strong>
         <div className="practice-parsons-blocks" aria-label="사용할 코드 블록">
-          {fragments.map((fragment, fragmentIndex) =>
+          {bankOrder.map((fragmentIndex) =>
             order.includes(fragmentIndex) ? null : (
               <button
                 type="button"
@@ -112,7 +128,7 @@ export function ParsonsQuestion({ problem, order, onChange, disabled }) {
                 }}
                 onDragEnd={() => setDraggedFragment(null)}
               >
-                <code>{fragment}</code>
+                <code>{fragments[fragmentIndex]}</code>
               </button>
             ),
           )}
