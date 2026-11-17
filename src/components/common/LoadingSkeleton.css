@@ -37,7 +37,7 @@
 .skeleton-lesson-card { width: min(680px, 100%); margin: 0 auto; }
 @keyframes skeleton-pulse { 50% { opacity: .45; } }
 @media (prefers-reduced-motion: reduce) { .skeleton-block { animation: none; } }
-@media (max-width: 760px) { @media (max-width: 480px) { .skeleton-profile-avatar { width: 48px; height: 48px; } .skeleton-profile-hero { gap: 10px; } .skeleton-panel { padding: 14px; } }
+@media (max-width: 480px) { .skeleton-profile-avatar { width: 48px; height: 48px; } .skeleton-profile-hero { gap: 10px; } .skeleton-panel { padding: 14px; } }
 
 .loading-skeleton--history .skeleton-layout, .loading-skeleton--friends .skeleton-layout { gap: 0; }
 .loading-skeleton--history .skeleton-row { min-height: 40px; }

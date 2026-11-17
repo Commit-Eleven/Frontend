@@ -39,14 +39,42 @@ export function beginGoogleLogin(returnMode) {
   location.assign(googleLoginUrl())
 }
 
-export function completeGoogleLogin() {
-  if (location.pathname !== '/auth/callback') return
-
-  const token = new URLSearchParams(location.search).get('token')
-  if (token) setAccessToken(token)
-
+function finishLogin() {
   const savedPath = sessionStorage.getItem(returnPathKey)
   sessionStorage.removeItem(returnPathKey)
   const returnPath = journeyPathPattern.test(savedPath || '') ? savedPath : defaultJourneyPath
   location.replace(returnPath)
+}
+
+/**
+ * 구글 로그인 콜백을 마무리합니다.
+ * 백엔드는 /auth/callback?code=... 로 일회용 코드를 넘기므로, 이 코드를 POST /social/login/exchange 로 토큰으로 바꿉니다.
+ * 예전 방식(?token=...)도 그대로 받아 줍니다.
+ */
+export async function completeGoogleLogin() {
+  if (location.pathname !== '/auth/callback') return
+
+  const params = new URLSearchParams(location.search)
+  const token = params.get('token')
+  const code = params.get('code')
+
+  if (token) {
+    setAccessToken(token)
+  } else if (code) {
+    try {
+      const response = await fetch('/api/social/login/exchange', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ code }),
+      })
+      const payload = await response.json().catch(() => ({}))
+      const issued = payload?.data?.token ?? payload?.token
+      if (response.ok && typeof issued === 'string' && issued) setAccessToken(issued)
+    } catch {
+      // 교환에 실패하면 로그인 없이 학습 화면으로 돌아갑니다.
+    }
+  }
+
+  finishLogin()
 }
