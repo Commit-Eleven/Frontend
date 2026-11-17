@@ -27,7 +27,7 @@ export function Home(props) {
     <div className={'home-layout' + (activeItem === '그룹' ? ' groups-page' : '')}>
       <Sidebar activeItem={activeItem} onNavigate={navigate} onLogout={onLogout} homePath={`/journeys/${language.code}/fundamentals`} />
       <HomeContent key={language.code} {...props} onNavigate={navigate} />
-      <RightRail onNavigate={navigate} summary={summary} />
+      <RightRail onNavigate={navigate} summary={summary} journey={props.journey} completed={props.completed} active={props.active} onSyllabus={props.onSyllabus} />
       <div className="mobile-stats">
         <Stats compact streakDays={summary.home?.stats.streakDays ?? 0} />
       </div>
@@ -54,7 +54,7 @@ function HomeContent({
   const { chapterData } = journey;
   const centerRef = useRef(null);
   const activeRef = useRef(null);
-  const [visibleChapter, setVisibleChapter] = useState(language.code === 'html' ? 1 : 0);
+  const [visibleChapter, setVisibleChapter] = useState(0);
   useEffect(() => {
     if (!selectedId) return;
 
@@ -97,6 +97,15 @@ function HomeContent({
     centerRef.current.scrollTo({ top: target.offsetTop - 150, behavior: 'smooth' });
     setVisibleChapter(jumpTo.chapter);
   }, [activeItem, jumpTo]);
+  const sectionTabs = chapterData
+    .map((chapter, index) => ({ section: chapter.section ?? 1, title: chapter.sectionTitle, index, start: chapter.sectionStart }))
+    .filter((tab) => tab.start || tab.index === 0);
+  const goToChapter = (index) => {
+    const target = document.getElementById('chapter-' + index);
+    if (!target || !centerRef.current) return;
+    centerRef.current.scrollTo({ top: target.offsetTop - 150, behavior: 'smooth' });
+    setVisibleChapter(index);
+  };
   const handleScroll = () => {
     if (!centerRef.current) return;
     const rect = centerRef.current.getBoundingClientRect();
@@ -134,7 +143,7 @@ function HomeContent({
                   강의 계획
                 </button>
                 <span className="course-breadcrumb">
-                  › 섹션 1 · 챕터 {visibleChapter + 1}
+                  › 섹션 {chapterData[visibleChapter].section ?? 1} · 챕터 {chapterData[visibleChapter].sectionChapter ?? visibleChapter + 1}
                 </span>
                 <h1>{chapterData[visibleChapter].title}</h1>
               </div>
@@ -146,9 +155,25 @@ function HomeContent({
                 <kbd>⌘K</kbd>
               </button>
             </div>
+            {sectionTabs.length > 1 && (
+              <div className="section-tabs" role="tablist" aria-label="섹션 이동">
+                {sectionTabs.map((tab) => (
+                  <button
+                    type="button"
+                    role="tab"
+                    key={tab.section}
+                    aria-selected={tab.section === (chapterData[visibleChapter].section ?? 1)}
+                    className={tab.section === (chapterData[visibleChapter].section ?? 1) ? 'is-active' : ''}
+                    onClick={() => goToChapter(tab.index)}
+                  >
+                    섹션 {tab.section} · {tab.title}
+                  </button>
+                ))}
+              </div>
+            )}
             {chapterData.map((chapter, index) => (
               <MapChapter
-                key={chapter.title}
+                key={chapter.title + index}
                 chapter={chapter}
                 chapterIndex={index}
                 completed={completed}
@@ -159,12 +184,22 @@ function HomeContent({
                 activeRef={activeRef}
               />
             ))}
-            <div className="next-section">
-              <small>다음 섹션 2</small>
-              <h2>{journey.nextSectionTitle}</h2>
-              <p>{language.description}</p>
-              <span>다음 과정</span>
-            </div>
+            {journey.hiddenSections > 0 && (
+              <div className="next-section">
+                <small>잠긴 섹션 {journey.hiddenSections}개</small>
+                <h2>이 섹션을 모두 풀면 열려요</h2>
+                <p>위 레슨을 끝까지 풀면 다음 섹션으로 넘어가요.</p>
+                <span>설정에서 등급을 올려도 열 수 있어요</span>
+              </div>
+            )}
+            {journey.nextSectionTitle && (
+              <div className="next-section">
+                <small>다음 섹션 {(chapterData[chapterData.length - 1].section ?? 1) + 1}</small>
+                <h2>{journey.nextSectionTitle}</h2>
+                <p>{language.description}</p>
+                <span>다음 과정</span>
+              </div>
+            )}
           </>
         )}
       </div>

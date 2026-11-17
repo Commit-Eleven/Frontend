@@ -71,6 +71,11 @@ export function MapChapter({
       : 0;
   return (
     <section className="map-chapter" id={'chapter-' + chapterIndex}>
+      {chapter.sectionStart && chapterIndex > 0 && (
+        <div className="section-banner">
+          섹션 {chapter.section} · {chapter.sectionTitle}
+        </div>
+      )}
       {chapterIndex === 0 ? (
         <h2 className="first-chapter-title">{chapter.title}</h2>
       ) : (
@@ -149,7 +154,7 @@ export function MapChapter({
             className={'node-popover popover-' + selectedStatus}
             style={{
               top: 30 + selectedRow * 101 + 62,
-              left: Math.min(220, Math.max(0, selectedX - 144)),
+              left: selectedX,
             }}
           >
             <span className="popover-arrow" />

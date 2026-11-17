@@ -8,13 +8,14 @@ import {
   relativeTime,
   updateNotificationSettings,
 } from '../../api/notifications.js'
+import { LoadingSkeleton } from '../common/LoadingSkeleton.jsx'
 import { DashboardPageHeader } from './DashboardPageHeader.jsx'
 import './NotificationsPage.css'
 
 const PAGE_SIZE = 20
 const isAbort = (error) => error?.name === 'CanceledError' || error?.name === 'AbortError'
 
-function NotificationSettings() {
+export function NotificationSettings() {
   const [settings, setSettings] = useState(null)
   const [error, setError] = useState('')
   const [savingType, setSavingType] = useState('')
@@ -47,7 +48,7 @@ function NotificationSettings() {
       <h2>알림 설정</h2>
       <p className="notice-muted">받고 싶은 알림만 켜 두세요.</p>
       {error && <p className="notice-error" role="alert">{error}</p>}
-      {!settings && !error ? <p className="notice-muted">설정을 불러오는 중…</p> : settings && (
+      {!settings && !error ? <LoadingSkeleton variant="settings" label="알림 설정을 불러오는 중" /> : settings && (
         <ul className="notice-settings">
           {NOTIFICATION_TYPES.map(({ type, label, description }) => (
             <li key={type}>
@@ -135,7 +136,7 @@ export function NotificationsPage() {
       </div>
 
       <article className="notice-card">
-        {loading && !items.length ? <p className="notice-muted">알림을 불러오는 중…</p>
+        {loading && !items.length ? <LoadingSkeleton variant="notifications" label="알림을 불러오는 중" />
           : error ? (
             <p className="notice-error" role="alert">
               알림을 불러오지 못했어요. {error.message}
@@ -162,7 +163,6 @@ export function NotificationsPage() {
         )}
       </article>
 
-      <NotificationSettings />
     </section>
   )
 }

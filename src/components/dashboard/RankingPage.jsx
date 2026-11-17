@@ -1,3 +1,4 @@
+import { LoadingSkeleton } from '../common/LoadingSkeleton.jsx'
 import { useEffect, useState } from 'react'
 import { beginGoogleLogin } from '../../api/auth.js'
 import { fetchRanking } from '../../api/learning.js'
@@ -57,7 +58,7 @@ export function RankingPage() {
       )}
 
       <article className="ranking-list-card">
-        {loading && !data ? <p className="ranking-muted">랭킹을 불러오는 중…</p>
+        {loading && !data ? <LoadingSkeleton variant="ranking" label="랭킹을 불러오는 중" />
           : error ? (
             <div className="ranking-muted" role="alert">
               랭킹을 불러오지 못했어요. {error.message}

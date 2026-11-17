@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { fetchCodeProblem, submitCodeAnswer } from '../api/codeProblems.js';
+import { fetchLessonProblems } from '../api/practiceProblems.js';
 import { recordWrongAnswer, resolveWrongNoteForProblem } from '../lib/wrongNotes.js';
 
 const emptyState = {
@@ -36,7 +37,13 @@ export function useCodeChallenge({ enabled, language, lesson, onSuccess }) {
 
     async function load() {
       try {
-        const id = readStorage(selectionKey);
+        // 레슨에 정해진 코드 문제가 있으면 그 문제를 먼저 씁니다.
+        let lessonCodeId = null;
+        try {
+          const { problems } = await fetchLessonProblems(lesson.id, { signal: controller.signal });
+          lessonCodeId = problems.find((item) => item.type === 'code')?.id ?? null;
+        } catch { /* 레슨 문제가 없으면 언어별 문제를 가져옵니다. */ }
+        const id = lessonCodeId ?? readStorage(selectionKey);
         let problem;
         try {
           problem = await fetchCodeProblem({ id, language, signal: controller.signal });
@@ -94,7 +101,7 @@ export function useCodeChallenge({ enabled, language, lesson, onSuccess }) {
       setState((current) => ({ ...current, result }));
       const context = { language, lessonId: lesson.id, type: 'code', problemId: state.problem.id };
       if (result.correct) {
-        resolveWrongNoteForProblem(context);
+        resolveWrongNoteForProblem({ ...context, problem: state.problem });
         await saveCompletion(signal);
       } else {
         recordWrongAnswer({

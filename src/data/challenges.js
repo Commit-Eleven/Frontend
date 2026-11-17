@@ -50,12 +50,11 @@ export function starterCodeFor(language = 'html') {
 }
 
 export function challengeFor(lesson, language = 'html') {
-  if (language !== 'html') {
-    const languageChallenge = languageChallengeFor(language, lesson);
-    if (languageChallenge) return languageChallenge;
-  }
+  const languageChallenge = languageChallengeFor(language, lesson);
+  if (languageChallenge) return languageChallenge;
   return (
-    lessonChallenges[lesson.id] || {
+    lessonChallenges[lesson.base ?? lesson.id] ||
+    {
       instruction: 'p 요소를 하나 만들고 "' + lesson.title + '"이라고 작성하세요.',
       theory: 'HTML 요소는 시작 태그와 종료 태그 사이에 콘텐츠를 넣어 만듭니다.',
       example: '<p>' + lesson.title + '</p>',

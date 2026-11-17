@@ -1,25 +1,35 @@
 import { useMemo, useState } from 'react';
 import './ParsonsQuestion.css';
 
-/** 정답 순서가 그대로 보이지 않도록 블록 표시 순서를 문제마다 고정된 방식으로 섞습니다. */
+/** 문제를 열 때마다 블록 표시 순서를 무작위로 섞습니다. */
 function shuffledIndexes(fragments) {
-  const seedText = fragments.join('\n');
-  let seed = 0;
-  for (let i = 0; i < seedText.length; i += 1) seed = (seed * 31 + seedText.charCodeAt(i)) >>> 0;
   const indexes = fragments.map((_, index) => index);
-  for (let i = indexes.length - 1; i > 0; i -= 1) {
-    seed = (seed * 1664525 + 1013904223) >>> 0;
-    const j = seed % (i + 1);
-    [indexes[i], indexes[j]] = [indexes[j], indexes[i]];
-  }
-  if (indexes.length > 1 && indexes.every((value, index) => value === index)) indexes.push(indexes.shift());
+  if (indexes.length < 2) return indexes;
+  let attempts = 0;
+  do {
+    for (let i = indexes.length - 1; i > 0; i -= 1) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [indexes[i], indexes[j]] = [indexes[j], indexes[i]];
+    }
+    attempts += 1;
+  } while (attempts < 10 && indexes.every((value, index) => value === index));
   return indexes;
+}
+
+function isInlineParsons(fragments) {
+  if (!Array.isArray(fragments) || fragments.length === 0) return false;
+  if (fragments.some((item) => String(item).includes('\n'))) return false;
+  const texts = fragments.map((item) => String(item).trim());
+  // ( ) ; . 처럼 기호만 있는 조각이 있으면 한 줄을 쪼갠 문제로 봅니다.
+  if (texts.some((item) => /^[().,;:[\]'"=+\-*/<>!?]+$/.test(item))) return true;
+  const lineLike = texts.filter((item) => /[;{}]$/.test(item) || /^<.*>$/.test(item));
+  return fragments.length <= 6 && lineLike.length <= 1;
 }
 
 export function ParsonsQuestion({ problem, order, onChange, disabled }) {
   const [draggedFragment, setDraggedFragment] = useState(null);
   const fragments = problem.content.fragments;
-  const bankOrder = useMemo(() => shuffledIndexes(fragments), [fragments]);
+  const bankOrder = useMemo(() => shuffledIndexes(fragments), [problem.id, fragments]);
 
   const placeFragment = (fragmentIndex, targetSlot) => {
     if (disabled || !Number.isInteger(fragmentIndex)) return;
@@ -60,7 +70,9 @@ export function ParsonsQuestion({ problem, order, onChange, disabled }) {
       <p className="practice-parsons-instruction">
         코드 블록을 드래그하거나 눌러 빈칸에 배치하세요.
       </p>
-      <ol className="practice-parsons-slots" aria-label="코드 블록을 놓을 순서">
+      <ol
+        className={`practice-parsons-slots${isInlineParsons(fragments) ? ' is-inline' : ''}`}
+        aria-label="코드 블록을 놓을 순서">
         {order.map((fragmentIndex, position) => (
           <li key={position}>
             <button
@@ -86,11 +98,13 @@ export function ParsonsQuestion({ problem, order, onChange, disabled }) {
               onDragOver={(event) => event.preventDefault()}
               onDrop={(event) => handleDrop(event, position)}
             >
-              <span className="practice-line-number" aria-hidden="true">
-                {position + 1}
-              </span>
+              {!isInlineParsons(fragments) && (
+                <span className="practice-line-number" aria-hidden="true">
+                  {position + 1}
+                </span>
+              )}
               {fragmentIndex === null ? (
-                <span>코드 블록을 드래그하여 배치하세요.</span>
+                <span>{isInlineParsons(fragments) ? '여기에' : '여기에 놓아 주세요'}</span>
               ) : (
                 <code>{fragments[fragmentIndex]}</code>
               )}

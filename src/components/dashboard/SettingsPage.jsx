@@ -1,17 +1,18 @@
 import { useEffect, useState } from 'react'
 import { authorizationHeaders, clearAccessToken } from '../../api/auth.js'
 import { deleteMyAccount, fetchLearningSettings, updateLearningSettings } from '../../api/learning.js'
-import { readStudyLevel, saveStudyLevel, studyLevels } from '../../lib/studyLevel.js'
+import { hasSavedStudyLevel, readStudyLevel, saveStudyLevel, studyLevels } from '../../lib/studyLevel.js'
 import { codingLanguages } from '../../data/navigation.js'
 import { selectCodingLanguage } from '../../hooks/useCodingLanguage.js'
 import { DashboardPageHeader } from './DashboardPageHeader.jsx'
+import { NotificationSettings } from './NotificationsPage.jsx'
 import './SettingsPage.css'
 
 export function SettingsPage({ language, onNavigate, onLogout }) {
   const [confirmDelete, setConfirmDelete] = useState(false)
   const [deleting, setDeleting] = useState(false)
   const [notice, setNotice] = useState('')
-  const [level, setLevel] = useState(readStudyLevel)
+  const [level, setLevel] = useState(() => readStudyLevel(language.code))
   const [learningNotice, setLearningNotice] = useState('')
   const loggedIn = Boolean(authorizationHeaders().Authorization)
 
@@ -21,13 +22,13 @@ export function SettingsPage({ language, onNavigate, onLogout }) {
     const controller = new AbortController()
     fetchLearningSettings({ signal: controller.signal })
       .then((settings) => {
-        if (!settings?.studyLevel) return
+        if (!settings?.studyLevel || hasSavedStudyLevel(language.code)) return
         setLevel(settings.studyLevel)
-        saveStudyLevel(settings.studyLevel)
+        saveStudyLevel(settings.studyLevel, language.code)
       })
       .catch(() => {})
     return () => controller.abort()
-  }, [loggedIn])
+  }, [loggedIn, language.code])
 
   const saveLearning = async (change) => {
     if (!loggedIn) return
@@ -46,8 +47,8 @@ export function SettingsPage({ language, onNavigate, onLogout }) {
 
   const chooseLevel = (code) => {
     setLevel(code)
-    saveStudyLevel(code)
-    saveLearning({ level: code })
+    saveStudyLevel(code, language.code)
+    saveLearning({ language: language.code, level: code })
   }
 
   const deleteAccount = async () => {
@@ -102,7 +103,7 @@ export function SettingsPage({ language, onNavigate, onLogout }) {
       <article className="settings-section-card">
         <div className="settings-section-heading">
           <span className="settings-section-symbol" aria-hidden="true">▲</span>
-          <div><h2>학습 등급</h2><p>내 수준에 맞는 난이도를 골라요.</p></div>
+          <div><h2>학습 등급</h2><p>{language.label}의 등급이에요. 등급에 따라 열리는 섹션이 달라져요.</p></div>
         </div>
         <div className="settings-language-list" role="group" aria-label="학습 등급 선택">
           {studyLevels.map((option) => {
@@ -124,6 +125,8 @@ export function SettingsPage({ language, onNavigate, onLogout }) {
         {learningNotice && <p className="settings-delete-notice" role="alert">{learningNotice}</p>}
         {!loggedIn && <p className="settings-learning-hint">로그인하면 학습 언어와 등급이 계정에 저장돼요.</p>}
       </article>
+
+      <NotificationSettings />
 
       <article className="settings-section-card settings-account-card">
         <div className="settings-section-heading">
