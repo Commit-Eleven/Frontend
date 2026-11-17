@@ -41,9 +41,6 @@ export default function App() {
 
 function JourneyApp({ language, activeHomeItem, onHomeItemChange }) {
   const journey = useJourneyController(language.code);
-  useEffect(() => {
-    document.title = `${journey.journey.title} | Coddy`;
-  }, [journey.journey.title]);
 
   return (
     <>
