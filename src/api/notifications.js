@@ -43,7 +43,7 @@ export function normalizeNotification(item = {}) {
   } else if (type === 'friend_accepted') {
     message = '친구 요청이 수락됐어요.'
   } else if (type === 'group_joined') {
-    message = '새 멤버이 그룹에 참여했어요.'
+    message = '새 멤버가 그룹에 참여했어요.'
   }
   return {
     id: item.id,

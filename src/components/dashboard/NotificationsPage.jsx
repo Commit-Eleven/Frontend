@@ -71,7 +71,15 @@ export function NotificationSettings() {
 }
 
 /** GET /notifications — 알림 목록과 알림 설정 */
-export function NotificationsPage() {
+/** 알림을 누르면 이동할 메뉴입니다. 그룹 초대는 그룹 화면의 '받은 초대'에서 수락·거절합니다. */
+const notificationTargets = {
+  group_invite: '그룹',
+  group_joined: '그룹',
+  friend_request: '친구',
+  friend_accepted: '친구',
+}
+
+export function NotificationsPage({ onNavigate }) {
   const [unreadOnly, setUnreadOnly] = useState(false)
   const [page, setPage] = useState(1)
   const [state, setState] = useState({ loading: true, items: [], total: 0, error: null })
@@ -102,13 +110,17 @@ export function NotificationsPage() {
   }
 
   async function open(item) {
-    if (item.isRead) return
-    setState((current) => ({ ...current, items: current.items.map((row) => (row.id === item.id ? { ...row, isRead: true } : row)) }))
-    try {
-      await markNotificationRead(item.id)
-    } catch {
-      // 읽음 처리 API가 아직 서버에 없어도 화면에서는 읽은 것으로 보여줍니다.
+    const target = notificationTargets[item.type]
+    if (item.isRead) {
+      if (target) onNavigate?.(target)
+      return
     }
+    setState((current) => ({ ...current, items: current.items.map((row) => (row.id === item.id ? { ...row, isRead: true } : row)) }))
+    const marking = markNotificationRead(item.id).catch(() => {
+      // 읽음 처리 API가 아직 서버에 없어도 화면에서는 읽은 것으로 보여줍니다.
+    })
+    if (target) onNavigate?.(target)
+    else await marking
   }
 
   const header = <DashboardPageHeader eyebrow="소식" title="알림" description="친구, 팀, 서비스 소식을 한곳에서 확인해요." />

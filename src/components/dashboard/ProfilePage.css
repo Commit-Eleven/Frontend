@@ -114,5 +114,9 @@
 .profile-history-list b.is-wrong { background: #fff1ef; color: #b55454; }
 .profile-more-button { display: block; width: 100%; margin-top: 10px; min-height: 34px; border: 1px solid #e5e5e5; border-radius: 8px; background: #fff; color: var(--primary-strong); font-size: var(--dashboard-text-sm); font-weight: 700; }
 .profile-more-button:hover { background: var(--primary-wash); }
+.profile-section-heading > button b { margin-left: 3px; }
+.profile-section-list { display: grid; gap: 14px; margin: 16px 0 0; padding: 0; list-style: none; }
+.profile-section-list li > div:first-child { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 6px; font-size: var(--dashboard-text-sm); }
+.profile-section-list small { flex: none; color: #888; }
 
 .profile-stat-icon svg { width: 17px; height: 17px; stroke-linecap: round; stroke-linejoin: round; }
