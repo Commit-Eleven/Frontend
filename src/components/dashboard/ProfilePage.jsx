@@ -123,7 +123,8 @@ function SubmissionHistory() {
   )
 }
 
-export function ProfilePage({ onNavigate }) {
+export function ProfilePage({ onNavigate, journey, completed = [] }) {
+  const [showAllSections, setShowAllSections] = useState(false)
   const [profile, setProfile] = useState(null)
   const [stats, setStats] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -278,6 +279,23 @@ export function ProfilePage({ onNavigate }) {
   const total = stats?.totalProblemCount ?? 0
   const solved = stats?.solvedProblemCount ?? 0
   const progress = total ? Math.min(100, Math.round((solved / total) * 100)) : 0
+  // 처음 보는 사람도 부담 없도록 전체 문제 수 대신 섹션별 진행도를 보여줍니다.
+  const sections = []
+  for (const chapter of journey?.chapterData ?? []) {
+    const key = chapter.section ?? 1
+    let section = sections.find((item) => item.key === key)
+    if (!section) {
+      section = { key, title: chapter.sectionTitle || '섹션 ' + key, solved: 0, total: 0 }
+      sections.push(section)
+    }
+    for (const row of chapter.rows ?? []) {
+      section.total += 1
+      if (completed.includes(row.main.id)) section.solved += 1
+    }
+  }
+  const currentIndex = Math.max(0, sections.findIndex((item) => item.solved < item.total))
+  const orderedSections = [...sections.slice(currentIndex), ...sections.slice(0, currentIndex)]
+  const visibleSections = showAllSections ? orderedSections : orderedSections.slice(0, 2)
   const typeStats = Array.isArray(stats?.byType) ? stats.byType : []
   const currentAvatarUrl = profile?.avatarUrl ?? profile?.imageUrl ?? ''
   const toggleAvatarEditor = () => {
@@ -369,14 +387,39 @@ export function ProfilePage({ onNavigate }) {
         </article>
       </div>
 
-      <article className="profile-progress-card">
-        <div className="profile-section-heading">
-          <div><h3>학습 진행</h3><p>현재 언어의 전체 문제 기준</p></div>
-          <strong>{solved} <span>/ {total}</span></strong>
-        </div>
-        <div className="profile-progress-track" aria-label={`학습 진행률 ${progress}%`}><span style={{ width: progress + '%' }} /></div>
-        <div className="profile-progress-foot"><span>{progress}% 완료</span><button type="button" onClick={() => onNavigate('학습')}>학습 계속하기 <b aria-hidden="true">→</b></button></div>
-      </article>
+      {sections.length ? (
+        <article className="profile-progress-card">
+          <div className="profile-section-heading">
+            <div><h3>학습 진행</h3><p>섹션별로 차근차근 채워 가요.</p></div>
+            <button type="button" onClick={() => onNavigate('학습')}>학습 계속하기 <b aria-hidden="true">→</b></button>
+          </div>
+          <ul className="profile-section-list">
+            {visibleSections.map((item) => {
+              const percent = item.total ? Math.round((item.solved / item.total) * 100) : 0
+              return (
+                <li key={item.key}>
+                  <div><span>섹션 {item.key} · {item.title}</span><small>{item.solved} / {item.total}</small></div>
+                  <div className="profile-type-track" aria-label={`${item.title} 진행률 ${percent}%`}><span style={{ width: percent + '%' }} /></div>
+                </li>
+              )
+            })}
+          </ul>
+          {orderedSections.length > 2 && (
+            <button type="button" className="profile-more-button" onClick={() => setShowAllSections((value) => !value)}>
+              {showAllSections ? '접기' : `더 보기 (${orderedSections.length - 2})`}
+            </button>
+          )}
+        </article>
+      ) : (
+        <article className="profile-progress-card">
+          <div className="profile-section-heading">
+            <div><h3>학습 진행</h3><p>현재 언어의 전체 문제 기준</p></div>
+            <strong>{solved} <span>/ {total}</span></strong>
+          </div>
+          <div className="profile-progress-track" aria-label={`학습 진행률 ${progress}%`}><span style={{ width: progress + '%' }} /></div>
+          <div className="profile-progress-foot"><span>{progress}% 완료</span><button type="button" onClick={() => onNavigate('학습')}>학습 계속하기 <b aria-hidden="true">→</b></button></div>
+        </article>
+      )}
 
       <article className="profile-type-card">
         <div className="profile-section-heading">

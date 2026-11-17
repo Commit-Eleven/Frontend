@@ -126,7 +126,7 @@ function HomeContent({
         ) : activeItem === '친구' ? (
           <FriendsPage />
         ) : activeItem === '프로필' ? (
-          <ProfilePage onNavigate={onNavigate} />
+          <ProfilePage onNavigate={onNavigate} journey={journey} completed={completed} />
         ) : activeItem === '설정' ? (
           <SettingsPage language={language} onNavigate={onNavigate} onLogout={onLogout} />
         ) : activeItem === '도움말' ? (
@@ -134,7 +134,7 @@ function HomeContent({
         ) : activeItem === '랭킹' ? (
           <RankingPage />
         ) : activeItem === '알림' ? (
-          <NotificationsPage />
+          <NotificationsPage onNavigate={onNavigate} />
         ) : (
           <>
             <div className="floating-course-card">
