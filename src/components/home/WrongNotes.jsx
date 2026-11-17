@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { apiRequest } from '../../api/client.js';
 import { fetchServerWrongNotes } from '../../api/learning.js';
 import { readWrongNotes, wrongNotesChangeEvent } from '../../lib/wrongNotes.js';
 import { WrongNotesPractice } from './WrongNotesPractice.jsx';
@@ -38,8 +39,9 @@ function useWrongNotes() {
     fetchServerWrongNotes({ signal: controller.signal }).then(setServerNotes).catch(() => {});
     return () => controller.abort();
   }, []);
-  const localIds = new Set(notes.map((note) => note.id));
-  return [...notes, ...serverNotes.filter((note) => !localIds.has(note.id))];
+  const noteKey = (note) => [note.language, note.type, note.problem?.title].join('::');
+  const localKeys = new Set(notes.map(noteKey));
+  return [...notes, ...serverNotes.filter((note) => !localKeys.has(noteKey(note)))];
 }
 
 export function WrongNotes({ language, onOpen }) {
@@ -50,6 +52,42 @@ export function WrongNotes({ language, onOpen }) {
   const [filter, setFilter] = useState('unresolved');
   const [typeFilter, setTypeFilter] = useState('all');
   const [sessionNotes, setSessionNotes] = useState(null);
+  const [openingId, setOpeningId] = useState(null);
+  const [openError, setOpenError] = useState({});
+
+  /** 서버에서 온 오답은 문제 내용이 없어서, 문제 ID로 내용을 불러온 뒤 풀이 화면을 엽니다. */
+  const openNote = async (note) => {
+    if (note.type === 'code') {
+      onOpen(note.lessonId);
+      return;
+    }
+    if (!note.readOnly) {
+      setSessionNotes([note]);
+      return;
+    }
+    if (openingId) return;
+    setOpeningId(note.id);
+    setOpenError((current) => ({ ...current, [note.id]: '' }));
+    try {
+      const problemId = String(note.id).replace(/^server::/, '');
+      const payload = await apiRequest({
+        url: '/problems/' + encodeURIComponent(note.type),
+        method: 'GET',
+        params: { id: problemId },
+      });
+      const problem = payload?.problem ?? payload?.data?.problem;
+      if (!problem?.content) throw new Error('문제를 불러오지 못했어요.');
+      const lessonId = note.lessonId || problemId.split('-').slice(0, 3).join('-');
+      setSessionNotes([{ ...note, problem, lessonId, readOnly: false, source: 'server' }]);
+    } catch (error) {
+      setOpenError((current) => ({
+        ...current,
+        [note.id]: error.status === 401 ? '로그인이 만료되었어요. 다시 로그인해 주세요.' : error.message || '문제를 불러오지 못했어요.',
+      }));
+    } finally {
+      setOpeningId(null);
+    }
+  };
   const unresolved = languageNotes.filter((note) => note.status !== 'resolved');
   const resolved = languageNotes.filter((note) => note.status === 'resolved');
   const conceptNotes = unresolved.filter((note) => conceptTypes.has(note.type));
@@ -146,7 +184,19 @@ export function WrongNotes({ language, onOpen }) {
           {visibleNotes.map((note) => {
             const codeNote = note.type === 'code';
             return (
-              <article className="wrong-note-card" key={note.id}>
+              <article
+                className="wrong-note-card is-clickable"
+                key={note.id}
+                role="button"
+                tabIndex={0}
+                onClick={() => openNote(note)}
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    openNote(note);
+                  }
+                }}
+              >
                 <div className="wrong-note-card-meta">
                   <span className="wrong-note-type">{typeLabels[note.type] || '문제'}</span>
                   <span>{note.lessonTitle || language.label}</span>
@@ -155,16 +205,12 @@ export function WrongNotes({ language, onOpen }) {
                 </div>
                 <h4>{note.problem.title}</h4>
                 <p>{note.problem.description || '이 문제를 다시 풀어보세요.'}</p>
+                {openError[note.id] && <p className="wrong-note-error" role="alert">{openError[note.id]}</p>}
                 <div className="wrong-note-card-bottom">
                   <span>{note.status === 'resolved' ? '복습 완료' : note.wrongCount + '회 오답'}</span>
-                  {note.readOnly ? null : (
-                    <button
-                      type="button"
-                      onClick={() => codeNote ? onOpen(note.lessonId) : setSessionNotes([note])}
-                    >
-                      {codeNote ? '코드 문제로 이동' : '다시 풀기'} <span aria-hidden="true">→</span>
-                    </button>
-                  )}
+                  <span className="wrong-note-open">
+                    {openingId === note.id ? '불러오는 중...' : codeNote ? '코드 문제로 이동' : '다시 풀기'} <span aria-hidden="true">→</span>
+                  </span>
                 </div>
               </article>
             );

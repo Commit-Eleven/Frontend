@@ -119,6 +119,9 @@ export function QuizWorkspace({ lesson, languageCode, onExit, onComplete, onLogi
     onExit?.();
   };
 
+  // 새로고침은 언마운트 없이 페이지가 닫히므로 저장이 남고, 화면을 떠나 다시 들어오면 새 문제를 뽑습니다.
+  useEffect(() => () => clearQuizSave(languageCode, lesson.id), [languageCode, lesson.id]);
+
   useEffect(() => {
     const controller = new AbortController();
     setPlan(null);
