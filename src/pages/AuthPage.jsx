@@ -16,7 +16,7 @@ export function AuthPage() {
 
   useEffect(() => {
     const previousTitle = document.title;
-    document.title = '시작하기 | Codegram';
+    document.title = 'Codegram';
     return () => {
       document.title = previousTitle;
     };
