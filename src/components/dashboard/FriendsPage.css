@@ -104,3 +104,5 @@
   .friend-row { flex-wrap: wrap; padding: 12px 0; }
   .friend-row-actions { margin-left: auto; }
 }
+
+.friends-section-icon svg, .friends-search-field svg { width: 18px; height: 18px; stroke-linecap: round; }

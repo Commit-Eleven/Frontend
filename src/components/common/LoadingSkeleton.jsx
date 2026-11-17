@@ -90,7 +90,13 @@ export function LoadingSkeleton({ variant, label }) {
         : variant === 'lesson' ? <LessonSkeleton />
         : variant === 'settings' ? <SkeletonRows count={5} />
         : variant === 'xp' ? <div className="skeleton-row-copy"><Line width="46%" height={14} /><Line width="70%" /></div>
-        : variant === 'groups' ? (
+        : variant === 'group-detail' ? (
+          <div className="skeleton-group-detail">
+            <Line width="60%" /><div className="skeleton-detail-meta"><Line width="75px" height={30} /><Line width="75px" height={30} /></div>
+            <Line width="90px" height={16} /><SkeletonRows count={3} avatar />
+            <Line width="90px" height={16} /><SkeletonRows count={2} avatar />
+          </div>
+        ) : variant === 'groups' ? (
           Array.from({ length: 3 }, (_, index) => <div className="skeleton-panel skeleton-group" key={index}>
             <div className="skeleton-group-top"><span className="skeleton-block skeleton-avatar" /><Line width="45px" height={20} /></div>
             <Line width="35%" height={15} /><Line width="55%" />
