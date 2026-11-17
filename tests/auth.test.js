@@ -74,3 +74,26 @@ test('chooses the Google login start URL for each environment', async () => {
   assert.equal(googleLoginUrl({ DEV: true, VITE_API_TARGET: 'http://localhost:3000' }), '/api/social/login/google')
   assert.equal(googleLoginUrl({ DEV: true, VITE_GOOGLE_LOGIN_URL: 'https://example.test/login' }), 'https://example.test/login')
 })
+
+test('returns to the same dashboard tab after Google login', (context) => {
+  const originalLocation = globalThis.location
+  const originalStorage = globalThis.sessionStorage
+  const values = new Map()
+  let returnUrl
+  globalThis.sessionStorage = {
+    getItem: (key) => values.get(key) ?? null,
+    setItem: (key, value) => values.set(key, value),
+    removeItem: (key) => values.delete(key),
+  }
+  globalThis.location = { pathname: '/journeys/html/fundamentals', search: '?tab=friends', assign: () => {} }
+  context.after(() => {
+    globalThis.location = originalLocation
+    globalThis.sessionStorage = originalStorage
+  })
+
+  beginGoogleLogin()
+  globalThis.location = { pathname: '/auth/callback', search: '?token=sample-token', replace: (url) => { returnUrl = url } }
+  completeGoogleLogin()
+
+  assert.equal(returnUrl, '/journeys/html/fundamentals?tab=friends')
+})

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { authorizationHeaders, clearAccessToken } from '../../api/auth.js'
+import { authorizationHeaders, beginGoogleLogin, clearAccessToken } from '../../api/auth.js'
 import { deleteMyAccount, fetchLearningSettings, updateLearningSettings } from '../../api/learning.js'
 import { readStudyLevel, saveStudyLevel, studyLevels } from '../../lib/studyLevel.js'
 import { codingLanguages } from '../../data/navigation.js'
@@ -141,26 +141,34 @@ export function SettingsPage({ language, onNavigate, onLogout }) {
         </div>
       </article>
 
-      <button type="button" className="settings-logout-button" onClick={onLogout}>로그아웃</button>
+      {!loggedIn && (
+        <button type="button" className="settings-logout-button" onClick={() => beginGoogleLogin()}>Google로 로그인</button>
+      )}
 
-      <article className="settings-section-card settings-danger-card">
-        <div className="settings-section-heading">
-          <span className="settings-section-symbol account" aria-hidden="true">!</span>
-          <div><h2>회원 탈퇴</h2><p>탈퇴하면 계정과 학습 기록이 삭제돼요.</p></div>
-        </div>
-        {confirmDelete ? (
-          <div className="settings-delete-confirm" role="alertdialog" aria-label="회원 탈퇴 확인">
-            <p>정말 탈퇴할까요? 이 작업은 되돌릴 수 없어요.</p>
-            <div>
-              <button type="button" onClick={() => setConfirmDelete(false)} disabled={deleting}>취소</button>
-              <button type="button" className="is-danger" onClick={deleteAccount} disabled={deleting}>{deleting ? '처리 중…' : '탈퇴하기'}</button>
+      {loggedIn && (
+        <>
+          <button type="button" className="settings-logout-button" onClick={onLogout}>로그아웃</button>
+
+          <article className="settings-section-card settings-danger-card">
+            <div className="settings-section-heading">
+              <span className="settings-section-symbol account" aria-hidden="true">!</span>
+              <div><h2>회원 탈퇴</h2><p>탈퇴하면 계정과 학습 기록이 삭제돼요.</p></div>
             </div>
-          </div>
-        ) : (
-          <button type="button" className="settings-delete-button" onClick={() => setConfirmDelete(true)}>회원 탈퇴</button>
-        )}
-        {notice && <p className="settings-delete-notice" role="alert">{notice}</p>}
-      </article>
+            {confirmDelete ? (
+              <div className="settings-delete-confirm" role="alertdialog" aria-label="회원 탈퇴 확인">
+                <p>정말 탈퇴할까요? 이 작업은 되돌릴 수 없어요.</p>
+                <div>
+                  <button type="button" onClick={() => setConfirmDelete(false)} disabled={deleting}>취소</button>
+                  <button type="button" className="is-danger" onClick={deleteAccount} disabled={deleting}>{deleting ? '처리 중…' : '탈퇴하기'}</button>
+                </div>
+              </div>
+            ) : (
+              <button type="button" className="settings-delete-button" onClick={() => setConfirmDelete(true)}>회원 탈퇴</button>
+            )}
+            {notice && <p className="settings-delete-notice" role="alert">{notice}</p>}
+          </article>
+        </>
+      )}
     </section>
   )
 }

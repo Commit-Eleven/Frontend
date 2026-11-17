@@ -1,3 +1,4 @@
+import { useMemo, useState } from 'react'
 import { DashboardPageHeader } from './DashboardPageHeader.jsx'
 import './HelpPage.css'
 
@@ -26,7 +27,23 @@ const helpTopics = [
   },
 ]
 
+function filterHelpTopics(topics, query) {
+  const term = query.trim().toLowerCase()
+  if (!term) return topics
+  return topics
+    .map((topic) => ({
+      ...topic,
+      questions: topic.questions.filter(([question, answer]) =>
+        (question + ' ' + answer + ' ' + topic.category).toLowerCase().includes(term)),
+    }))
+    .filter((topic) => topic.questions.length > 0)
+}
+
 export function HelpPage({ onNavigate }) {
+  const [query, setQuery] = useState('')
+  const visibleTopics = useMemo(() => filterHelpTopics(helpTopics, query), [query])
+  const searching = query.trim().length > 0
+
   return (
     <section className="help-page">
       <DashboardPageHeader
@@ -34,13 +51,26 @@ export function HelpPage({ onNavigate }) {
         title="무엇을 도와드릴까요?"
         description="학습, 문제 풀이, 계정 사용 방법을 확인해 보세요."
       />
-      <div className="help-search-hint"><span aria-hidden="true">⌕</span><p>아래 주제에서 필요한 내용을 찾아보세요.</p></div>
+      <label className="help-search-field">
+        <span aria-hidden="true">⌕</span>
+        <input
+          type="text"
+          value={query}
+          onChange={(event) => setQuery(event.target.value)}
+          placeholder="궁금한 내용을 검색해 보세요. 예: 로그인, 친구"
+          aria-label="도움말 검색"
+        />
+        {query && <button type="button" onClick={() => setQuery('')} aria-label="검색어 지우기">×</button>}
+      </label>
       <div className="help-topic-list">
-        {helpTopics.map((topic) => (
+        {visibleTopics.length === 0 && (
+          <p className="help-empty" role="status">'{query.trim()}'에 대한 도움말을 찾지 못했어요. 다른 단어로 검색해 보세요.</p>
+        )}
+        {visibleTopics.map((topic) => (
           <section className="help-topic" key={topic.category}>
             <h2>{topic.category}</h2>
             {topic.questions.map(([question, answer]) => (
-              <details className="help-question" key={question}>
+              <details className="help-question" key={question} open={searching || undefined}>
                 <summary><span>{question}</span><b aria-hidden="true">＋</b></summary>
                 <p>{answer}</p>
               </details>

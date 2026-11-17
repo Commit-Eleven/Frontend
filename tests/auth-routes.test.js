@@ -17,3 +17,13 @@ test('keeps each language journey and valid lesson routes available', () => {
   assert.equal(getViewFromPath('/journeys/java/fundamentals/java-output'), 'lesson');
   assert.equal(getViewFromPath('/journeys/html/fundamentals/not-a-lesson'), 'home');
 });
+
+test('keeps dashboard menus in the ?tab= query so refresh and sharing work', async () => {
+  const { homeItemFromSearch, searchForHomeItem } = await import('../src/app/routes.js');
+  for (const label of ['오답 노트', '친구', '그룹', '프로필', '랭킹', '알림', '설정', '도움말']) {
+    assert.equal(homeItemFromSearch(searchForHomeItem(label)), label);
+  }
+  assert.equal(searchForHomeItem('학습'), '');
+  assert.equal(homeItemFromSearch(''), '학습');
+  assert.equal(homeItemFromSearch('?tab=unknown'), '학습');
+});

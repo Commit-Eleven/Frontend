@@ -26,6 +26,6 @@ export function useCodingLanguage() {
 export function selectCodingLanguage(language) {
   localStorage.setItem('codegram-language', language.code);
   const routeMatch = window.location.pathname.match(/^\/journeys\/(?:html|javascript|python|java)\/fundamentals(?:\/[^/]+)?$/);
-  if (routeMatch) window.history.replaceState({}, '', `/journeys/${language.code}/fundamentals`);
+  if (routeMatch) window.history.replaceState({}, '', `/journeys/${language.code}/fundamentals${window.location.search}`);
   window.dispatchEvent(new Event('codegram-language-change'));
 }

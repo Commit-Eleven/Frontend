@@ -15,6 +15,11 @@ import { RankingPage } from '../dashboard/RankingPage.jsx';
 import { Groups } from '../groups/Groups.jsx';
 import './Home.css';
 
+const isApplePlatform =
+  typeof navigator !== 'undefined' &&
+  /Mac|iPhone|iPad|iPod/i.test(navigator.userAgentData?.platform || navigator.platform || navigator.userAgent);
+const searchShortcutLabel = isApplePlatform ? '⌘K' : 'Ctrl K';
+
 export function Home(props) {
   const { language, activeItem, onActiveItemChange, onSelect, onLogout } = props;
   const summary = useDashboardSummary();
@@ -54,7 +59,7 @@ function HomeContent({
   const { chapterData } = journey;
   const centerRef = useRef(null);
   const activeRef = useRef(null);
-  const [visibleChapter, setVisibleChapter] = useState(language.code === 'html' ? 1 : 0);
+  const [visibleChapter, setVisibleChapter] = useState(0);
   useEffect(() => {
     if (!selectedId) return;
 
@@ -86,7 +91,9 @@ function HomeContent({
       const scroller = centerRef.current;
       const top =
         activeRef.current.getBoundingClientRect().top - scroller.getBoundingClientRect().top;
-      scroller.scrollTop += top - 315;
+      const nextTop = scroller.scrollTop + top - 315;
+      // 첫 레슨처럼 이미 화면 위쪽에 있으면 맨 위에 두어 챕터 제목이 고정 카드에 가리지 않게 합니다.
+      scroller.scrollTop = nextTop < 120 ? 0 : nextTop;
     });
     return () => cancelAnimationFrame(timer);
   }, [activeItem, jumpTo, language.code]);
@@ -143,7 +150,7 @@ function HomeContent({
                   <circle cx="10.5" cy="10.5" r="6.5" />
                   <path d="m15.5 15.5 5 5" />
                 </svg>
-                <kbd>⌘K</kbd>
+                <kbd>{searchShortcutLabel}</kbd>
               </button>
             </div>
             {chapterData.map((chapter, index) => (

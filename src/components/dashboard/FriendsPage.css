@@ -25,6 +25,8 @@
 .friends-search-field > span { font-size: 21px; }
 .friends-search-field input { flex: 1; min-width: 0; border: 0; outline: 0; background: transparent; color: #222; font-size: var(--dashboard-text-body); }
 .friends-search-field input::placeholder { color: #aaa; }
+.friends-search-field input::-webkit-search-cancel-button,
+.friends-search-field input::-webkit-search-decoration { -webkit-appearance: none; appearance: none; }
 .friends-search-field > button { width: 24px; height: 24px; border: 0; border-radius: 50%; background: #f1f1f1; color: #777; font-size: var(--dashboard-text-xl); line-height: 1; }
 .friends-search-results { margin-top: 10px; border-top: 1px solid #eee; }
 .friends-search-result { padding: 11px 1px 3px; }

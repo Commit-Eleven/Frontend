@@ -151,6 +151,13 @@
     top: 56px;
     margin-bottom: 55px;
     padding: 12px 16px;
+    /* 흰 그림자 폭이 아래 여백(55px)보다 크면 첫 챕터 제목이 가려지므로 줄입니다. */
+    box-shadow:
+      0 0 0 48px #fff,
+      0 1px 2px #00000005;
+  }
+  .course-search kbd {
+    display: none;
   }
   .mobile-stats {
     display: block;

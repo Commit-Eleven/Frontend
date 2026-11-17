@@ -1,6 +1,6 @@
 import { LoadingSkeleton } from '../common/LoadingSkeleton.jsx'
 import { useEffect, useMemo, useState } from 'react'
-import { beginGoogleLogin } from '../../api/auth.js'
+import { authorizationHeaders, beginGoogleLogin } from '../../api/auth.js'
 import {
   acceptFriendRequest,
   fetchFriends,
@@ -83,6 +83,11 @@ export function FriendsPage() {
 
     const controller = new AbortController()
     const timer = window.setTimeout(() => {
+      if (!authorizationHeaders().Authorization) {
+        setSearching(false)
+        setSearchError('로그인하면 친구를 찾을 수 있어요.')
+        return
+      }
       setSearching(true)
       setSearchError('')
       searchPeople(term, { signal: controller.signal })

@@ -1,10 +1,10 @@
-import { lazy, Suspense, useEffect, useState } from 'react';
+import { lazy, Suspense, useCallback, useEffect, useState } from 'react';
 import { useJourneyController } from '../hooks/useJourneyController.js';
 import { Home } from '../components/home/Home.jsx';
 import { SearchModal } from '../components/home/SearchModal.jsx';
 import { SyllabusModal } from '../components/home/SyllabusModal.jsx';
 import { useCodingLanguage } from '../hooks/useCodingLanguage.js';
-import { getViewFromPath } from './routes.js';
+import { getViewFromPath, homeItemFromSearch, searchForHomeItem } from './routes.js';
 import { AuthPage } from '../pages/AuthPage.jsx';
 import { logoutFromApp } from '../api/authSession.js';
 import { OnboardingModal } from '../components/onboarding/OnboardingModal.jsx';
@@ -16,15 +16,26 @@ const Lesson = lazy(() =>
 
 export default function App() {
   const language = useCodingLanguage();
-  const [activeHomeItem, setActiveHomeItem] = useState('학습');
+  const [activeHomeItem, setActiveHomeItem] = useState(() => homeItemFromSearch(window.location.search));
   const [isAuthPage, setIsAuthPage] = useState(
     () => getViewFromPath(window.location.pathname) === 'auth',
   );
 
   useEffect(() => {
-    const syncRoute = () => setIsAuthPage(getViewFromPath(window.location.pathname) === 'auth');
+    const syncRoute = () => {
+      setIsAuthPage(getViewFromPath(window.location.pathname) === 'auth');
+      setActiveHomeItem(homeItemFromSearch(window.location.search));
+    };
     window.addEventListener('popstate', syncRoute);
     return () => window.removeEventListener('popstate', syncRoute);
+  }, []);
+
+  // 메뉴를 바꿀 때마다 주소(?tab=)에 남겨 새로고침·공유·뒤로가기가 같은 화면을 보여 주게 합니다.
+  const changeHomeItem = useCallback((label) => {
+    setActiveHomeItem(label);
+    const nextSearch = searchForHomeItem(label);
+    if (window.location.search === nextSearch) return;
+    window.history.pushState({}, '', window.location.pathname + nextSearch);
   }, []);
 
   if (isAuthPage) return <AuthPage />;
@@ -33,7 +44,7 @@ export default function App() {
     <JourneyApp
       language={language}
       activeHomeItem={activeHomeItem}
-      onHomeItemChange={setActiveHomeItem}
+      onHomeItemChange={changeHomeItem}
     />
   );
 }
@@ -41,7 +52,7 @@ export default function App() {
 function JourneyApp({ language, activeHomeItem, onHomeItemChange }) {
   const journey = useJourneyController(language.code);
   useEffect(() => {
-    document.title = `${journey.journey.title} | Coddy`;
+    document.title = `${journey.journey.title} | Codegram`;
   }, [journey.journey.title]);
 
   return (
@@ -69,7 +80,7 @@ function JourneyApp({ language, activeHomeItem, onHomeItemChange }) {
             lessonId={journey.lessonId}
             language={language.code}
             journey={journey.journey}
-            onBack={journey.goHome}
+            onBack={() => journey.goHome(searchForHomeItem(activeHomeItem))}
             onSuccess={journey.completeLesson}
           />
         </Suspense>

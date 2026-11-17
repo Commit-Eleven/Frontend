@@ -2,7 +2,7 @@ const tokenKey = 'codegram-access-token'
 const returnPathKey = 'codegram-login-return-path'
 export const returnModeKey = 'codegram-login-return-mode'
 const defaultJourneyPath = '/journeys/html/fundamentals'
-const journeyPathPattern = /^\/journeys\/(?:html|javascript|python|java)\/fundamentals(?:\/[^/?#]+)?$/
+const journeyPathPattern = /^\/journeys\/(?:html|javascript|python|java)\/fundamentals(?:\/[^/?#]+)?(?:\?tab=[a-z-]+)?$/
 
 export function authorizationHeaders() {
   const token = typeof sessionStorage === 'undefined' ? null : sessionStorage.getItem(tokenKey)
@@ -33,7 +33,7 @@ export function googleLoginUrl(env = viteEnv) {
 }
 
 export function beginGoogleLogin(returnMode) {
-  sessionStorage.setItem(returnPathKey, location.pathname)
+  sessionStorage.setItem(returnPathKey, location.pathname + (location.search || ''))
   if (returnMode === 'quiz') sessionStorage.setItem(returnModeKey, 'quiz')
   else sessionStorage.removeItem(returnModeKey)
   location.assign(googleLoginUrl())

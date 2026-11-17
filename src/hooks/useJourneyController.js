@@ -53,10 +53,14 @@ export function useJourneyController(language) {
       window.location.pathname,
     );
     const selectedPath = journeyPath(language);
-    if (isJourneyRoute && !window.location.pathname.startsWith(selectedPath)) {
-      window.history.replaceState({}, '', selectedPath);
+    if (!isJourneyRoute) return;
+    const hasUnknownLesson =
+      window.location.pathname.startsWith(selectedPath + '/') && !lessonFromPath(language, journey);
+    if (!window.location.pathname.startsWith(selectedPath) || hasUnknownLesson) {
+      // 다른 언어 경로나 존재하지 않는 레슨 주소는 현재 언어의 학습 지도로 정리합니다.
+      window.history.replaceState({}, '', selectedPath + window.location.search);
     }
-  }, [language]);
+  }, [language, journey]);
 
   useEffect(() => {
     const onPop = () => {
@@ -92,11 +96,11 @@ export function useJourneyController(language) {
     window.history.pushState({}, '', journeyPath(language) + '/' + id);
   };
 
-  const goHome = () => {
+  const goHome = (search = '') => {
     setView('home');
     setSelectedId(active);
     setJumpTo(null);
-    window.history.pushState({}, '', journeyPath(language));
+    window.history.pushState({}, '', journeyPath(language) + search);
   };
 
   const completeLesson = async (id, options) => {

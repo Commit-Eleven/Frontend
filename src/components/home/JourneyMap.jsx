@@ -1,5 +1,6 @@
 import { journeyIcon } from '../../lib/assets.js';
 import { statusFor } from '../../data/journey.js';
+import { authorizationHeaders } from '../../api/auth.js';
 import './JourneyMap.css';
 
 function Hex({ node, status, onClick, activeRef, iconType = node.type }) {
@@ -162,6 +163,9 @@ export function MapChapter({
               </p>
             )}
             {selectedStatus === 'special' && <p>배운 내용을 복습해 보세요.</p>}
+            {selectedStatus !== 'locked' && !authorizationHeaders().Authorization && (
+              <p className="popover-login-hint">문제를 풀려면 Google 로그인이 필요해요.</p>
+            )}
             <button
               type="button"
               className={'popover-button ' + (selectedStatus === 'locked' ? 'disabled' : '')}
