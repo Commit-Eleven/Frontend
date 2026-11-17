@@ -371,17 +371,17 @@ export function ProfilePage({ onNavigate, journey, completed = [] }) {
 
       <div className="profile-stat-grid" aria-label="학습 통계">
         <article className="profile-stat-card">
-          <span className="profile-stat-icon xp" aria-hidden="true">✦</span>
+          <span className="profile-stat-icon xp" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="12" cy="12" r="8" /><path d="M12 7v10M9.5 9.5h5M9.5 14.5h5" /></svg></span>
           <strong>{(stats?.totalExp ?? profile?.totalExp ?? 0).toLocaleString()}</strong>
           <small>총 XP</small>
         </article>
         <article className="profile-stat-card">
-          <span className="profile-stat-icon solved" aria-hidden="true">✓</span>
+          <span className="profile-stat-icon solved" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m5 12 4.5 4.5L19 7" /></svg></span>
           <strong>{solved.toLocaleString()}</strong>
           <small>푼 문제</small>
         </article>
         <article className="profile-stat-card">
-          <span className="profile-stat-icon accuracy" aria-hidden="true">◎</span>
+          <span className="profile-stat-icon accuracy" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="12" cy="12" r="8" /><circle cx="12" cy="12" r="3" /></svg></span>
           <strong>{stats?.accuracy ?? 0}%</strong>
           <small>정답률</small>
         </article>

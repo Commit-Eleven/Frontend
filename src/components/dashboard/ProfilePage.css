@@ -118,3 +118,5 @@
 .profile-section-list { display: grid; gap: 14px; margin: 16px 0 0; padding: 0; list-style: none; }
 .profile-section-list li > div:first-child { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 6px; font-size: var(--dashboard-text-sm); }
 .profile-section-list small { flex: none; color: #888; }
+
+.profile-stat-icon svg { width: 17px; height: 17px; stroke-linecap: round; stroke-linejoin: round; }
