@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import { sidebarItems } from '../../data/navigation.js';
+import { authorizationHeaders } from '../../api/auth.js';
 import { MoreIcon } from '../common/MoreIcon.jsx';
 import './MobileNav.css';
 
 export function MobileNav({ activeItem = '학습', onNavigate = () => {}, onLogout = () => {} }) {
   const [moreOpen, setMoreOpen] = useState(false);
+  const loggedIn = Boolean(authorizationHeaders().Authorization);
   const moreRef = useRef(null);
 
   useEffect(() => {
@@ -46,7 +48,7 @@ export function MobileNav({ activeItem = '학습', onNavigate = () => {}, onLogo
       <div className="mobile-more-wrap" ref={moreRef}>
         <button
           type="button"
-          className={'mobile-nav-item mobile-more-trigger' + (moreOpen || activeItem === '설정' || activeItem === '도움말' ? ' selected' : '')}
+          className={'mobile-nav-item mobile-more-trigger' + (moreOpen || activeItem === '설정' || activeItem === '도움말' || activeItem === '랭킹' || activeItem === '알림' ? ' selected' : '')}
           aria-label="더보기"
           aria-expanded={moreOpen}
           aria-haspopup="menu"
@@ -57,6 +59,12 @@ export function MobileNav({ activeItem = '학습', onNavigate = () => {}, onLogo
         </button>
         {moreOpen && (
           <div className="mobile-more-menu" role="menu" aria-label="더보기 메뉴">
+            <button type="button" role="menuitem" onClick={() => { setMoreOpen(false); onNavigate('랭킹'); }}>
+              랭킹
+            </button>
+            <button type="button" role="menuitem" onClick={() => { setMoreOpen(false); onNavigate('알림'); }}>
+              알림
+            </button>
             <button type="button" role="menuitem" onClick={() => { setMoreOpen(false); onNavigate('설정'); }}>
                 설정
               </button>
@@ -68,10 +76,11 @@ export function MobileNav({ activeItem = '학습', onNavigate = () => {}, onLogo
               role="menuitem"
               onClick={() => {
                 setMoreOpen(false);
-                onLogout();
+                if (loggedIn) onLogout();
+              else window.location.assign('/auth');
               }}
             >
-              로그아웃
+              {loggedIn ? '로그아웃' : '로그인'}
             </button>
           </div>
         )}

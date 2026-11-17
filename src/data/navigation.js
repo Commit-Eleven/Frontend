@@ -9,7 +9,7 @@ export const sidebarItems = [
 export const codingLanguages = [
   {
     code: 'html',
-    label: 'HTML',
+    label: 'HTML/CSS',
     category: '웹',
     description: '웹 페이지의 구조를 만들어요.',
     icon: '/coddy/icons/html.svg',

@@ -1,6 +1,8 @@
+import { LoadingSkeleton } from '../common/LoadingSkeleton.jsx'
 import { useEffect, useState } from 'react'
 import { beginGoogleLogin } from '../../api/auth.js'
-import { fetchMyProfile, fetchMyStats, updateMyNickname } from '../../api/community.js'
+import { fetchMyProfile, fetchMyStats, resetMyAvatar, updateMyAvatar, updateMyNickname } from '../../api/community.js'
+import { expSummary, fetchMyExp, fetchMySubmissions } from '../../api/learning.js'
 import { DashboardPageHeader } from './DashboardPageHeader.jsx'
 import './ProfilePage.css'
 
@@ -16,6 +18,110 @@ const languageNames = {
 
 const levelNames = { beginner: '초급', intermediate: '중급', advanced: '고급' }
 const typeNames = { mcq: '선택형', blank: '빈칸 채우기', parsons: '순서 맞추기', short: '단답형' }
+const tierNames = { normal: '학습자', creator: '크리에이터', admin: '관리자' }
+
+const formatDate = (value) => {
+  const date = value ? new Date(value) : null
+  return date && !Number.isNaN(date.getTime())
+    ? date.toLocaleString('ko-KR', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' })
+    : ''
+}
+
+/** GET /users/me/exp — 최근에 얻은 경험치 */
+function ExpHistory() {
+  const [exp, setExp] = useState(null)
+  const [failed, setFailed] = useState(false)
+
+  useEffect(() => {
+    const controller = new AbortController()
+    fetchMyExp({ signal: controller.signal })
+      .then((data) => setExp(expSummary(data)))
+      .catch((requestError) => {
+        if (requestError.name !== 'CanceledError' && requestError.name !== 'AbortError') setFailed(true)
+      })
+    return () => controller.abort()
+  }, [])
+
+  const rows = exp?.recent.slice(0, 5) ?? []
+  return (
+    <article className="profile-type-card">
+      <div className="profile-section-heading">
+        <div><h3>최근 획득 XP</h3><p>문제를 맞혀 얻은 경험치예요.</p></div>
+        {exp && <strong>{exp.totalExp.toLocaleString()} <span>XP</span></strong>}
+      </div>
+      {rows.length ? (
+        <ul className="profile-history-list">
+          {rows.map((row, index) => (
+            <li key={(row.createdAt ?? '') + index}>
+              <span>{row.problemTitle || row.reason || '학습 보상'}</span>
+              <small>{formatDate(row.createdAt)}</small>
+              <b className="is-plus">+{row.amount}</b>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        !failed && !exp ? <LoadingSkeleton variant="history" label="경험치 기록을 불러오는 중" /> : <p className="profile-no-history">{failed ? '경험치 기록을 불러오지 못했어요.' : '아직 얻은 경험치가 없어요.'}</p>
+      )}
+    </article>
+  )
+}
+
+/** GET /users/me/submissions — 내 제출 이력(더 보기로 다음 페이지) */
+function SubmissionHistory() {
+  const [items, setItems] = useState([])
+  const [nextCursor, setNextCursor] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [failed, setFailed] = useState(false)
+
+  const load = async (cursor, signal) => {
+    try {
+      const page = await fetchMySubmissions({ cursor, limit: 10 }, { signal })
+      setItems((current) => (cursor ? [...current, ...page.items] : page.items))
+      setNextCursor(page.nextCursor)
+      setFailed(false)
+    } catch (requestError) {
+      if (requestError.name === 'CanceledError' || requestError.name === 'AbortError') return
+      setFailed(true)
+    }
+    setLoading(false)
+  }
+
+  useEffect(() => {
+    const controller = new AbortController()
+    fetchMySubmissions({ limit: 10 }, { signal: controller.signal })
+      .then((page) => { setItems(page.items); setNextCursor(page.nextCursor); setLoading(false) })
+      .catch((requestError) => {
+        if (requestError.name === 'CanceledError' || requestError.name === 'AbortError') return
+        setFailed(true); setLoading(false)
+      })
+    return () => controller.abort()
+  }, [])
+
+  return (
+    <article className="profile-type-card">
+      <div className="profile-section-heading">
+        <div><h3>제출 기록</h3><p>최근에 제출한 답안이에요.</p></div>
+      </div>
+      {items.length ? (
+        <ul className="profile-history-list">
+          {items.map((item) => (
+            <li key={item.id}>
+              <span>{item.title || item.problemId}<small> · {typeNames[item.type] || item.type || '문제'}{item.language ? ' · ' + (languageNames[item.language] || item.language) : ''}</small></span>
+              <small>{formatDate(item.createdAt)}</small>
+              <b className={item.isCorrect ? 'is-correct' : 'is-wrong'}>{item.isCorrect ? '정답' : '오답'}</b>
+            </li>
+          ))}
+        </ul>
+      ) : !loading ? (
+        <p className="profile-no-history">{failed ? '제출 기록을 불러오지 못했어요.' : '아직 제출한 답안이 없어요.'}</p>
+      ) : null}
+      {loading && <LoadingSkeleton variant="history" label="제출 기록을 불러오는 중" />}
+      {!loading && nextCursor && (
+        <button type="button" className="profile-more-button" onClick={() => { setLoading(true); load(nextCursor) }}>더 보기</button>
+      )}
+    </article>
+  )
+}
 
 export function ProfilePage({ onNavigate }) {
   const [profile, setProfile] = useState(null)
@@ -24,6 +130,10 @@ export function ProfilePage({ onNavigate }) {
   const [error, setError] = useState(null)
   const [editing, setEditing] = useState(false)
   const [nickname, setNickname] = useState('')
+  const [avatarUrl, setAvatarUrl] = useState('')
+  const [avatarEditing, setAvatarEditing] = useState(false)
+  const [avatarSaving, setAvatarSaving] = useState(false)
+  const [avatarFailed, setAvatarFailed] = useState(false)
   const [saving, setSaving] = useState(false)
   const [notice, setNotice] = useState('')
   const [reloadKey, setReloadKey] = useState(0)
@@ -44,6 +154,7 @@ export function ProfilePage({ onNavigate }) {
         setProfile(user)
         setStats(summary)
         setNickname(user.nickname || '')
+        setAvatarUrl(user.avatarUrl ?? user.imageUrl ?? '')
       })
       .catch((requestError) => {
         if (requestError.name !== 'CanceledError' && requestError.name !== 'AbortError') {
@@ -78,6 +189,56 @@ export function ProfilePage({ onNavigate }) {
     }
   }
 
+  const refreshAvatar = async (fallbackUrl) => {
+    try {
+      const user = await fetchMyProfile()
+      const refreshedUrl = user.avatarUrl ?? user.imageUrl ?? fallbackUrl
+      setProfile({ ...user, avatarUrl: refreshedUrl })
+      setAvatarUrl(refreshedUrl || '')
+      setAvatarFailed(false)
+      return true
+    } catch {
+      setProfile((current) => ({ ...current, avatarUrl: fallbackUrl }))
+      setAvatarUrl(fallbackUrl || '')
+      setAvatarFailed(false)
+      return false
+    }
+  }
+
+  const saveAvatar = async (event) => {
+    event.preventDefault()
+    const value = avatarUrl.trim()
+    if (!value || avatarSaving) return
+    setAvatarSaving(true)
+    setNotice('')
+    try {
+      await updateMyAvatar(value)
+      const confirmed = await refreshAvatar(value)
+      setAvatarEditing(false)
+      setNotice(confirmed ? '프로필 사진을 변경했어요.' : '사진은 저장했지만 최신 프로필을 다시 불러오지 못했어요.')
+    } catch (requestError) {
+      setNotice(requestError.message || '프로필 사진을 변경하지 못했어요.')
+    } finally {
+      setAvatarSaving(false)
+    }
+  }
+
+  const resetAvatar = async () => {
+    if (avatarSaving) return
+    setAvatarSaving(true)
+    setNotice('')
+    try {
+      await resetMyAvatar()
+      const confirmed = await refreshAvatar(null)
+      setAvatarEditing(false)
+      setNotice(confirmed ? '프로필 사진을 기본 이미지로 되돌렸어요.' : '기본 이미지로 저장했지만 최신 프로필을 다시 불러오지 못했어요.')
+    } catch (requestError) {
+      setNotice(requestError.message || '프로필 사진을 되돌리지 못했어요.')
+    } finally {
+      setAvatarSaving(false)
+    }
+  }
+
   if (error?.status === 401) {
     return (
       <section className="profile-page">
@@ -96,7 +257,7 @@ export function ProfilePage({ onNavigate }) {
     return (
       <section className="profile-page">
         <DashboardPageHeader eyebrow="내 학습 기록" title="프로필" description="학습 진행 상황과 계정 정보를 확인해요." />
-        <div className="profile-loading">프로필을 불러오는 중…</div>
+        <LoadingSkeleton variant="profile" label="프로필을 불러오는 중" />
       </section>
     )
   }
@@ -118,6 +279,12 @@ export function ProfilePage({ onNavigate }) {
   const solved = stats?.solvedProblemCount ?? 0
   const progress = total ? Math.min(100, Math.round((solved / total) * 100)) : 0
   const typeStats = Array.isArray(stats?.byType) ? stats.byType : []
+  const currentAvatarUrl = profile?.avatarUrl ?? profile?.imageUrl ?? ''
+  const toggleAvatarEditor = () => {
+    setAvatarEditing((value) => !value)
+    setAvatarUrl(currentAvatarUrl || '')
+    setNotice('')
+  }
 
   return (
     <section className="profile-page">
@@ -130,11 +297,26 @@ export function ProfilePage({ onNavigate }) {
 
       <article className="profile-hero">
         <div className="profile-identity">
-          <span className="profile-avatar">{[...(profile?.nickname || '나')][0]}</span>
+          <div className="profile-avatar-column">
+            <button type="button" className="profile-avatar-trigger" aria-label="프로필 사진 변경" onClick={toggleAvatarEditor} disabled={avatarSaving}>
+              {currentAvatarUrl && !avatarFailed ? (
+                <img className="profile-avatar profile-avatar-image" src={currentAvatarUrl} alt="" onError={() => setAvatarFailed(true)} />
+              ) : (
+                <span className="profile-avatar">{[...(profile?.nickname || '나')][0]}</span>
+              )}
+            </button>
+            {currentAvatarUrl && (
+              <div className="profile-avatar-actions">
+                <button type="button" className="profile-avatar-action" onClick={resetAvatar} disabled={avatarSaving}>
+                  {avatarSaving ? '처리 중…' : '기본으로'}
+                </button>
+              </div>
+            )}
+          </div>
           <div className="profile-identity-copy">
             <div className="profile-name-row">
               <h2>{profile?.nickname || '코드 학습자'}</h2>
-              <span className="profile-tier">{profile?.tier === 'pro' ? 'PRO' : profile?.tier === 'plus' ? 'PLUS' : '학습자'}</span>
+              <span className="profile-tier">{tierNames[profile?.tier] || '학습자'}</span>
             </div>
             <p>#{profile?.tag || '----'} · {languageNames[profile?.studyLanguage] || '학습 언어 미설정'}</p>
             <span className="profile-level">{levelNames[profile?.studyLevel] || '기초부터 차근차근'}</span>
@@ -151,6 +333,18 @@ export function ProfilePage({ onNavigate }) {
               <button type="submit" disabled={saving}>{saving ? '저장 중…' : '저장'}</button>
             </div>
             <small>친구에게 표시되는 이름이에요. 2~20자로 입력해 주세요.</small>
+          </form>
+        )}
+
+        {avatarEditing && (
+          <form className="profile-avatar-form" onSubmit={saveAvatar}>
+            <label htmlFor="profile-avatar-url">프로필 사진 URL</label>
+            <div>
+              <input id="profile-avatar-url" type="url" value={avatarUrl} maxLength={2048} onChange={(event) => setAvatarUrl(event.target.value)} placeholder="https://example.com/avatar.png" required />
+              <button type="submit" disabled={avatarSaving}>{avatarSaving ? '저장 중…' : '저장'}</button>
+              <button type="button" className="profile-avatar-cancel" onClick={() => setAvatarEditing(false)} disabled={avatarSaving}>취소</button>
+            </div>
+            <small>웹에서 열 수 있는 이미지 주소를 입력해 주세요.</small>
           </form>
         )}
 
@@ -205,6 +399,9 @@ export function ProfilePage({ onNavigate }) {
           <p className="profile-no-history">문제를 풀면 유형별 기록이 여기에 쌓여요.</p>
         )}
       </article>
+
+      <ExpHistory />
+      <SubmissionHistory />
     </section>
   )
 }

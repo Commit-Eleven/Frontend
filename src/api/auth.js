@@ -9,6 +9,10 @@ export function authorizationHeaders() {
   return token ? { Authorization: `Bearer ${token}` } : {}
 }
 
+export function setAccessToken(token) {
+  if (typeof sessionStorage !== 'undefined') sessionStorage.setItem(tokenKey, token)
+}
+
 export function clearAccessToken() {
   if (typeof sessionStorage !== 'undefined') sessionStorage.removeItem(tokenKey)
 }
@@ -39,7 +43,7 @@ export function completeGoogleLogin() {
   if (location.pathname !== '/auth/callback') return
 
   const token = new URLSearchParams(location.search).get('token')
-  if (token) sessionStorage.setItem(tokenKey, token)
+  if (token) setAccessToken(token)
 
   const savedPath = sessionStorage.getItem(returnPathKey)
   sessionStorage.removeItem(returnPathKey)

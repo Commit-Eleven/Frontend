@@ -81,9 +81,9 @@
   top: 103px;
   width: 230px;
   height: 210px;
-  border-radius: 65px 65px 80px 80px;
-  background: var(--primary);
-  box-shadow: 0 12px 0 #029b7e;
+  border-radius: 76px 76px 88px 88px;
+  background: #00c6a3;
+  box-shadow: inset 0 5px 0 #ffffff30, 0 10px 0 #029b7e, 0 17px 24px #028b7020;
   transform: rotate(-9deg);
 }
 .auth-mascot:before,
@@ -111,10 +111,11 @@
   padding-top: 44px;
 }
 .auth-eye {
-  width: 59px;
-  height: 73px;
-  border-radius: 45%;
+  width: 55px;
+  height: 69px;
+  border-radius: 48%;
   background: white;
+  box-shadow: 0 4px 0 #007c6814;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -137,8 +138,8 @@
   height: 14px;
 }
 .auth-smile {
-  width: 38px;
-  height: 22px;
+  width: 34px;
+  height: 20px;
   background: #087c68;
   border-radius: 4px 4px 30px 30px;
   margin: 17px auto;
@@ -170,7 +171,17 @@
   box-shadow: 0 6px 0 #0000000b;
 }
 .auth-float span {
-  font-size: 26px;
+  font-size: 11px;
+  letter-spacing: 0.3px;
+}
+.auth-float img {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+}
+.float-python img {
+  width: 30px;
+  height: 30px;
 }
 .float-html {
   background: #ffb654;
@@ -182,7 +193,7 @@
   transform: rotate(-20deg);
   font-size: 12px;
 }
-.float-css {
+.float-java {
   background: #95d9fa;
   color: #237bad;
   width: 82px;
@@ -192,7 +203,7 @@
   transform: rotate(15deg);
   font-size: 12px;
 }
-.float-js {
+.float-python {
   background: #bdadff;
   color: #7251bc;
   width: 66px;
@@ -378,10 +389,10 @@
   .float-html {
     left: 14px;
   }
-  .float-css {
+  .float-java {
     right: 17px;
   }
-  .float-js {
+  .float-python {
     right: 0;
     bottom: 52px;
   }

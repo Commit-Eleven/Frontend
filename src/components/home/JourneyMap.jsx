@@ -2,14 +2,16 @@ import { journeyIcon } from '../../lib/assets.js';
 import { statusFor } from '../../data/journey.js';
 import './JourneyMap.css';
 
-function Hex({ node, status, onClick, activeRef }) {
-  const base = status === 'special' ? 'special' : status;
+function Hex({ node, status, onClick, activeRef, iconType = node.type }) {
+  const base = status === 'special' ? 'active' : status;
   const lesson =
-    status === 'done'
-      ? node.type === 'trophy'
-        ? 'lesson-trophy-done'
-        : 'lesson-done'
-      : 'lesson-' + node.type;
+    iconType === 'challenge'
+      ? 'lesson-challenge'
+      : status === 'done'
+        ? iconType === 'trophy'
+          ? 'lesson-trophy-done'
+          : 'lesson-done'
+        : 'lesson-' + iconType;
   return (
     <button
       type="button"
@@ -83,9 +85,11 @@ export function MapChapter({
               x2 = point(index + 1),
               y1 = 62 + index * 101,
               y2 = 62 + (index + 1) * 101;
-            const done =
-              statusFor(row.main, completed, active) === 'done' &&
-              statusFor(chapter.rows[index + 1].main, completed, active) === 'done';
+            const fromStatus = statusFor(row.main, completed, active);
+            const toStatus = statusFor(chapter.rows[index + 1].main, completed, active);
+            const unlockedConnection =
+              ['done', 'special'].includes(fromStatus) &&
+              ['active', 'done', 'special'].includes(toStatus);
             return (
               <path
                 key={index}
@@ -108,30 +112,8 @@ export function MapChapter({
                   y2
                 }
                 fill="none"
-                stroke={done ? 'var(--primary)' : '#e5e5e5'}
+                stroke={unlockedConnection ? 'var(--primary)' : '#e5e5e5'}
                 strokeWidth="10"
-                strokeLinecap="round"
-              />
-            );
-          })}
-          {chapter.rows.map((row, index) => {
-            if (!row.side) return null;
-            const x1 = point(index),
-              x2 = x1 + (x1 <= 190 ? 120 : -120),
-              y = 62 + index * 101;
-            const done =
-              statusFor(row.main, completed, active) === 'special' &&
-              statusFor(row.side, completed, active) === 'done';
-            return (
-              <line
-                key={'side-' + index}
-                x1={x1}
-                x2={x2}
-                y1={y}
-                y2={y}
-                stroke={done ? '#f7a324' : '#e6e6e6'}
-                strokeWidth="10"
-                strokeDasharray="1 15"
                 strokeLinecap="round"
               />
             );
@@ -140,7 +122,14 @@ export function MapChapter({
         {chapter.rows.map((row, index) => {
           const x = point(index),
             y = 30 + index * 101;
-          const sideX = x + (x <= 190 ? 120 : -120);
+          const iconType =
+            index === 0
+              ? 'challenge'
+              : index === chapter.rows.length - 1
+                ? 'trophy'
+                : row.main.type === 'challenge'
+                  ? 'all'
+                  : undefined;
           return (
             <div key={row.main.id}>
               <div className="node-position" style={{ left: x - 36, top: y }}>
@@ -149,17 +138,9 @@ export function MapChapter({
                   status={statusFor(row.main, completed, active)}
                   onClick={() => onSelect(row.main.id)}
                   activeRef={activeRef}
+                  iconType={iconType}
                 />
               </div>
-              {row.side && (
-                <div className="node-position" style={{ left: sideX - 36, top: y }}>
-                  <Hex
-                    node={row.side}
-                    status={statusFor(row.side, completed, active)}
-                    onClick={() => onSelect(row.side.id)}
-                  />
-                </div>
-              )}
             </div>
           );
         })}
