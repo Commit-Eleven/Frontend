@@ -8,6 +8,7 @@ import { LessonSidebar } from './LessonSidebar.jsx';
 import { CodeWorkspace } from './CodeWorkspace.jsx';
 import { QuizWorkspace } from './QuizWorkspace.jsx';
 import { PanelResizeHandle } from './PanelResizeHandle.jsx';
+import { LoadingSkeleton } from '../common/LoadingSkeleton.jsx';
 import './Lesson.css';
 
 export function Lesson({ lessonId, language, journey, onBack, onSuccess }) {
@@ -17,7 +18,30 @@ export function Lesson({ lessonId, language, journey, onBack, onSuccess }) {
   const challenge = challengeFor(lesson, language);
   // Every entry from the journey map starts with the server-backed concept check.
   // Completing it only advances this lesson visit to the coding challenge.
-  const [mode, setMode] = useState('concept');
+  const modeKey = `codegram-lesson-mode-${lesson?.id}`;
+  const [mode, setMode] = useState(() => {
+    try {
+      return sessionStorage.getItem(modeKey) === 'challenge' ? 'challenge' : 'concept';
+    } catch {
+      return 'concept';
+    }
+  });
+  // 새로고침해도 코드 문제 단계에 머물도록 단계를 기억합니다. 화면을 떠나면 지웁니다.
+  useEffect(() => {
+    try {
+      if (mode === 'challenge') sessionStorage.setItem(modeKey, 'challenge');
+      else sessionStorage.removeItem(modeKey);
+    } catch {
+      /* 저장소를 쓸 수 없으면 기억하지 않습니다. */
+    }
+    return () => {
+      try {
+        sessionStorage.removeItem(modeKey);
+      } catch {
+        /* noop */
+      }
+    };
+  }, [mode, modeKey]);
   const saveSolved = async (...args) => {
     const result = await onSuccess(...args);
     markProblemSolved();
@@ -117,19 +141,20 @@ export function Lesson({ lessonId, language, journey, onBack, onSuccess }) {
               language={language}
             />
           ) : (
-            <div className="code-problem-state" role={loadingCode ? 'status' : 'alert'}>
-              <h2>{loadingCode ? '코드 문제를 불러오는 중…'
-                : coding.status === 'auth-required' ? '로그인이 필요해요'
+            loadingCode ? <LoadingSkeleton variant="practice" label="코드 문제를 불러오는 중" /> : (
+            <div className="code-problem-state" role="alert">
+              <h2>{coding.status === 'auth-required' ? '로그인이 필요해요'
                 : coding.status === 'unavailable' ? '코드 문제를 준비하고 있어요'
                 : '코드 문제를 불러오지 못했어요'}</h2>
-              {!loadingCode && <>
+              <>
                 <p>{coding.status === 'unavailable' ? '아직 이 언어의 코드 문제가 없어요. 나중에 다시 확인해 주세요.' : coding.error}</p>
                 {coding.status === 'auth-required'
                   ? <button type="button" onClick={() => beginGoogleLogin('quiz')}>Google로 로그인</button>
                   : <button type="button" onClick={coding.reload}>다시 시도</button>}
                 <button type="button" className="code-state-secondary" onClick={onBack}>여정으로 돌아가기</button>
-              </>}
+              </>
             </div>
+            )
           )}
         </main>
       </div>

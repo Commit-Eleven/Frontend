@@ -19,12 +19,14 @@ export function SearchModal({ journey, onClose, onPick }) {
           subtitle: '섹션 1 · 챕터 2',
           chapter: 1,
         },
-        { label: journey.nextSectionTitle, subtitle: '다음 섹션', chapter: chapterData.length - 1 },
+        ...(journey.nextSectionTitle
+          ? [{ label: journey.nextSectionTitle, subtitle: '다음 섹션', chapter: chapterData.length - 1 }]
+          : []),
       ];
     return [
       ...chapterData.map((c, index) => ({
         label: c.title,
-        subtitle: '섹션 1 · 챕터 ' + (index + 1),
+        subtitle: `섹션 ${c.section ?? 1} · 챕터 ${c.sectionChapter ?? index + 1}`,
         chapter: index,
       })),
       ...allMainLessons.map((lesson) => ({

@@ -148,6 +148,7 @@
   z-index: 10;
   width: 280px;
   min-height: 126px;
+  transform: translateX(-50%);
   border: 2px solid #d1d1d1;
   border-radius: 7px;
   background: #fff;
@@ -216,8 +217,14 @@
     width: 250px;
   }
 }
-@media (min-width: 981px) {
-  .node-popover {
-    margin-left: -10px;
-  }
+
+.section-banner {
+  margin: 56px 0 4px;
+  padding: 14px 18px;
+  border: 2px solid var(--primary);
+  border-radius: 16px;
+  color: var(--primary);
+  font-weight: 800;
+  font-size: 15px;
+  text-align: center;
 }

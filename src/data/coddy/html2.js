@@ -1,0 +1,111 @@
+import { L } from './lesson.js';
+
+// 섹션 2: CSS로 스타일링하기
+const css = (rule) => `<style>\n${rule}\n</style>`;
+
+export default [
+  { title: '소개', lessons: [
+    L('CSS란 무엇인가?', 'A', 'style 요소 안에서 p의 글자색을 red로 바꾸세요.', 'CSS는 HTML 요소의 색, 크기, 배치 같은 모양을 정하는 언어입니다.', css('p {\n  color: red;\n}'), '<style>', 'color: red'),
+    L('CSS 문법', 'A', 'h1의 글자 크기를 32px로 지정하세요.', '선택자 { 속성: 값; } 형태이며 선택자는 대상, 속성과 값은 모양을 정합니다.', css('h1 {\n  font-size: 32px;\n}'), 'h1 {', 'font-size', ';'),
+    L('CSS 주석', 'A', '/* */ 주석을 포함한 CSS를 작성하세요.', 'CSS 주석은 /* 내용 */ 형태입니다.', css('/* 제목 스타일 */\nh1 {\n  color: blue;\n}'), '/*', '*/'),
+    L('head 태그', 'A', 'head 안에 style을 넣으세요.', 'style과 title 같은 문서 정보는 head 안에 둡니다.', '<head>\n  <style>\n    p { color: gray; }\n  </style>\n</head>', '<head>', '<style>'),
+    L('title 태그', 'M', 'head에 title "My Styled Page"를 작성하세요.', 'title은 브라우저 탭에 표시되는 문서 제목입니다.', '<head>\n  <title>My Styled Page</title>\n</head>', '<title>', 'My Styled Page'),
+  ] },
+  { title: 'CSS 추가', lessons: [
+    L('인라인 CSS', 'M', 'p 요소의 style 속성으로 글자색을 지정하세요.', '인라인 CSS는 요소의 style 속성에 직접 씁니다.', '<p style="color: blue;">Hello</p>', 'style="', 'color'),
+    L('내부 CSS', 'M', 'head의 style 요소로 스타일을 작성하세요.', '내부 CSS는 문서 안 style 요소에 모아 씁니다.', '<style>\n  p { color: green; }\n</style>', '<style>', 'p {'),
+    L('외부 CSS', 'M', 'link 요소로 style.css를 연결하세요.', '외부 CSS는 별도 파일을 link로 불러옵니다.', '<link rel="stylesheet" href="style.css">', '<link', 'rel="stylesheet"', 'href="style.css"'),
+    L('기본 스타일링 도전', 'C', '세 가지 방식(인라인, 내부, 외부 link)을 모두 사용하세요.', 'CSS를 적용하는 방법을 비교합니다.', '<link rel="stylesheet" href="a.css">\n<style>p { color: red; }</style>\n<p style="font-size: 20px;">Hi</p>', '<link', '<style>', 'style="'),
+  ] },
+  { title: '기본 선택자', lessons: [
+    L('선택자 소개', 'A', '선택자가 무엇인지 주석으로 쓰고 p 선택자를 사용하세요.', '선택자는 스타일을 적용할 요소를 고르는 규칙입니다.', css('/* 선택자 = 대상 */\np {\n  color: red;\n}'), '/*', 'p {'),
+    L('유형 선택자', 'M', 'h2 유형 선택자로 색을 지정하세요.', '유형 선택자는 태그 이름으로 요소를 고릅니다.', css('h2 {\n  color: navy;\n}'), 'h2 {'),
+    L('클래스 선택자', 'M', '.highlight 클래스 선택자를 사용하세요.', '.이름 은 class="이름"인 요소를 고릅니다. 여러 요소에 쓸 수 있습니다.', css('.highlight {\n  background: yellow;\n}'), '.highlight', 'class="highlight"'),
+    L('ID 선택자', 'M', '#main ID 선택자를 사용하세요.', '#이름 은 id="이름"인 요소 하나를 고릅니다. 문서에서 id는 유일해야 합니다.', css('#main {\n  width: 600px;\n}'), '#main', 'id="main"'),
+    L('그룹 선택자', 'M', 'h1, h2, h3에 같은 색을 지정하세요.', '쉼표로 여러 선택자를 묶어 같은 스타일을 적용합니다.', css('h1, h2, h3 {\n  color: teal;\n}'), 'h1, h2, h3'),
+    L('전체 선택자', 'M', '* 선택자로 모든 요소의 margin을 0으로 만드세요.', '* 는 모든 요소를 선택합니다.', css('* {\n  margin: 0;\n}'), '* {', 'margin: 0'),
+    L('선택자 도전 과제', 'C', '유형, 클래스, ID 선택자를 모두 사용하세요.', '선택자를 종합합니다.', css('p { color: black; }\n.note { color: gray; }\n#title { color: red; }'), 'p {', '.note', '#title'),
+  ] },
+  { title: '텍스트 기초', lessons: [
+    L('텍스트 색상', 'M', 'color로 글자색을 지정하세요.', 'color는 글자색을 정합니다.', css('p { color: crimson; }'), 'color:'),
+    L('글꼴', 'M', 'font-family를 지정하세요.', 'font-family는 글꼴을 정하며 대체 글꼴을 쉼표로 나열합니다.', css('p { font-family: Arial, sans-serif; }'), 'font-family'),
+    L('글꼴 크기', 'M', 'font-size를 지정하세요.', 'font-size는 글자 크기이며 px, em, rem 단위를 씁니다.', css('p { font-size: 18px; }'), 'font-size'),
+    L('글꼴 두께', 'M', 'font-weight를 bold로 지정하세요.', 'font-weight는 글자 굵기를 정합니다.', css('p { font-weight: bold; }'), 'font-weight'),
+    L('텍스트 정렬', 'M', 'text-align으로 가운데 정렬하세요.', 'text-align은 left, center, right로 정렬합니다.', css('h1 { text-align: center; }'), 'text-align'),
+    L('텍스트 장식', 'M', 'text-decoration으로 밑줄을 없애세요.', 'text-decoration은 밑줄, 취소선 등을 정합니다.', css('a { text-decoration: none; }'), 'text-decoration'),
+    L('복습 챌린지 #1', 'C', 'color, font-size, font-weight를 함께 지정하세요.', '글자 관련 속성을 조합합니다.', css('h1 {\n  color: navy;\n  font-size: 28px;\n  font-weight: bold;\n}'), 'color', 'font-size', 'font-weight'),
+    L('복습 챌린지 #2', 'C', 'text-align, text-decoration, font-family를 함께 지정하세요.', '글자 관련 속성을 조합합니다.', css('a {\n  text-align: center;\n  text-decoration: none;\n  font-family: Arial;\n}'), 'text-align', 'text-decoration', 'font-family'),
+  ] },
+  { title: '색상과 배경', lessons: [
+    L('배경색', 'M', 'background-color를 지정하세요.', 'background-color는 요소의 배경색입니다.', css('body { background-color: lightyellow; }'), 'background-color'),
+    L('HEX 색상', 'M', '#으로 시작하는 HEX 색상을 사용하세요.', 'HEX는 #RRGGBB 형식으로 색을 표현합니다.', css('p { color: #ff5733; }'), '#'),
+    L('RGB 색상', 'M', 'rgb() 색상을 사용하세요.', 'rgb(빨강, 초록, 파랑)은 0~255 값으로 색을 표현합니다.', css('p { color: rgb(255, 87, 51); }'), 'rgb('),
+    L('RGBA로 투명도 조절', 'A', 'rgba()로 반투명 배경을 만드세요.', 'rgba의 마지막 값은 투명도(0~1)입니다.', css('div { background: rgba(0, 0, 0, 0.5); }'), 'rgba('),
+    L('복습 도전 과제 #1', 'C', 'HEX, RGB, RGBA를 각각 사용하세요.', '색상 표현 방식을 모두 사용합니다.', css('h1 { color: #333; }\np { color: rgb(0, 0, 255); }\ndiv { background: rgba(0, 0, 0, 0.2); }'), '#', 'rgb(', 'rgba('),
+  ] },
+  { title: '카페 메뉴', lessons: [
+    L('타이포그래피 기초', 'C', '제목과 본문의 글꼴, 크기를 지정하세요.', '카페 메뉴 페이지의 글꼴을 설정합니다.', css('h1 { font-family: Georgia; font-size: 32px; }\np { font-size: 16px; }'), 'font-family', 'font-size'),
+    L('텍스트 스타일링', 'P', '메뉴 이름은 굵게, 가격은 색을 지정하세요.', '클래스로 요소별 스타일을 나눕니다.', css('.name { font-weight: bold; }\n.price { color: brown; }'), '.name', '.price'),
+    L('색상 및 배경', 'P', 'body 배경색과 글자색을 지정하세요.', '페이지 전체 분위기를 색으로 정합니다.', css('body {\n  background-color: #fff8f0;\n  color: #3b2a20;\n}'), 'background-color', 'color'),
+  ] },
+  { title: '박스 모델 1부', lessons: [
+    L('박스 모델이란?', 'A', '모든 요소가 content, padding, border, margin 박스라는 것을 주석으로 쓰세요.', '모든 요소는 안쪽부터 content, padding, border, margin으로 이루어진 상자입니다.', css('/* content > padding > border > margin */\ndiv { border: 1px solid black; }'), '/*', 'border'),
+    L('패딩', 'M', 'padding으로 안쪽 여백을 주세요.', 'padding은 내용과 테두리 사이의 안쪽 여백입니다.', css('div { padding: 16px; }'), 'padding'),
+    L('여백', 'M', 'margin으로 바깥 여백을 주세요.', 'margin은 테두리 바깥의 여백입니다.', css('div { margin: 20px; }'), 'margin'),
+    L('테두리', 'M', 'border를 지정하세요.', 'border: 두께 스타일 색 형태입니다.', css('div { border: 2px solid #333; }'), 'border:', 'solid'),
+    L('너비와 높이', 'M', 'width와 height를 지정하세요.', 'width, height는 콘텐츠 영역의 크기입니다.', css('div { width: 300px; height: 200px; }'), 'width', 'height'),
+    L('복습 도전 과제', 'C', 'padding, margin, border, width를 모두 사용하세요.', '박스 모델 속성을 조합합니다.', css('.box {\n  width: 200px;\n  padding: 10px;\n  margin: 10px;\n  border: 1px solid gray;\n}'), 'padding', 'margin', 'border', 'width'),
+  ] },
+  { title: '박스 모델 2부', lessons: [
+    L('박스 크기 설정', 'A', 'box-sizing: border-box를 지정하세요.', 'border-box는 padding과 border를 width에 포함해 계산합니다.', css('* { box-sizing: border-box; }'), 'box-sizing', 'border-box'),
+    L('테두리 반경', 'M', 'border-radius로 모서리를 둥글게 하세요.', 'border-radius는 모서리의 둥근 정도입니다.', css('.card { border-radius: 12px; }'), 'border-radius'),
+    L('오버플로', 'M', 'overflow로 넘치는 내용을 스크롤로 처리하세요.', 'overflow는 내용이 상자를 넘칠 때 처리 방식을 정합니다.', css('.box { height: 100px; overflow: auto; }'), 'overflow'),
+    L('박스 그림자', 'M', 'box-shadow로 그림자를 추가하세요.', 'box-shadow: x y 흐림 색 형태로 그림자를 만듭니다.', css('.card { box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); }'), 'box-shadow'),
+    L('복습 도전 과제', 'C', 'box-sizing, border-radius, box-shadow를 모두 사용한 카드를 만드세요.', '박스 꾸미기 속성을 조합합니다.', css('.card {\n  box-sizing: border-box;\n  border-radius: 8px;\n  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);\n}'), 'box-sizing', 'border-radius', 'box-shadow'),
+  ] },
+  { title: 'Flex Box', lessons: [
+    L('Flex Box란 무엇인가?', 'A', 'display: flex로 자식들을 가로로 배치하세요.', 'display: flex를 주면 자식 요소가 한 줄로 배치되는 유연한 박스가 됩니다.', css('.row { display: flex; }'), 'display: flex'),
+    L('Flex 방향', 'M', 'flex-direction으로 세로 방향으로 바꾸세요.', 'flex-direction은 row(가로), column(세로)로 배치 방향을 정합니다.', css('.col {\n  display: flex;\n  flex-direction: column;\n}'), 'flex-direction'),
+    L('콘텐츠 정렬', 'M', 'justify-content로 가운데 정렬하세요.', 'justify-content는 주축 방향 정렬(center, space-between 등)입니다.', css('.row {\n  display: flex;\n  justify-content: center;\n}'), 'justify-content'),
+    L('항목 정렬', 'M', 'align-items로 세로 가운데 정렬하세요.', 'align-items는 교차축 방향 정렬입니다.', css('.row {\n  display: flex;\n  align-items: center;\n}'), 'align-items'),
+    L('완벽한 중앙 정렬', 'A', 'justify-content와 align-items를 모두 center로 지정하세요.', '두 속성을 함께 쓰면 자식이 정확히 가운데에 놓입니다.', css('.center {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  height: 100vh;\n}'), 'justify-content: center', 'align-items: center'),
+    L('Flex Box 도전 과제', 'C', 'flex 컨테이너에서 방향과 정렬, 간격(gap)을 지정하세요.', 'Flexbox 속성을 종합합니다.', css('.nav {\n  display: flex;\n  flex-direction: row;\n  justify-content: space-between;\n  gap: 12px;\n}'), 'display: flex', 'justify-content', 'gap'),
+  ] },
+  { title: '로그인 폼', lessons: [
+    L('본문', 'C', 'body에 배경색과 가운데 정렬 레이아웃을 지정하세요.', '로그인 페이지의 기본 배경을 만듭니다.', css('body {\n  display: flex;\n  justify-content: center;\n  background: #f5f5f5;\n}'), 'body {', 'display: flex'),
+    L('폼 컨테이너', 'P', '폼에 너비, 패딩, 테두리 반경을 지정하세요.', '폼을 카드 형태로 꾸밉니다.', css('form {\n  width: 320px;\n  padding: 24px;\n  border-radius: 8px;\n  background: white;\n}'), 'form {', 'padding', 'border-radius'),
+    L('입력 필드', 'P', 'input의 너비, 패딩, 테두리를 지정하세요.', '입력칸 모양을 정합니다.', css('input {\n  width: 100%;\n  padding: 8px;\n  border: 1px solid #ccc;\n}'), 'input {', 'padding', 'border'),
+    L('버튼', 'P', 'button의 배경색, 글자색, 모서리를 지정하세요.', '로그인 버튼을 꾸밉니다.', css('button {\n  background: #0a84ff;\n  color: white;\n  border: none;\n  border-radius: 6px;\n}'), 'button {', 'background', 'color'),
+  ] },
+  { title: '레이아웃 기법', lessons: [
+    L('블록 요소와 인라인 요소', 'A', 'display로 span을 블록처럼, div를 인라인처럼 바꾸세요.', '블록 요소는 한 줄을 차지하고 인라인 요소는 내용만큼만 차지합니다.', css('span { display: block; }\ndiv { display: inline; }'), 'display: block', 'display: inline'),
+    L('포지셔닝 기초', 'M', 'position 속성의 종류를 주석으로 정리하세요.', 'position은 static(기본), relative, absolute, fixed, sticky가 있습니다.', css('/* static relative absolute fixed sticky */\n.box { position: static; }'), 'position', '/*'),
+    L('상대 위치 지정', 'M', 'position: relative와 top, left를 사용하세요.', 'relative는 원래 위치를 기준으로 이동합니다.', css('.box {\n  position: relative;\n  top: 10px;\n  left: 20px;\n}'), 'position: relative', 'top'),
+    L('절대 위치 지정', 'M', 'absolute를 relative 부모 안에서 사용하세요.', 'absolute는 가장 가까운 위치 지정된 부모를 기준으로 배치됩니다.', css('.parent { position: relative; }\n.child {\n  position: absolute;\n  right: 0;\n  top: 0;\n}'), 'position: absolute', 'position: relative'),
+    L('고정 위치 지정', 'M', 'position: fixed로 상단 바를 고정하세요.', 'fixed는 스크롤해도 화면의 같은 자리에 머뭅니다.', css('.bar {\n  position: fixed;\n  top: 0;\n  width: 100%;\n}'), 'position: fixed'),
+    L('Z-Index 기초', 'A', 'z-index로 겹침 순서를 정하세요.', 'z-index가 클수록 위에 쌓입니다. position이 지정된 요소에 적용됩니다.', css('.modal {\n  position: absolute;\n  z-index: 10;\n}'), 'z-index'),
+    L('복습 도전 과제', 'C', 'relative, absolute, z-index를 모두 사용하세요.', '위치 지정 속성을 조합합니다.', css('.card { position: relative; }\n.badge {\n  position: absolute;\n  top: 0;\n  z-index: 2;\n}'), 'position: relative', 'position: absolute', 'z-index'),
+  ] },
+  { title: '반응형 디자인 기초', lessons: [
+    L('반응형 디자인이란?', 'A', '반응형 디자인의 뜻을 주석으로 쓰세요.', '반응형 디자인은 화면 크기에 따라 레이아웃이 자연스럽게 바뀌게 만드는 방식입니다.', css('/* 화면 크기에 맞춰 레이아웃이 바뀐다 */\nimg { max-width: 100%; }'), '/*', 'max-width'),
+    L('Viewport 메타 태그', 'A', 'viewport meta 태그를 head에 추가하세요.', 'viewport 메타 태그가 있어야 모바일에서 화면 너비에 맞게 표시됩니다.', '<meta name="viewport" content="width=device-width, initial-scale=1">', '<meta', 'name="viewport"', 'width=device-width'),
+    L('유동형 레이아웃', 'M', '고정 px 대신 %를 사용해 너비를 지정하세요.', '% 너비를 쓰면 부모 크기에 따라 유연하게 변합니다.', css('.container { width: 80%; }'), 'width: 80%'),
+    L('Viewport 단위', 'M', 'vw, vh 단위를 사용하세요.', '1vw는 화면 너비의 1%, 1vh는 화면 높이의 1%입니다.', css('.hero {\n  width: 100vw;\n  height: 50vh;\n}'), 'vw', 'vh'),
+    L('미디어 쿼리 기초', 'M', '화면 너비가 600px 이하일 때 글자 크기를 줄이세요.', '@media로 조건에 맞을 때만 스타일을 적용합니다.', css('@media (max-width: 600px) {\n  body { font-size: 14px; }\n}'), '@media', 'max-width'),
+    L('유연한 이미지', 'M', '이미지가 부모보다 커지지 않게 하세요.', 'max-width: 100%와 height: auto로 이미지가 비율을 유지하며 줄어듭니다.', css('img {\n  max-width: 100%;\n  height: auto;\n}'), 'max-width: 100%', 'height: auto'),
+  ] },
+  { title: 'Tonga 웹페이지', lessons: [
+    L('탐색 메뉴', 'C', 'nav 안에 링크 목록을 만들고 가로로 배치하세요.', 'Flexbox로 메뉴를 가로로 배치합니다.', '<nav>\n  <a href="#">Home</a>\n  <a href="#">About</a>\n</nav>\n<style>nav { display: flex; gap: 16px; }</style>', '<nav>', 'display: flex'),
+    L('환영 헤더', 'P', '큰 제목과 배경색이 있는 헤더를 만드세요.', '헤더에 배경색과 가운데 정렬을 적용합니다.', css('header {\n  background: #0a84ff;\n  color: white;\n  text-align: center;\n}'), 'header {', 'background', 'text-align'),
+    L('소개 섹션', 'P', '소개 섹션에 패딩과 최대 너비를 지정하세요.', '읽기 좋은 폭으로 본문을 제한합니다.', css('.about {\n  padding: 24px;\n  max-width: 700px;\n  margin: 0 auto;\n}'), '.about', 'padding', 'max-width'),
+    L('연락처 섹션', 'P', '연락처 정보를 flex로 정렬하세요.', '연락처 항목을 나란히 배치합니다.', css('.contact {\n  display: flex;\n  justify-content: space-around;\n}'), '.contact', 'display: flex'),
+    L('뷰포트 태그', 'P', 'viewport meta 태그를 추가하세요.', '모바일 대응을 위한 필수 태그입니다.', '<meta name="viewport" content="width=device-width, initial-scale=1">', 'name="viewport"'),
+    L('미디어 쿼리', 'P', '600px 이하에서 메뉴를 세로로 바꾸세요.', '작은 화면에서 레이아웃을 바꿉니다.', css('@media (max-width: 600px) {\n  nav { flex-direction: column; }\n}'), '@media', 'flex-direction'),
+  ] },
+  { title: '최종 과제', lessons: [
+    L('항목 정렬', 'C', '여러 항목을 flex로 가운데 정렬하세요.', 'Flexbox 정렬 속성을 종합합니다.', css('.list {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  gap: 8px;\n}'), 'display: flex', 'justify-content', 'align-items'),
+    L('영화 목록', 'C', '영화 카드 목록에 박스 모델과 그림자를 적용하세요.', '카드 스타일을 만듭니다.', css('.movie {\n  padding: 12px;\n  border-radius: 8px;\n  box-shadow: 0 1px 4px rgba(0,0,0,.2);\n}'), '.movie', 'padding', 'border-radius'),
+    L('청첩장', 'C', '가운데 정렬 레이아웃과 글꼴, 배경색을 적용하세요.', '텍스트와 배경 스타일을 조합합니다.', css('body {\n  text-align: center;\n  font-family: Georgia;\n  background: #fff0f3;\n}'), 'text-align', 'font-family', 'background'),
+    L('플로팅 알림', 'C', 'position: fixed로 화면 모서리에 알림을 띄우세요.', 'fixed와 z-index로 항상 위에 보이게 합니다.', css('.toast {\n  position: fixed;\n  right: 16px;\n  bottom: 16px;\n  z-index: 100;\n}'), 'position: fixed', 'z-index'),
+  ] },
+];

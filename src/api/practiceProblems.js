@@ -101,3 +101,33 @@ export async function submitPracticeAnswer(type, problem, answer, { signal } = {
     results: Array.isArray(result.results) ? result.results : [],
   }
 }
+
+// 레슨에 붙은 문제 전체(객관식 → 파슨스 → 단답 → 코드 작성)를 한 번에 가져옵니다.
+const lessonProblemCache = new Map()
+
+export function fetchLessonProblems(lessonId, { signal } = {}) {
+  if (!lessonId) return Promise.reject(new Error('레슨 ID가 없습니다.'))
+  const cached = lessonProblemCache.get(lessonId)
+  if (cached) return cached
+  const request = apiRequest({
+    url: `/lessons/${encodeURIComponent(lessonId)}/problems`,
+    method: 'GET',
+    signal,
+  })
+    .then((payload) => {
+      const data = payload?.data && typeof payload.data === 'object' ? payload.data : payload
+      const problems = Array.isArray(data?.problems) ? data.problems : []
+      return { total: data?.total ?? problems.length, solved: data?.solved ?? 0, problems }
+    })
+    .catch((error) => {
+      lessonProblemCache.delete(lessonId)
+      throw error
+    })
+  lessonProblemCache.set(lessonId, request)
+  return request
+}
+
+export function clearLessonProblemCache(lessonId) {
+  if (lessonId) lessonProblemCache.delete(lessonId)
+  else lessonProblemCache.clear()
+}

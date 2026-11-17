@@ -1,0 +1,76 @@
+// HTML 레슨 콘텐츠. 검사식: 'p=텍스트' 는 해당 요소의 텍스트가 같은지, 'br' 만 쓰면 요소가 존재하는지 확인합니다.
+const entry = (instruction, theory, example, ...rules) => ({
+  instruction,
+  theory,
+  example,
+  checks: rules.map((rule) => {
+    const [selector, expected] = rule.split('=');
+    const index = rules.slice(0, rules.indexOf(rule)).filter((r) => r.split('=')[0] === selector).length;
+    return expected === undefined
+      ? { selector, index, expected: `${selector} 요소`, exists: true }
+      : { selector, index, expected };
+  }),
+});
+
+const raw = {
+  'html-intro': entry('body 안에 p 요소를 만들고 "Hello HTML"이라고 작성하세요.', 'HTML은 웹 페이지의 구조를 만드는 마크업 언어입니다. 브라우저가 태그를 읽어 화면에 보여 줍니다.', '<p>Hello HTML</p>', 'p=Hello HTML'),
+  'html-document': entry('body 안에 h1 요소로 "My Page"를 작성하세요.', 'HTML 문서는 html 요소 안에 head와 body로 나뉩니다. 화면에 보이는 내용은 body에 씁니다.', '<h1>My Page</h1>', 'h1=My Page'),
+  'html-tags': entry('p 요소에 "Tags wrap content"를 작성하세요.', '요소는 시작 태그 <p>, 내용, 종료 태그 </p>로 이루어집니다.', '<p>Tags wrap content</p>', 'p=Tags wrap content'),
+  'html-head': entry('head 안에 title 요소로 "My Site"를 작성하세요.', 'head에는 화면에 직접 보이지 않는 정보(title, meta 등)를 넣습니다. title은 브라우저 탭에 표시됩니다.', '<head>\n  <title>My Site</title>\n</head>', 'title=My Site'),
+  'html-body': entry('body 안에 h1 "Welcome"과 p "Enjoy your stay"를 작성하세요.', 'body 안의 내용이 브라우저 화면에 보입니다.', '<h1>Welcome</h1>\n<p>Enjoy your stay</p>', 'h1=Welcome', 'p=Enjoy your stay'),
+  'html-first': entry('h1 "My First Page"와 p "Hello, world!"로 첫 웹 페이지를 완성하세요.', '제목과 본문 요소를 조합해 첫 페이지를 만듭니다.', '<h1>My First Page</h1>\n<p>Hello, world!</p>', 'h1=My First Page', 'p=Hello, world!'),
+  'text-mastery': entry('h2 "Daily Special"과 p "Fresh pasta"를 작성하세요.', '제목과 단락을 함께 써서 텍스트의 구조를 만듭니다.', '<h2>Daily Special</h2>\n<p>Fresh pasta</p>', 'h2=Daily Special', 'p=Fresh pasta'),
+  'text-challenge': entry('h1 "Pizza House", p "Open daily", strong "Fresh"를 작성하세요.', '제목, 단락, 강조 요소를 조합합니다.', '<h1>Pizza House</h1>\n<p>Open daily</p>\n<strong>Fresh</strong>', 'h1=Pizza House', 'p=Open daily', 'strong=Fresh'),
+  'text-trophy': entry('h1 "Text Done"과 p "Well done"을 작성하세요.', '텍스트 챕터에서 배운 제목과 단락을 정리합니다.', '<h1>Text Done</h1>\n<p>Well done</p>', 'h1=Text Done', 'p=Well done'),
+  'unordered-list': entry('ul 안에 li 두 개 "Apple"과 "Banana"를 작성하세요.', 'ul은 순서가 없는 목록(점 목록)을, li는 각 항목을 나타냅니다.', '<ul>\n  <li>Apple</li>\n  <li>Banana</li>\n</ul>', 'ul', 'li=Apple', 'li=Banana'),
+  'ordered-list': entry('ol 안에 li 두 개 "Boil water"와 "Add pasta"를 작성하세요.', 'ol은 번호가 붙는 순서 있는 목록입니다.', '<ol>\n  <li>Boil water</li>\n  <li>Add pasta</li>\n</ol>', 'ol', 'li=Boil water', 'li=Add pasta'),
+  'list-items': entry('ul 안에 li "Milk", "Eggs", "Bread" 세 개를 작성하세요.', '항목은 li로 하나씩 감싸며 필요한 만큼 추가할 수 있습니다.', '<ul>\n  <li>Milk</li>\n  <li>Eggs</li>\n  <li>Bread</li>\n</ul>', 'li=Milk', 'li=Eggs', 'li=Bread'),
+  'list-challenge': entry('ul 안에 li "Red", "Green"을, ol 안에 li "Start"를 작성하세요.', 'ul과 ol을 함께 사용해 봅니다.', '<ul>\n  <li>Red</li>\n  <li>Green</li>\n</ul>\n<ol>\n  <li>Start</li>\n</ol>', 'ul', 'ol', 'li=Red', 'li=Green', 'li=Start'),
+  'list-trophy': entry('ul에 li "One"과 "Two"를 작성하세요.', '리스트 챕터를 정리하는 복습입니다.', '<ul>\n  <li>One</li>\n  <li>Two</li>\n</ul>', 'ul', 'li=One', 'li=Two'),
+  'recipe-start': entry('h1 "Pancakes"를 작성하세요.', '레시피 카드의 제목을 만듭니다.', '<h1>Pancakes</h1>', 'h1=Pancakes'),
+  'recipe-1': entry('p 요소에 "Fluffy breakfast pancakes"를 작성하세요.', '제목 아래에 짧은 설명을 붙입니다.', '<p>Fluffy breakfast pancakes</p>', 'p=Fluffy breakfast pancakes'),
+  'recipe-2': entry('h2 "Ingredients"와 ul 안에 li "Flour", "Milk"를 작성하세요.', '재료는 순서가 필요 없으므로 ul로 나열합니다.', '<h2>Ingredients</h2>\n<ul>\n  <li>Flour</li>\n  <li>Milk</li>\n</ul>', 'h2=Ingredients', 'ul', 'li=Flour', 'li=Milk'),
+  'recipe-3': entry('h2 "Steps"와 ol 안에 li "Mix", "Cook"을 작성하세요.', '조리 순서는 번호가 필요하므로 ol로 나열합니다.', '<h2>Steps</h2>\n<ol>\n  <li>Mix</li>\n  <li>Cook</li>\n</ol>', 'h2=Steps', 'ol', 'li=Mix', 'li=Cook'),
+  'recipe-trophy': entry('h1 "Pancakes", ul/li "Flour", ol/li "Mix"로 레시피 카드를 완성하세요.', '제목, 재료, 단계를 하나의 카드로 합칩니다.', '<h1>Pancakes</h1>\n<ul>\n  <li>Flour</li>\n</ul>\n<ol>\n  <li>Mix</li>\n</ol>', 'h1=Pancakes', 'ul', 'ol', 'li=Flour', 'li=Mix'),
+  links: entry('href가 "https://example.com"인 a 요소에 "Visit"를 작성하세요.', 'a 요소의 href 속성에 이동할 주소를 적습니다.', '<a href="https://example.com">Visit</a>', 'a=Visit'),
+  images: entry('src가 "cat.png", alt가 "Cat"인 img 요소를 작성하세요.', 'img는 닫는 태그가 없고, alt는 이미지를 설명하는 대체 텍스트입니다.', '<img src="cat.png" alt="Cat">', 'img'),
+  'audio-video': entry('controls 속성이 있는 audio 요소를 작성하세요.', 'audio와 video 요소는 controls 속성을 주면 재생 컨트롤이 표시됩니다.', '<audio src="song.mp3" controls></audio>', 'audio'),
+  'content-more': entry('a "Docs"와 img를 함께 작성하세요.', '링크와 이미지를 한 페이지에 조합할 수 있습니다.', '<a href="https://example.com">Docs</a>\n<img src="logo.png" alt="Logo">', 'a=Docs', 'img'),
+  'content-trophy': entry('a "Home"과 img를 작성하세요.', '콘텐츠 추가하기 챕터의 복습입니다.', '<a href="/">Home</a>\n<img src="a.png" alt="A">', 'a=Home', 'img'),
+  semantic: entry('main 요소 안에 p "Content"를 작성하세요.', 'header, main, footer 같은 시맨틱 요소는 영역의 의미를 알려 줍니다.', '<main>\n  <p>Content</p>\n</main>', 'main', 'p=Content'),
+  'header-footer': entry('header에 h1 "Site", footer에 p "Bye"를 작성하세요.', 'header는 머리말, footer는 꼬리말 영역입니다.', '<header>\n  <h1>Site</h1>\n</header>\n<footer>\n  <p>Bye</p>\n</footer>', 'header', 'h1=Site', 'footer', 'p=Bye'),
+  sections: entry('section 안에 h2 "About"을 작성하세요.', 'section은 주제별로 묶인 영역을 나타냅니다.', '<section>\n  <h2>About</h2>\n</section>', 'section', 'h2=About'),
+  'layout-challenge': entry('header, main, footer를 모두 사용하고 main 안에 p "Hi"를 작성하세요.', '시맨틱 요소로 페이지 뼈대를 만듭니다.', '<header></header>\n<main>\n  <p>Hi</p>\n</main>\n<footer></footer>', 'header', 'main', 'footer', 'p=Hi'),
+  'layout-trophy': entry('header, main, footer를 작성하세요.', '레이아웃 챕터를 정리하는 복습입니다.', '<header></header>\n<main></main>\n<footer></footer>', 'header', 'main', 'footer'),
+  'profile-start': entry('h1 "Jane Doe"를 작성하세요.', '프로필 페이지의 이름을 제목으로 만듭니다.', '<h1>Jane Doe</h1>', 'h1=Jane Doe'),
+  'profile-about': entry('h2 "About me"와 p "I love coding"을 작성하세요.', '자기소개 영역을 제목과 단락으로 만듭니다.', '<h2>About me</h2>\n<p>I love coding</p>', 'h2=About me', 'p=I love coding'),
+  'profile-links': entry('a "GitHub"와 a "Email" 링크를 작성하세요.', '연락처는 링크로 연결합니다.', '<a href="https://github.com">GitHub</a>\n<a href="mailto:me@example.com">Email</a>', 'a=GitHub', 'a=Email'),
+  'profile-image': entry('alt가 있는 img 요소를 작성하세요.', '프로필 사진에는 alt 텍스트를 넣습니다.', '<img src="me.png" alt="Jane">', 'img'),
+  'profile-trophy': entry('h1 "Jane Doe", p "Developer", img로 프로필을 완성하세요.', '프로필 페이지 요소를 모두 모읍니다.', '<h1>Jane Doe</h1>\n<p>Developer</p>\n<img src="me.png" alt="Jane">', 'h1=Jane Doe', 'p=Developer', 'img'),
+  form: entry('form 요소 안에 button "Send"를 작성하세요.', 'form은 사용자 입력을 모아 보내는 영역입니다.', '<form>\n  <button>Send</button>\n</form>', 'form', 'button=Send'),
+  input: entry('type이 "text"인 input 요소를 form 안에 작성하세요.', 'input 요소는 type 속성에 따라 다양한 입력칸을 만듭니다.', '<form>\n  <input type="text">\n</form>', 'form', 'input'),
+  labels: entry('label "Name"과 input을 form 안에 작성하세요.', 'label은 입력칸의 이름표입니다. 클릭하면 입력칸으로 이동합니다.', '<form>\n  <label>Name</label>\n  <input type="text">\n</form>', 'label=Name', 'input'),
+  'form-challenge': entry('label "Email", input, button "Join"이 있는 form을 작성하세요.', '레이블·입력칸·버튼을 하나의 폼으로 합칩니다.', '<form>\n  <label>Email</label>\n  <input type="email">\n  <button>Join</button>\n</form>', 'form', 'label=Email', 'input', 'button=Join'),
+  'form-trophy': entry('input과 button "Go"가 있는 form을 작성하세요.', '폼 챕터를 정리하는 복습입니다.', '<form>\n  <input type="text">\n  <button>Go</button>\n</form>', 'form', 'input', 'button=Go'),
+  select: entry('option "Red"와 "Blue"가 있는 select를 작성하세요.', 'select는 드롭다운 메뉴, option은 선택지입니다.', '<select>\n  <option>Red</option>\n  <option>Blue</option>\n</select>', 'select', 'option=Red', 'option=Blue'),
+  checkbox: entry('type이 "checkbox"인 input과 label "Agree"를 작성하세요.', '체크박스는 켜고 끄는 선택에 씁니다.', '<input type="checkbox">\n<label>Agree</label>', 'input', 'label=Agree'),
+  radio: entry('type이 "radio"인 input 두 개와 label "Yes", "No"를 작성하세요.', '같은 name을 가진 라디오 버튼 중 하나만 선택됩니다.', '<input type="radio" name="a">\n<label>Yes</label>\n<input type="radio" name="a">\n<label>No</label>', 'input', 'label=Yes', 'label=No'),
+  'form2-challenge': entry('select, checkbox input, button "Submit"이 있는 form을 작성하세요.', '다양한 입력 요소를 한 폼에 모읍니다.', '<form>\n  <select><option>A</option></select>\n  <input type="checkbox">\n  <button>Submit</button>\n</form>', 'form', 'select', 'input', 'button=Submit'),
+  'form2-trophy': entry('select와 button "OK"를 form에 작성하세요.', '폼 파트 2를 정리하는 복습입니다.', '<form>\n  <select><option>A</option></select>\n  <button>OK</button>\n</form>', 'form', 'select', 'button=OK'),
+  table: entry('table 안에 tr, td "Cell"을 작성하세요.', 'table 안에 행(tr)과 칸(td)을 넣어 표를 만듭니다.', '<table>\n  <tr>\n    <td>Cell</td>\n  </tr>\n</table>', 'table', 'tr', 'td=Cell'),
+  'table-rows': entry('tr 두 개, 각 행에 td "A"와 "B"를 작성하세요.', 'tr 하나가 한 행, td 하나가 한 칸입니다.', '<table>\n  <tr><td>A</td></tr>\n  <tr><td>B</td></tr>\n</table>', 'table', 'td=A', 'td=B'),
+  'table-head': entry('th "Name"과 td "Kim"을 가진 표를 작성하세요.', 'th는 제목 칸입니다. 굵게 가운데 정렬되어 표시됩니다.', '<table>\n  <tr><th>Name</th></tr>\n  <tr><td>Kim</td></tr>\n</table>', 'th=Name', 'td=Kim'),
+  'table-challenge': entry('th "Item", "Price"와 td "Pen", "1"이 있는 표를 작성하세요.', '제목 행과 데이터 행으로 표를 완성합니다.', '<table>\n  <tr><th>Item</th><th>Price</th></tr>\n  <tr><td>Pen</td><td>1</td></tr>\n</table>', 'th=Item', 'th=Price', 'td=Pen', 'td=1'),
+  'table-trophy': entry('th "Name"과 td "Lee"가 있는 표를 작성하세요.', '테이블 챕터를 정리하는 복습입니다.', '<table>\n  <tr><th>Name</th></tr>\n  <tr><td>Lee</td></tr>\n</table>', 'th=Name', 'td=Lee'),
+  'event-start': entry('h1 "Tech Meetup"을 작성하세요.', '이벤트 페이지의 제목을 만듭니다.', '<h1>Tech Meetup</h1>', 'h1=Tech Meetup'),
+  'event-form': entry('label "Name", input, button "Register"가 있는 form을 작성하세요.', '참가 신청 폼을 만듭니다.', '<form>\n  <label>Name</label>\n  <input type="text">\n  <button>Register</button>\n</form>', 'form', 'label=Name', 'input', 'button=Register'),
+  'event-details': entry('p "Date: Dec 1"과 p "Place: Seoul"을 작성하세요.', '일시와 장소 같은 정보를 단락으로 보여 줍니다.', '<p>Date: Dec 1</p>\n<p>Place: Seoul</p>', 'p=Date: Dec 1', 'p=Place: Seoul'),
+  'event-finish': entry('h1 "Tech Meetup", p "Seoul", form의 button "Register"로 페이지를 완성하세요.', '제목, 정보, 폼을 하나로 합칩니다.', '<h1>Tech Meetup</h1>\n<p>Seoul</p>\n<form>\n  <button>Register</button>\n</form>', 'h1=Tech Meetup', 'p=Seoul', 'button=Register'),
+  'event-trophy': entry('h1 "Meetup"과 form 안의 button "Join"을 작성하세요.', '이벤트 페이지 프로젝트 복습입니다.', '<h1>Meetup</h1>\n<form>\n  <button>Join</button>\n</form>', 'h1=Meetup', 'form', 'button=Join'),
+  'final-one': entry('header의 h1 "Blog"와 main의 p "Hello"를 작성하세요.', '시맨틱 요소와 텍스트 요소를 조합합니다.', '<header>\n  <h1>Blog</h1>\n</header>\n<main>\n  <p>Hello</p>\n</main>', 'header', 'h1=Blog', 'main', 'p=Hello'),
+  'final-two': entry('ul에 li "A", "B"를 넣고 a "More" 링크를 작성하세요.', '리스트와 링크를 조합합니다.', '<ul>\n  <li>A</li>\n  <li>B</li>\n</ul>\n<a href="/more">More</a>', 'ul', 'li=A', 'li=B', 'a=More'),
+  'final-three': entry('form(label "Name", input, button "Send")과 table(th "Name")을 작성하세요.', '폼과 테이블을 한 페이지에서 사용합니다.', '<form>\n  <label>Name</label>\n  <input type="text">\n  <button>Send</button>\n</form>\n<table>\n  <tr><th>Name</th></tr>\n</table>', 'form', 'label=Name', 'input', 'button=Send', 'th=Name'),
+  'final-trophy': entry('h1 "Done"과 p "Course complete"를 작성하세요.', '과정을 마무리하는 복습입니다.', '<h1>Done</h1>\n<p>Course complete</p>', 'h1=Done', 'p=Course complete'),
+};
+
+export default raw;

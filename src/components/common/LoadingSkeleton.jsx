@@ -29,12 +29,68 @@ function ProfileSkeleton() {
   </>
 }
 
+function NoticeSkeleton({ count = 3 }) {
+  return Array.from({ length: count }, (_, index) => (
+    <div className="skeleton-panel skeleton-notice" key={index}>
+      <span className="skeleton-block skeleton-dot" />
+      <div className="skeleton-row-copy"><Line width="30%" height={13} /><Line width="72%" /></div>
+      <Line width="42px" />
+    </div>
+  ))
+}
+
+function RankingSkeleton({ count = 7 }) {
+  return Array.from({ length: count }, (_, index) => (
+    <div className="skeleton-rank-row" key={index}>
+      <Line width="16px" height={14} />
+      <Line width="38%" height={12} />
+      <Line width="64px" height={14} />
+    </div>
+  ))
+}
+
+function PracticeSkeleton() {
+  return (
+    <div className="skeleton-practice">
+      <Line width="26%" height={12} />
+      <Line width="70%" height={20} />
+      <Line width="48%" height={14} />
+      {[0, 1, 2].map((item) => <span className="skeleton-block skeleton-option" key={item} />)}
+    </div>
+  )
+}
+
+function LessonSkeleton() {
+  return (
+    <div className="skeleton-lesson">
+      <div className="skeleton-lesson-topbar">
+        <span className="skeleton-lesson-close"><span className="skeleton-block skeleton-lesson-x" /></span>
+        <Line width="140px" height={20} />
+      </div>
+      <div className="skeleton-lesson-body">
+        <div className="skeleton-lesson-side">
+          <Line width="55%" height={20} /><Line /><Line width="88%" /><Line width="70%" />
+          <span className="skeleton-block skeleton-lesson-example" />
+        </div>
+        <span className="skeleton-lesson-handle" />
+        <div className="skeleton-lesson-main"><div className="skeleton-lesson-card"><PracticeSkeleton /></div></div>
+      </div>
+    </div>
+  )
+}
+
 export function LoadingSkeleton({ variant, label }) {
   return (
     <div className={`loading-skeleton loading-skeleton--${variant}`} role="status" aria-label={label}>
       <span className="skeleton-sr-only">{label}</span>
       <div aria-hidden="true" className="skeleton-layout">
-        {variant === 'profile' ? <ProfileSkeleton /> : variant === 'groups' ? (
+        {variant === 'profile' ? <ProfileSkeleton /> : variant === 'notifications' ? <NoticeSkeleton />
+        : variant === 'ranking' ? <RankingSkeleton />
+        : variant === 'practice' ? <PracticeSkeleton />
+        : variant === 'lesson' ? <LessonSkeleton />
+        : variant === 'settings' ? <SkeletonRows count={5} />
+        : variant === 'xp' ? <div className="skeleton-row-copy"><Line width="46%" height={14} /><Line width="70%" /></div>
+        : variant === 'groups' ? (
           Array.from({ length: 3 }, (_, index) => <div className="skeleton-panel skeleton-group" key={index}>
             <div className="skeleton-group-top"><span className="skeleton-block skeleton-avatar" /><Line width="45px" height={20} /></div>
             <Line width="35%" height={15} /><Line width="55%" />

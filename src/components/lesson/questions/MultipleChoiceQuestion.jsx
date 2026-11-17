@@ -7,7 +7,7 @@ export function MultipleChoiceQuestion({ problem, selected, feedback, onChange, 
       <QuestionOptions
         choices={problem.content.choices}
         selectedIndex={selected}
-        correctChoiceIndex={Number.isInteger(feedback?.answer) ? feedback.answer : -1}
+        correctChoiceIndex={-1}
         showResult={Boolean(feedback)}
         isCorrect={Boolean(feedback?.correct)}
         onSelect={onChange}
