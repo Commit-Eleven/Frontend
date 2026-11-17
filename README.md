@@ -18,6 +18,7 @@ npm run dev
 - `/`, `/auth`, `/login`: 시작 및 Google 로그인 화면
 - `/journeys/html/fundamentals`: HTML 여정과 웹 미리보기가 있는 실습
 - `/journeys/javascript/fundamentals`, `/journeys/python/fundamentals`, `/journeys/java/fundamentals`: 언어별 여정과 코드 실습
+- 각 여정의 사이드 메뉴 `그룹`: 그룹 목록 조회, 생성, 참여 및 초대 기능을 제공합니다.
 - 각 여정의 사이드 메뉴 `오답 노트`: 틀린 개념 문제 복습과 코드 문제 재방문
 
 학습 화면에서는 선택형, 빈칸 채우기, 순서 맞추기, 단답형 문제를 코드 실습 전에 풀 수 있습니다. 문제 조회와 제출은 `/api/problems/{mcq|blank|parsons|short}`를 사용하며, 개발 서버는 `/api` 요청을 `https://codegram.me`로 전달합니다. 서버 응답이 없으면 예시 문제를 표시합니다.
@@ -25,6 +26,9 @@ npm run dev
 코드 실습은 `GET /api/problems/code?language=html`로 문제 설명·초기 코드·보상을 가져오고, `POST /api/problems/code`에 `{ id, code }`를 제출합니다. 채점 기준 통과 수와 부족한 조건은 서버 응답으로 표시합니다. 정답이면 서버가 제출 기록과 첫 정답 XP를 저장하며, 프론트는 `POST /api/lessons/{lessonId}/complete`가 성공한 뒤 여정의 완료 상태를 갱신합니다. 완료 기록 저장에 실패하면 코드 재제출 없이 저장만 재시도할 수 있습니다.
 
 코드 실습 API 오류나 미등록 언어는 안내 화면으로 표시합니다. 코드를 프론트에서 대신 채점하지 않습니다. HTML 미리보기와 작성 중인 코드 초안은 브라우저에서 처리하며, 서버의 현재 코드 채점 방식은 정규식 조건 검사입니다. 코드 실습 안내는 서버 문제를 사용하고, 개념 확인 단계의 왼쪽 이론은 기존 프론트 콘텐츠를 사용합니다.
+## 친구 삭제
+
+친구 화면의 목록에서 `친구 삭제` → `삭제 확인`을 누르면 기존 `DELETE /api/users/friends/{friendshipId}` API를 호출합니다. 삭제 성공 후 목록과 친구 수가 갱신되며, 실패하면 친구를 유지하고 재시도 안내를 표시합니다. `취소`를 누르면 요청을 보내지 않습니다.
 
 ## 소스 구조
 
