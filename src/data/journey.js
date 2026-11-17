@@ -197,6 +197,12 @@ export const chapterData = [
   },
 ];
 
+for (const chapter of chapterData) {
+  for (const row of chapter.rows) {
+    if (row.side) row.side.base = row.main.id;
+  }
+}
+
 export const allMainLessons = chapterData.flatMap((chapter) => chapter.rows.map((row) => row.main));
 export const allNodes = chapterData.flatMap((chapter) =>
   chapter.rows.flatMap((row) => [row.main, row.side].filter(Boolean)),

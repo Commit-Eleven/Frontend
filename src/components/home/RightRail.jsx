@@ -1,25 +1,53 @@
-import { memo, useState } from 'react';
+import { memo, useMemo } from 'react';
 import { icon } from '../../lib/assets.js';
 import { wasSolvedOnDate } from '../../lib/studyActivity.js';
+import { LoadingSkeleton } from '../common/LoadingSkeleton.jsx';
 import { Stats } from '../common/Stats.jsx';
-import { UnitDetailModal } from './UnitDetailModal.jsx';
+import { chapterTitleFor } from '../../data/curricula.js';
 import './RightRail.css';
 
 const tierNames = { normal: '학습자', creator: '크리에이터', admin: '관리자' };
 
-export const RightRail = memo(function RightRail({ onNavigate, summary }) {
-  const { exp, home, ranking, loggedIn } = summary;
-  const [unitOpen, setUnitOpen] = useState(false);
+/** 선택한 언어의 로컬 커리큘럼과 로컬 진행도로 '이어서 학습' 카드를 만듭니다. */
+function currentLesson(journey, completed, active) {
+  const lessons = journey.allMainLessons;
+  const next = lessons.find((lesson) => lesson.id === active) ?? lessons.find((lesson) => !completed.includes(lesson.id));
+  if (!next) return null;
+  const chapterIndex = journey.chapterData.findIndex((chapter) =>
+    chapter.rows.some((row) => row.main.id === next.id || row.side?.id === next.id),
+  );
+  const chapter = journey.chapterData[chapterIndex];
+  const remainingInChapter = chapter
+    ? chapter.rows.filter((row) => !completed.includes(row.main.id)).length
+    : 0;
+  return {
+    courseTitle: journey.title,
+    chapterTitle: chapterTitleFor(next.id, journey),
+    title: next.title,
+    // 처음 쓰는 사람도 진행이 보이도록 코스 전체가 아니라 현재 챕터 기준으로 계산합니다.
+    solved: chapter
+      ? chapter.rows.filter((row) => completed.includes(row.main.id)).length
+      : lessons.filter((lesson) => completed.includes(lesson.id)).length,
+    total: chapter ? chapter.rows.length : lessons.length,
+    remainingInChapter,
+    nextChapterTitle: journey.chapterData[chapterIndex + 1]?.title ?? journey.nextSectionTitle,
+  };
+}
+
+export const RightRail = memo(function RightRail({ onNavigate, summary, journey, completed = [], active, onSyllabus }) {
+  const { exp, ranking, loggedIn } = summary;
 
   const latest = exp?.recent[0];
-  const unit = home?.currentUnit;
-  const recommendations = home?.recommendations.slice(0, 2) ?? [];
+  const unit = useMemo(
+    () => (journey ? currentLesson(journey, completed, active) : null),
+    [journey, completed, active],
+  );
   const topRanks = ranking?.items.slice(0, 3) ?? [];
   const meInTop = topRanks.some((row) => row.isMe);
 
   return (
     <aside className="right-rail">
-      <Stats streakDays={home?.stats.streakDays ?? 0} hasSolvedToday={wasSolvedOnDate(latest?.createdAt)} />
+      <Stats streakDays={summary.home?.stats.streakDays ?? 0} hasSolvedToday={wasSolvedOnDate(latest?.createdAt)} />
       <div className="rail-card level-card">
         <div className="level-avatar">XP</div>
         <div className="level-info">
@@ -33,8 +61,12 @@ export const RightRail = memo(function RightRail({ onNavigate, summary }) {
             </>
           ) : (
             <>
-              <div className="level-top"><strong>내 경험치</strong></div>
-              <small>{loggedIn ? '경험치를 불러오는 중…' : '로그인하면 XP가 기록돼요.'}</small>
+              {loggedIn ? <LoadingSkeleton variant="xp" label="경험치를 불러오는 중" /> : (
+                <>
+                  <div className="level-top"><strong>내 경험치</strong></div>
+                  <small>로그인하면 XP가 기록돼요.</small>
+                </>
+              )}
             </>
           )}
         </div>
@@ -44,27 +76,13 @@ export const RightRail = memo(function RightRail({ onNavigate, summary }) {
         <div className="rail-card unit-card">
           <div className="rail-heading">
             <strong>이어서 학습</strong>
-            <button type="button" onClick={() => setUnitOpen(true)}>단원 보기</button>
+            {onSyllabus && <button type="button" onClick={onSyllabus}>강의 계획</button>}
           </div>
-          <p className="unit-card-course">{unit.courseTitle}</p>
+          <p className="unit-card-course">{unit.courseTitle} · {unit.chapterTitle}</p>
           <h3>{unit.title}</h3>
-          <div className="unit-card-track" aria-label={`${unit.total}문제 중 ${unit.solved}문제 해결`}>
+          <div className="unit-card-track" aria-label={`${unit.total}개 레슨 중 ${unit.solved}개 완료`}>
             <span style={{ width: (unit.total ? Math.round((unit.solved / unit.total) * 100) : 0) + '%' }} />
           </div>
-          <small className="unit-card-meta">
-            {unit.solved} / {unit.total}문제
-            {unit.nextStageTitle ? ` · ${unit.remainingToUnlock}문제 더 맞히면 '${unit.nextStageTitle}' 열림` : ''}
-          </small>
-          {recommendations.length > 0 && (
-            <ul className="unit-card-list">
-              {recommendations.map((item) => (
-                <li key={item.problemId}>
-                  <span>{item.title}<small>{item.typeLabel}</small></span>
-                  <b>+{item.xp} XP</b>
-                </li>
-              ))}
-            </ul>
-          )}
         </div>
       )}
 
@@ -99,7 +117,6 @@ export const RightRail = memo(function RightRail({ onNavigate, summary }) {
           </div>
         )}
       </div>
-      {unitOpen && unit && <UnitDetailModal unitId={unit.unitId} onClose={() => setUnitOpen(false)} />}
     </aside>
   );
 });
