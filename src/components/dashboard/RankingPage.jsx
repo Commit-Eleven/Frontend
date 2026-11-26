@@ -1,4 +1,5 @@
 import { LoadingSkeleton } from '../common/LoadingSkeleton.jsx'
+import { LoadingTransition } from '../common/LoadingTransition.jsx'
 import { useEffect, useState } from 'react'
 import { beginGoogleLogin } from '../../api/auth.js'
 import { fetchRanking } from '../../api/learning.js'
@@ -58,8 +59,8 @@ export function RankingPage() {
       )}
 
       <article className="ranking-list-card">
-        {loading && !data ? <LoadingSkeleton variant="ranking" label="랭킹을 불러오는 중" />
-          : error ? (
+        <LoadingTransition loading={loading && !data} skeleton={<LoadingSkeleton variant="ranking" label="랭킹을 불러오는 중" />}>
+          {error ? (
             <div className="ranking-muted" role="alert">
               랭킹을 불러오지 못했어요. {error.message}
               <button type="button" className="ranking-text-button" onClick={() => goPage(page)}>다시 시도</button>
@@ -75,6 +76,7 @@ export function RankingPage() {
               ))}
             </ol>
           ) : <p className="ranking-muted">아직 랭킹에 오른 학습자가 없어요.</p>}
+        </LoadingTransition>
       </article>
 
       {lastPage > 1 && (

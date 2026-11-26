@@ -21,6 +21,7 @@ import { QuestionActions } from './questions/QuestionActions.jsx';
 import { recordWrongAnswer, resolveWrongNoteForProblem } from '../../lib/wrongNotes.js';
 import { markProblemSolved } from '../../lib/studyActivity.js';
 import { LoadingSkeleton } from '../common/LoadingSkeleton.jsx';
+import { LoadingTransition } from '../common/LoadingTransition.jsx';
 import './QuizWorkspace.css';
 
 function cleanTitle(title) {
@@ -327,9 +328,8 @@ export function QuizWorkspace({ lesson, languageCode, onExit, onComplete, onLogi
             step={String(step + 1).padStart(2, '0')}
             label={`${language.label} · ${names[type]} · 개념 확인`}
           />
-          {loaded.status === 'loading' || plan === null ? (
-            <LoadingSkeleton variant="practice" label="문제를 불러오는 중" />
-          ) : loaded.status === 'auth-required' ? (
+          <LoadingTransition loading={loaded.status === 'loading' || plan === null} skeleton={<LoadingSkeleton variant="practice" label="문제를 불러오는 중" />}>
+          {loaded.status === 'auth-required' ? (
             <div className="practice-auth-gate" role="alert">
               <h1>로그인이 필요해요</h1>
               <p>서버 문제를 불러오려면 로그인해 주세요.</p>
@@ -451,6 +451,7 @@ export function QuizWorkspace({ lesson, languageCode, onExit, onComplete, onLogi
               </QuestionActions>
             </>
           )}
+          </LoadingTransition>
         </div>
       </div>
     </section>

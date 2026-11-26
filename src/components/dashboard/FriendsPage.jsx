@@ -1,4 +1,5 @@
 import { LoadingSkeleton } from '../common/LoadingSkeleton.jsx'
+import { LoadingTransition } from '../common/LoadingTransition.jsx'
 import { useEffect, useMemo, useState } from 'react'
 import { beginGoogleLogin } from '../../api/auth.js'
 import {
@@ -271,9 +272,9 @@ export function FriendsPage() {
             <span>{loadError.message}</span>
             <button type="button" onClick={reloadFriends}>다시 시도</button>
           </div>
-        ) : loading ? (
-          <LoadingSkeleton variant="friends" label="친구 목록을 불러오는 중" />
-        ) : visible.length ? (
+        ) : (
+          <LoadingTransition loading={loading} skeleton={<LoadingSkeleton variant="friends" label="친구 목록을 불러오는 중" />}>
+          {visible.length ? (
           <div className="friends-list">
             {visible.map((item) => (
               <article className="friend-row" key={item.friendshipId}>
@@ -316,6 +317,8 @@ export function FriendsPage() {
             title={activeTab === 'friends' ? '아직 친구가 없어요' : activeTab === 'incoming' ? '받은 요청이 없어요' : '보낸 요청이 없어요'}
             description={activeTab === 'friends' ? '위 검색창에서 친구를 찾아 함께 학습을 시작해 보세요.' : '새로운 친구 요청이 오면 여기에서 확인할 수 있어요.'}
           />
+        )}
+          </LoadingTransition>
         )}
       </div>
     </section>

@@ -18,15 +18,35 @@ import './Home.css';
 export function Home(props) {
   const { language, activeItem, onActiveItemChange, onSelect, onLogout } = props;
   const summary = useDashboardSummary();
+  const [transitionStage, setTransitionStage] = useState('entering');
+  const transitionTimer = useRef(null);
   const navigate = useCallback((label) => {
-    onActiveItemChange(label);
-    onSelect(null);
-  }, [onActiveItemChange, onSelect]);
+    window.clearTimeout(transitionTimer.current);
+    if (label === activeItem || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setTransitionStage('idle');
+      onActiveItemChange(label);
+      onSelect(null);
+      return;
+    }
+
+    setTransitionStage('leaving');
+    transitionTimer.current = window.setTimeout(() => {
+      onActiveItemChange(label);
+      onSelect(null);
+      setTransitionStage('entering');
+      transitionTimer.current = window.setTimeout(() => setTransitionStage('idle'), 200);
+    }, 100);
+  }, [activeItem, onActiveItemChange, onSelect]);
+
+  useEffect(() => {
+    transitionTimer.current = window.setTimeout(() => setTransitionStage('idle'), 200);
+    return () => window.clearTimeout(transitionTimer.current);
+  }, []);
 
   return (
     <div className={'home-layout' + (activeItem === '그룹' ? ' groups-page' : '')}>
       <Sidebar activeItem={activeItem} onNavigate={navigate} onLogout={onLogout} homePath={`/journeys/${language.code}/fundamentals`} />
-      <HomeContent key={language.code} {...props} onNavigate={navigate} />
+      <HomeContent key={language.code} {...props} onNavigate={navigate} transitionStage={transitionStage} />
       <RightRail onNavigate={navigate} summary={summary} journey={props.journey} completed={props.completed} active={props.active} onSyllabus={props.onSyllabus} />
       <div className="mobile-stats">
         <Stats compact streakDays={summary.home?.stats.streakDays ?? 0} />
@@ -50,6 +70,7 @@ function HomeContent({
   onSearch,
   onSyllabus,
   jumpTo,
+  transitionStage,
 }) {
   const { chapterData } = journey;
   const centerRef = useRef(null);
@@ -118,7 +139,10 @@ function HomeContent({
   };
   return (
     <main className="center-pane" ref={centerRef} onScroll={activeItem === '학습' ? handleScroll : undefined}>
-      <div className="center-content">
+      <div
+        className={`center-content${transitionStage === 'leaving' ? ' is-leaving' : transitionStage === 'entering' ? ' is-entering' : ''}`}
+        inert={transitionStage === 'leaving'}
+      >
         {activeItem === '그룹' ? (
           <Groups scrollRef={centerRef} />
         ) : activeItem === '오답 노트' ? (

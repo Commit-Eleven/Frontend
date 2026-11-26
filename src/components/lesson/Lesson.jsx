@@ -9,6 +9,7 @@ import { CodeWorkspace } from './CodeWorkspace.jsx';
 import { QuizWorkspace } from './QuizWorkspace.jsx';
 import { PanelResizeHandle } from './PanelResizeHandle.jsx';
 import { LoadingSkeleton } from '../common/LoadingSkeleton.jsx';
+import { LoadingTransition } from '../common/LoadingTransition.jsx';
 import './Lesson.css';
 
 export function Lesson({ lessonId, language, journey, onBack, onSuccess }) {
@@ -128,7 +129,9 @@ export function Lesson({ lessonId, language, journey, onBack, onSuccess }) {
               onComplete={finishConceptCheck}
               onLogin={() => beginGoogleLogin('quiz')}
             />
-          ) : coding.status === 'ready' ? (
+          ) : (
+            <LoadingTransition loading={loadingCode} skeleton={<LoadingSkeleton variant="practice" label="코드 문제를 불러오는 중" />}>
+            {coding.status === 'ready' ? (
             <CodeWorkspace
               code={coding.code}
               onCodeChange={coding.changeCode}
@@ -140,8 +143,7 @@ export function Lesson({ lessonId, language, journey, onBack, onSuccess }) {
               onLogin={() => beginGoogleLogin('quiz')}
               language={language}
             />
-          ) : (
-            loadingCode ? <LoadingSkeleton variant="practice" label="코드 문제를 불러오는 중" /> : (
+            ) : (
             <div className="code-problem-state" role="alert">
               <h2>{coding.status === 'auth-required' ? '로그인이 필요해요'
                 : coding.status === 'unavailable' ? '코드 문제를 준비하고 있어요'
@@ -154,7 +156,8 @@ export function Lesson({ lessonId, language, journey, onBack, onSuccess }) {
                 <button type="button" className="code-state-secondary" onClick={onBack}>여정으로 돌아가기</button>
               </>
             </div>
-            )
+            )}
+            </LoadingTransition>
           )}
         </main>
       </div>

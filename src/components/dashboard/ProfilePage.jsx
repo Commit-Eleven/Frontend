@@ -1,4 +1,5 @@
 import { LoadingSkeleton } from '../common/LoadingSkeleton.jsx'
+import { LoadingTransition } from '../common/LoadingTransition.jsx'
 import { useEffect, useState } from 'react'
 import { beginGoogleLogin } from '../../api/auth.js'
 import { fetchMyProfile, fetchMyStats, resetMyAvatar, updateMyAvatar, updateMyNickname } from '../../api/community.js'
@@ -49,7 +50,8 @@ function ExpHistory() {
         <div><h3>최근 획득 XP</h3><p>문제를 맞혀 얻은 경험치예요.</p></div>
         {exp && <strong>{exp.totalExp.toLocaleString()} <span>XP</span></strong>}
       </div>
-      {rows.length ? (
+      <LoadingTransition loading={!failed && !exp} skeleton={<LoadingSkeleton variant="history" label="경험치 기록을 불러오는 중" />}>
+        {rows.length ? (
         <ul className="profile-history-list">
           {rows.map((row, index) => (
             <li key={(row.createdAt ?? '') + index}>
@@ -59,9 +61,8 @@ function ExpHistory() {
             </li>
           ))}
         </ul>
-      ) : (
-        !failed && !exp ? <LoadingSkeleton variant="history" label="경험치 기록을 불러오는 중" /> : <p className="profile-no-history">{failed ? '경험치 기록을 불러오지 못했어요.' : '아직 얻은 경험치가 없어요.'}</p>
-      )}
+        ) : <p className="profile-no-history">{failed ? '경험치 기록을 불러오지 못했어요.' : '아직 얻은 경험치가 없어요.'}</p>}
+      </LoadingTransition>
     </article>
   )
 }
@@ -102,7 +103,8 @@ function SubmissionHistory() {
       <div className="profile-section-heading">
         <div><h3>제출 기록</h3><p>최근에 제출한 답안이에요.</p></div>
       </div>
-      {items.length ? (
+      <LoadingTransition loading={loading && !items.length} skeleton={<LoadingSkeleton variant="history" label="제출 기록을 불러오는 중" />}>
+        {items.length ? (
         <ul className="profile-history-list">
           {items.map((item) => (
             <li key={item.id}>
@@ -112,10 +114,9 @@ function SubmissionHistory() {
             </li>
           ))}
         </ul>
-      ) : !loading ? (
-        <p className="profile-no-history">{failed ? '제출 기록을 불러오지 못했어요.' : '아직 제출한 답안이 없어요.'}</p>
-      ) : null}
-      {loading && <LoadingSkeleton variant="history" label="제출 기록을 불러오는 중" />}
+        ) : !loading ? <p className="profile-no-history">{failed ? '제출 기록을 불러오지 못했어요.' : '아직 제출한 답안이 없어요.'}</p> : null}
+      </LoadingTransition>
+      {loading && items.length > 0 && <LoadingSkeleton variant="history" label="제출 기록을 불러오는 중" />}
       {!loading && nextCursor && (
         <button type="button" className="profile-more-button" onClick={() => { setLoading(true); load(nextCursor) }}>더 보기</button>
       )}
@@ -254,28 +255,6 @@ export function ProfilePage({ onNavigate, journey, completed = [] }) {
     )
   }
 
-  if (loading) {
-    return (
-      <section className="profile-page">
-        <DashboardPageHeader eyebrow="내 학습 기록" title="프로필" description="학습 진행 상황과 계정 정보를 확인해요." />
-        <LoadingSkeleton variant="profile" label="프로필을 불러오는 중" />
-      </section>
-    )
-  }
-
-  if (error) {
-    return (
-      <section className="profile-page">
-        <DashboardPageHeader eyebrow="내 학습 기록" title="프로필" description="학습 진행 상황과 계정 정보를 확인해요." />
-        <div className="profile-error" role="alert">
-          <p>프로필을 불러오지 못했어요.</p>
-          <span>{error.message}</span>
-          <button type="button" onClick={reloadProfile}>다시 시도</button>
-        </div>
-      </section>
-    )
-  }
-
   const total = stats?.totalProblemCount ?? 0
   const solved = stats?.solvedProblemCount ?? 0
   const progress = total ? Math.min(100, Math.round((solved / total) * 100)) : 0
@@ -312,6 +291,15 @@ export function ProfilePage({ onNavigate, journey, completed = [] }) {
         description="배운 내용을 돌아보고 다음 목표를 정해 보세요."
         action={<button type="button" className="profile-settings-link" onClick={() => onNavigate('설정')}>설정</button>}
       />
+
+      <LoadingTransition loading={loading} skeleton={<LoadingSkeleton variant="profile" label="프로필을 불러오는 중" />}>
+      {error ? (
+        <div className="profile-error" role="alert">
+          <p>프로필을 불러오지 못했어요.</p>
+          <span>{error.message}</span>
+          <button type="button" onClick={reloadProfile}>다시 시도</button>
+        </div>
+      ) : <>
 
       <article className="profile-hero">
         <div className="profile-identity">
@@ -445,6 +433,8 @@ export function ProfilePage({ onNavigate, journey, completed = [] }) {
 
       <ExpHistory />
       <SubmissionHistory />
+      </>}
+      </LoadingTransition>
     </section>
   )
 }
