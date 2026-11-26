@@ -9,6 +9,7 @@ import {
   updateNotificationSettings,
 } from '../../api/notifications.js'
 import { LoadingSkeleton } from '../common/LoadingSkeleton.jsx'
+import { LoadingTransition } from '../common/LoadingTransition.jsx'
 import { DashboardPageHeader } from './DashboardPageHeader.jsx'
 import './NotificationsPage.css'
 
@@ -48,7 +49,8 @@ export function NotificationSettings() {
       <h2>알림 설정</h2>
       <p className="notice-muted">받고 싶은 알림만 켜 두세요.</p>
       {error && <p className="notice-error" role="alert">{error}</p>}
-      {!settings && !error ? <LoadingSkeleton variant="settings" label="알림 설정을 불러오는 중" /> : settings && (
+      <LoadingTransition loading={!settings && !error} skeleton={<LoadingSkeleton variant="settings" label="알림 설정을 불러오는 중" />}>
+      {settings && (
         <ul className="notice-settings">
           {NOTIFICATION_TYPES.map(({ type, label, description }) => (
             <li key={type}>
@@ -66,6 +68,7 @@ export function NotificationSettings() {
           ))}
         </ul>
       )}
+      </LoadingTransition>
     </article>
   )
 }
@@ -148,8 +151,8 @@ export function NotificationsPage({ onNavigate }) {
       </div>
 
       <article className="notice-card">
-        {loading && !items.length ? <LoadingSkeleton variant="notifications" label="알림을 불러오는 중" />
-          : error ? (
+        <LoadingTransition loading={loading && !items.length} skeleton={<LoadingSkeleton variant="notifications" label="알림을 불러오는 중" />}>
+          {error ? (
             <p className="notice-error" role="alert">
               알림을 불러오지 못했어요. {error.message}
               <button type="button" className="notice-text-button" onClick={() => changeFilter(unreadOnly)}>다시 시도</button>
@@ -170,6 +173,7 @@ export function NotificationsPage({ onNavigate }) {
               ))}
             </ul>
           ) : <p className="notice-muted">{unreadOnly ? '안 읽은 알림이 없어요.' : '아직 받은 알림이 없어요.'}</p>}
+        </LoadingTransition>
         {!error && items.length < total && (
           <button type="button" className="notice-more" disabled={loading} onClick={loadMore}>{loading ? '불러오는 중…' : '더 보기'}</button>
         )}

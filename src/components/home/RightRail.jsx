@@ -2,6 +2,7 @@ import { memo, useMemo } from 'react';
 import { icon } from '../../lib/assets.js';
 import { wasSolvedOnDate } from '../../lib/studyActivity.js';
 import { LoadingSkeleton } from '../common/LoadingSkeleton.jsx';
+import { LoadingTransition } from '../common/LoadingTransition.jsx';
 import { Stats } from '../common/Stats.jsx';
 import { chapterTitleFor } from '../../data/curricula.js';
 import './RightRail.css';
@@ -51,6 +52,7 @@ export const RightRail = memo(function RightRail({ onNavigate, summary, journey,
       <div className="rail-card level-card">
         <div className="level-avatar">XP</div>
         <div className="level-info">
+          <LoadingTransition loading={loggedIn && !exp} skeleton={<LoadingSkeleton variant="xp" label="경험치를 불러오는 중" />}>
           {exp ? (
             <>
               <div className="level-top">
@@ -59,16 +61,13 @@ export const RightRail = memo(function RightRail({ onNavigate, summary, journey,
               </div>
               <small>{latest ? `최근 +${latest.amount} XP${latest.problemTitle ? ' · ' + latest.problemTitle : ''}` : '문제를 맞히면 XP가 쌓여요.'}</small>
             </>
-          ) : (
+          ) : !loggedIn ? (
             <>
-              {loggedIn ? <LoadingSkeleton variant="xp" label="경험치를 불러오는 중" /> : (
-                <>
-                  <div className="level-top"><strong>내 경험치</strong></div>
-                  <small>로그인하면 XP가 기록돼요.</small>
-                </>
-              )}
+              <div className="level-top"><strong>내 경험치</strong></div>
+              <small>로그인하면 XP가 기록돼요.</small>
             </>
-          )}
+          ) : null}
+          </LoadingTransition>
         </div>
       </div>
 

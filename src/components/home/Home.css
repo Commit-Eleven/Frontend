@@ -19,6 +19,20 @@
   padding-top: 36px;
   padding-bottom: 120px;
 }
+.center-content.is-leaving {
+  pointer-events: none;
+  animation: sidebar-content-leave 100ms ease-out both;
+}
+.center-content.is-entering {
+  animation: sidebar-content-enter 200ms cubic-bezier(.2,.75,.25,1) both;
+}
+@keyframes sidebar-content-leave {
+  to { opacity: 0; }
+}
+@keyframes sidebar-content-enter {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
 .floating-course-card {
   height: 82px;
   position: sticky;
@@ -177,6 +191,10 @@
   .center-content {
     left: 19px;
   }
+}
+@media (prefers-reduced-motion: reduce) {
+  .center-content.is-leaving,
+  .center-content.is-entering { animation: none; }
 }
 
 .section-tabs {

@@ -1,4 +1,5 @@
 import { LoadingSkeleton } from '../common/LoadingSkeleton.jsx'
+import { LoadingTransition } from '../common/LoadingTransition.jsx'
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { DashboardPageHeader } from '../dashboard/DashboardPageHeader.jsx'
 import { beginGoogleLogin } from '../../api/auth.js'
@@ -250,8 +251,8 @@ function GroupDetail({ groupId, preview, onClose, onChanged }) {
       <div className="group-detail-heading">
         <h1>{group?.name || lockedGroup?.name || '그룹 상세'}</h1>
       </div>
-      {loading ? <LoadingSkeleton variant="group-detail" label="그룹 정보를 불러오는 중" />
-        : error ? <p className="group-error" role="alert">{error}</p>
+      <LoadingTransition loading={loading} skeleton={<LoadingSkeleton variant="group-detail" label="그룹 정보를 불러오는 중" />}>
+        {error ? <p className="group-error" role="alert">{error}</p>
         : locked ? <>
           <p className="group-description">{lockedGroup.description || '아직 그룹 소개가 없어요.'}</p>
           <dl className="group-detail-meta">
@@ -365,6 +366,7 @@ function GroupDetail({ groupId, preview, onClose, onChanged }) {
           )}
           {message && <p className="group-detail-state" role="status">{message}</p>}
         </>}
+      </LoadingTransition>
     </section>
   )
 }
@@ -468,8 +470,8 @@ function FindGroups({ myGroupIds, onJoined, onOpen }) {
         <button type="submit" className="group-secondary">검색</button>
       </form>
       {message && <p className="group-error" role="alert">{message}</p>}
-      {result.loading ? <LoadingSkeleton variant="groups" label="그룹을 찾는 중" />
-        : result.error ? <p className="group-error" role="alert">{result.error}</p>
+      <LoadingTransition loading={result.loading} skeleton={<LoadingSkeleton variant="groups" label="그룹을 찾는 중" />}>
+        {result.error ? <p className="group-error" role="alert">{result.error}</p>
         : result.items.length ? <>
           <div className="group-grid">
             {result.items.map((group) => {
@@ -495,6 +497,7 @@ function FindGroups({ myGroupIds, onJoined, onOpen }) {
           )}
         </>
         : <div className="group-empty"><div aria-hidden="true">〈/〉</div><h2>찾는 그룹이 없어요</h2><p>다른 이름으로 찾아보거나<br />직접 그룹을 만들어 보세요.</p></div>}
+      </LoadingTransition>
     </>
   )
 }
@@ -622,8 +625,8 @@ export function Groups({ scrollRef }) {
           <FindGroups myGroupIds={groups.map((group) => group.id)} onJoined={(text) => { changed(text); setTab('mine') }} onOpen={(group) => openDetail(group.id, group)} />
         ) : <>
           <ReceivedInvites reloadKey={reloadKey} onAccepted={changed} />
-          {loading ? <LoadingSkeleton variant="groups" label="그룹 목록을 불러오는 중" />
-            : loadError ? <div className="group-error" role="alert">{loadError} <button type="button" className="group-text-button" onClick={reload}>다시 시도</button></div>
+          <LoadingTransition loading={loading} skeleton={<LoadingSkeleton variant="groups" label="그룹 목록을 불러오는 중" />}>
+            {loadError ? <div className="group-error" role="alert">{loadError} <button type="button" className="group-text-button" onClick={reload}>다시 시도</button></div>
             : groups.length ? (
               <div className="group-grid">
                 {groups.map((group) => (
@@ -643,6 +646,7 @@ export function Groups({ scrollRef }) {
                 </div>
               </div>
             )}
+          </LoadingTransition>
         </>}
       </>}
       </>}
