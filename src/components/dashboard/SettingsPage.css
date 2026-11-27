@@ -45,3 +45,5 @@
   font-size: var(--dashboard-text-xs);
   color: #888;
 }
+
+.settings-section-symbol svg { width: 20px; height: 20px; }

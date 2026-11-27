@@ -78,7 +78,7 @@ export function SettingsPage({ language, onNavigate, onLogout }) {
 
       <article className="settings-section-card">
         <div className="settings-section-heading">
-          <span className="settings-section-symbol" aria-hidden="true">⌘</span>
+          <span className="settings-section-symbol" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="m8 8-4 4 4 4m8-8 4 4-4 4m-3-10-2 12" /></svg></span>
           <div><h2>학습 언어</h2><p>언어를 바꾸면 해당 과정과 문제가 열려요.</p></div>
         </div>
         <div className="settings-language-list" role="group" aria-label="학습 언어 선택">
@@ -103,7 +103,7 @@ export function SettingsPage({ language, onNavigate, onLogout }) {
 
       <article className="settings-section-card">
         <div className="settings-section-heading">
-          <span className="settings-section-symbol" aria-hidden="true">▲</span>
+          <span className="settings-section-symbol" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19h4v-5H4zm6 0h4V9h-4zm6 0h4V5h-4z" /></svg></span>
           <div><h2>학습 등급</h2><p>{language.label}의 등급이에요. 등급에 따라 열리는 섹션이 달라져요.</p></div>
         </div>
         <div className="settings-language-list" role="group" aria-label="학습 등급 선택">
@@ -131,7 +131,7 @@ export function SettingsPage({ language, onNavigate, onLogout }) {
 
       <article className="settings-section-card settings-account-card">
         <div className="settings-section-heading">
-          <span className="settings-section-symbol account" aria-hidden="true">◎</span>
+          <span className="settings-section-symbol account" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="3.5" /><path d="M5 20v-1a7 7 0 0 1 14 0v1" /></svg></span>
           <div><h2>계정</h2><p>학습 기록을 계정에 안전하게 저장하세요.</p></div>
         </div>
         <div className="settings-action-list">
